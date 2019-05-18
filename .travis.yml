@@ -1,6 +1,7 @@
 matrix:
   include:
     - language: cpp
+      dist: xenial
       script:
         - ./test/build.sh
     - language: python
