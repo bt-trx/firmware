@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(arduino-mock-test-all)
 
+set(CMAKE_CXX_STANDARD 11 CACHE STRING "Set the C++ standard to be used for compiling")
+
 message("building all tests")
 
 find_package(Threads REQUIRED)
