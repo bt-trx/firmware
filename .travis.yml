@@ -1,0 +1,21 @@
+language: python
+python:
+  - "2.7"
+
+cache:
+  directories:
+    - "~/.platformio"
+
+install:
+  - pip install -U platformio
+  - platformio update
+
+jobs:
+  - stage: test
+    name: "Unit Tests"
+    script:
+      - ./test/build.sh
+  - stage: build
+    name: "Build Binary"
+    script:
+      - platformio run -v
