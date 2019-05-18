@@ -14,3 +14,6 @@ test_script:
 
 build_script:
     - platformio run -v
+
+artifacts:
+    - path: .pioenvs/teensy32/firmware.hex
