@@ -1,3 +1,4 @@
+image: Ubuntu1804
 build: off
 environment:
 
@@ -6,7 +7,6 @@ environment:
 
 install:
     - cmd: git submodule update --init --recursive
-    - cmd: SET PATH=%PATH%;C:\Python27\Scripts
     - cmd: pip install -U platformio
 
 test_script:
