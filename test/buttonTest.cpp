@@ -35,6 +35,7 @@ class ButtonTest : public ::testing::Test {
 
   protected:
     ArduinoMock* arduinoMock;
+    Button* button;
 
     ButtonTest() {
     }
@@ -44,35 +45,36 @@ class ButtonTest : public ::testing::Test {
 
     virtual void SetUp() {
       arduinoMock = arduinoMockInstance();
+
+      EXPECT_CALL(*arduinoMock, pinMode(_, INPUT));
+      button = new Button(0);
     }
 
     virtual void TearDown() {
       releaseArduinoMock();
+      delete button;
     }
 
   };
 
 TEST_F(ButtonTest, isPressed) {
-  Button button(0);
 
   EXPECT_CALL(*arduinoMock, digitalRead(_))
     .WillOnce(Return(1))
     .WillOnce(Return(0));
   
-  ASSERT_EQ(false, button.isPressed());
-  ASSERT_EQ(true, button.isPressed());
+  ASSERT_EQ(false, button->isPressed());
+  ASSERT_EQ(true, button->isPressed());
 }
 
 TEST_F(ButtonTest, isPressedEdge) {
-  Button button(0);
-
   EXPECT_CALL(*arduinoMock, digitalRead(_))
     .WillOnce(Return(1))
     .WillOnce(Return(0))
     .WillOnce(Return(0));
   
-  ASSERT_EQ(false, button.isPressedEdge());
-  ASSERT_EQ(true, button.isPressedEdge());
-  ASSERT_EQ(false, button.isPressedEdge());
+  ASSERT_EQ(false, button->isPressedEdge());
+  ASSERT_EQ(true, button->isPressedEdge());
+  ASSERT_EQ(false, button->isPressedEdge());
 }
 }
