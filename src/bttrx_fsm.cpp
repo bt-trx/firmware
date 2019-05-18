@@ -1,0 +1,240 @@
+/*
+This file is part of bt-trx
+
+bt-trx is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+bt-trx is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+Contact: bt-trx.com, mail@bt-trx.com
+*/
+
+#include "bttrx_fsm.h"
+#include "resulttype.h"
+
+BTTRX_FSM::BTTRX_FSM()
+  : current_state_(STATE_INIT),
+    led_connected_(LED_CONNECTED),
+    led_busy_(LED_BUSY),
+    button_(PIN_BTN_0) {}
+
+BTTRX_FSM::BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg)
+  : current_state_(STATE_INIT),
+    led_connected_(LED_CONNECTED),
+    led_busy_(LED_BUSY),
+    button_(PIN_BTN_0)
+  {
+    setSerial(serial_bt, serial_dbg);
+  }
+
+void BTTRX_FSM::setSerial(Stream *serial_bt, Stream *serial_dbg) {
+  serial_.setSerialStreams(serial_bt, serial_dbg);
+  wt32i_.setSerialWrapper(&serial_);
+}
+
+/**
+ * @brief Run the State Machine, has to be called in the main loop
+ * 
+ */
+void BTTRX_FSM::run() {
+  // Run State Machine
+  switch(current_state_) {
+    case STATE_INIT: handleStateInit(); break;
+    case STATE_CONFIGURE: handleStateConfigure(); break;
+    case STATE_CONNECTING: handleStateConnecting(); break;
+    case STATE_CONNECTED: handleStateConnected(); break;
+    case STATE_CALL_RUNNING: handleStateCallRunning(); break;
+    default: break;
+  }
+}
+
+/**
+ * @brief StateInit: Try to reach the Bluetooth module
+ * If the Bluetooth module is available, advance to next state
+ */
+void BTTRX_FSM::handleStateInit() {
+  led_busy_.off();
+  led_connected_.off();
+
+  // Try to reach Bt Module
+  if (wt32i_.available() == ResultType::kSuccess) {
+    setState(STATE_CONFIGURE);
+  } else {
+    serial_.dbg_println("ERROR: can't reach WT32i module");
+  }
+}
+
+/**
+ * @brief StateConfigure: Check and correct the configuration of the
+ * Bluetooth module 
+ */
+void BTTRX_FSM::handleStateConfigure() {
+  led_busy_.on();
+  led_connected_.off();
+
+  // Verify configuration
+  wt32i_.set("BT", "NAME", "bt-trx-1");
+  wt32i_.set("PROFILE", "HFP-AG", "ON");
+  wt32i_.set("BT", "CLASS", "400204");    // HFP-AG
+
+  // Service Class: Audio, Major Device Class: Audio/Video
+  wt32i_.set("BT", "FILTER", "200400 200400");
+  // Set PIN to 0000 as fallback if no SSP is available
+  wt32i_.set("BT", "AUTH * 0000");
+
+  // Configuration: KLUDGE REMOVE_PAIR HFP_ERROR_BYPASS
+  wt32i_.set("CONTROL", "CONFIG", "0000 0000 0080 1100");
+  wt32i_.set("CONTROL", "ECHO", "5"); // Do not echo issued commands
+  wt32i_.set("CONTROL", "GAIN", "8 10"); // Set input (ADC) and output (DAC) audio gain
+
+  // Future (needs iWrap 6.2)
+  //wt32i_.set("CONTROL", "HFPINIT", "SERVICE 1 SIGNAL 5");
+
+  setState(STATE_CONNECTING);
+}
+
+/**
+ * @brief StateConnecting: Check for active connections (e.g. automatically 
+ * reestablished by already known partners). If no active connections, make 
+ * an inquiry for nearby inquiry and try to connect to the first device in
+ * the list. If the connection was successfull, proceed to "STATE_CONNECTED"
+ * 
+ */
+void BTTRX_FSM::handleStateConnecting() {
+  led_busy_.on();
+  led_connected_.off();
+
+  // Check if there is already an active connection. If yes, proceed to 
+  // STATE_CONNECTED
+  if (wt32i_.list() == kSuccess) {
+    if (wt32i_.getActiveConnections().size()) {
+      // Immediately indicate mobile network availability to HFP device
+      wt32i_.setStatus("service", "1");
+      setState(STATE_CONNECTED);
+      return;
+    }
+  }
+
+  // Search for nearby devices
+  if (wt32i_.inquiry() != kSuccess) {
+    serial_.dbg_println("ERROR: Inquiry failed");
+    return;
+  }
+
+  // If there are suitable devices (matching BT FILTER)
+  if (wt32i_.getInquiredDevices().size() == 0) {
+    serial_.dbg_println("INFO: No devices found in inquiry");
+    return;
+  }
+
+  // Connect to the first device in the list
+  string address = wt32i_.getInquiredDevices().at(0);      
+  if (wt32i_.connectHFPAG(address) == kSuccess) {
+    // Immediately indicate mobile network availability to HFP device
+    wt32i_.setStatus("service", "1");
+    setState(STATE_CONNECTED);
+  } else {
+    string dbg_output = "ERROR: Could not connect to device " + address;
+    serial_.dbg_println(dbg_output.c_str());
+  }
+}
+
+/**
+ * @brief STATE_CONNECTED: HFP-Connection established, waiting for calls
+ */
+void BTTRX_FSM::handleStateConnected() {
+  led_connected_.on();
+  led_busy_.off();
+
+  handleIncomingMessage();
+
+  if(button_.isPressedEdge()) {
+    if (wt32i_.dial() == kSuccess) {
+      if (wt32i_.connect() == kSuccess) {
+        setState(STATE_CALL_RUNNING);
+      }
+    }
+  }
+}
+
+/**
+ * @brief STATE_CALL_RUNNING: Phone call running 
+ */
+void BTTRX_FSM::handleStateCallRunning() {
+  led_connected_.on();
+  led_busy_.blink(500);
+  handleIncomingMessage();
+
+  // If the button is pressed, send the "HANGUP" message.
+  // State change back to STATE_CONNECTED happens when HFP device indicates 
+  // end of call
+  if(button_.isPressedEdge()) {
+    wt32i_.hangup();
+  }
+}
+
+/**
+ * @brief Reads serial messages from the bluetooth module and handles them 
+ */
+void BTTRX_FSM::handleIncomingMessage() {
+  iWrapMessage msg;
+  wt32i_.getIncomingMessage(&msg);
+
+  switch(msg.msg_type) {
+    case kHFPAG_DIAL:
+      if (wt32i_.handleMessage_HFPAG_DIAL(msg) == kSuccess) {
+        if (wt32i_.connect() == kSuccess) {
+          setState(STATE_CALL_RUNNING);
+        }
+      }      
+      break;
+    case kHFPAG_NO_CARRIER:
+      setState(STATE_CONNECTED);
+      break;
+    case kHFPAG_UNKOWN:
+      wt32i_.handleMessage_HFPAG_UNKNOWN(msg);
+      break;
+    case kNOCARRIER_ERROR_LINK_LOSS:
+      setState(STATE_CONNECTING);
+      break;
+    default:
+      break;
+  }
+}
+
+/**
+ * @brief Helper function to change state machine states.
+ * Currently only used to print a debug message on state change
+ * 
+ * @param state 
+ */
+void BTTRX_FSM::setState(state_t state) {
+  current_state_ = state;
+  switch (state) {
+    case state_t::STATE_INIT:
+      serial_.dbg_println("STATE: INIT");
+      break;
+    case state_t::STATE_CONFIGURE:
+      serial_.dbg_println("STATE: CONFIGURE");
+      break;
+    case state_t::STATE_CONNECTING:
+      serial_.dbg_println("STATE: CONNECTING");
+      break;
+    case state_t::STATE_CONNECTED:
+      serial_.dbg_println("STATE: CONNECTED");
+      break;
+    case state_t::STATE_CALL_RUNNING:
+      serial_.dbg_println("STATE: CALL_RUNNING");
+      break;
+    default: break;
+  }
+}
