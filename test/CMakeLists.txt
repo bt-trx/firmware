@@ -18,11 +18,9 @@ file(GLOB TEST_SRCS ${PROJECT_SOURCE_DIR}/*.cpp)
 file(GLOB PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/*.cpp)
 list(REMOVE_ITEM PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/main.cpp)
 
-add_library(program_lib ${PROGRAM_SRCS})
-add_executable(test-all ${TEST_SRCS})
+add_executable(test-all ${TEST_SRCS} ${PROGRAM_SRCS})
 
 target_link_libraries(test-all
-    program_lib
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/gtest/libgtest.a
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/libgmock.a
     ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
