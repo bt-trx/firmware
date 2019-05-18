@@ -11,11 +11,12 @@ install:
   - platformio update
 
 jobs:
-  - stage: test
-    name: "Unit Tests"
-    script:
-      - ./test/build.sh
-  - stage: build
-    name: "Build Binary"
-    script:
-      - platformio run -v
+  include:
+    - stage: test
+      name: "Unit Tests"
+      script:
+        - ./test/build.sh
+    - stage: build
+      name: "Build Binary"
+      script:
+        - platformio run -v
