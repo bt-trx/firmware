@@ -14,7 +14,7 @@ include_directories(
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
 )
 
-file(GLOB TEST_SRCS ${PROJECT_SOURCE_DIR}/*.cpp)
+file(GLOB TEST_SRCS ${PROJECT_SOURCE_DIR}/TestAll.cpp ${PROJECT_SOURCE_DIR}/buttonTest.cpp)
 file(GLOB PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/*.cpp)
 list(REMOVE_ITEM PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/main.cpp)
 
