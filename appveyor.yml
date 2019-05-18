@@ -6,8 +6,8 @@ environment:
     - PLATFORMIO_CI_SRC: ""
 
 install:
-    - cmd: git submodule update --init --recursive
-    - cmd: pip install -U platformio
+    - git submodule update --init --recursive
+    - pip install -U platformio
 
 test_script:
-    - cmd: platformio run -v
+    - platformio run -v
