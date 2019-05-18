@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(arduino-mock-test-all)
 
+set(CMAKE_CXX_STANDARD 11 CACHE STRING "Set the C++ standard to be used for compiling")
+
 message("building all tests")
 
 find_package(Threads REQUIRED)
@@ -12,10 +14,11 @@ include_directories(
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/googlemock/include
 )
 
-file(GLOB LIB_SRCS "lib/*.cpp")
-file(GLOB TEST_SRCS "*.cpp")
-file(GLOB PROGRAM_SRCS "../src/bttrx_fsm.cpp" "../src/splitstring.cpp" "../src/wt32i.cpp" "../src/serialwrapper.cpp" "../src/led.cpp" "../src/button.cpp")
-add_executable(test-all ${TEST_SRCS} ${PROGRAM_SRCS} ${LIB_SRCS})
+file(GLOB TEST_SRCS ${PROJECT_SOURCE_DIR}/*.cpp)
+file(GLOB PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/*.cpp)
+list(REMOVE_ITEM PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/main.cpp)
+
+add_executable(test-all ${TEST_SRCS} ${PROGRAM_SRCS})
 
 target_link_libraries(test-all
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/googlemock/gtest/libgtest.a

@@ -1,0 +1,25 @@
+matrix:
+  include:
+    - language: cpp
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+      before_install:
+        - eval "${MATRIX_EVAL}"
+      script:
+        - ./test/build.sh
+    - language: python
+      python: 2.7
+      cache:
+        directories:
+          - "~/.platformio"
+      install:
+        - pip install -U platformio
+      script:
+        - platformio run -v
