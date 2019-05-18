@@ -16,6 +16,7 @@ include_directories(
 
 file(GLOB LIB_SRCS ${PROJECT_SOURCE_DIR}/lib/*.cpp)
 file(GLOB TEST_SRCS ${PROJECT_SOURCE_DIR}/*.cpp)
+list(REMOVE_ITEM TEST_SRCS ${PROJECT_SOURCE_DIR}/buttonTest.cpp)
 file(GLOB PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/*.cpp)
 list(REMOVE_ITEM PROGRAM_SRCS ${PROJECT_SOURCE_DIR}/../src/main.cpp)
 
