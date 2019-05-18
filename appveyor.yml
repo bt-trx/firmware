@@ -10,4 +10,7 @@ install:
     - sudo pip install -U platformio
 
 test_script:
+    - ./test/build.sh
+
+build_script:
     - platformio run -v
