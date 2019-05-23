@@ -420,11 +420,11 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
     // Return serial number
     serial_->println("+CGSN: 123456");
     serial_->println("OK");
-  } else if (cmd == "AT+CGMI" || cmd == "AT+CGMI?" || cmd == "AT+GMI?") {
+  } else if (cmd == "AT+CGMI" || cmd == "AT+CGMI?" || cmd == "AT+GMI" || cmd == "AT+GMI?") {
     // Return Manufacturer identification
     serial_->println("+CGMI: bt-trx");
     serial_->println("OK");
-  } else if (cmd == "AT+CGMM" || cmd == "AT+CGMM?"|| cmd == "AT+GMM?") {
+  } else if (cmd == "AT+CGMM" || cmd == "AT+CGMM?"|| cmd == "AT+GMM"|| cmd == "AT+GMM?") {
     // Return Model identification
     serial_->println("+CGMM: bt-trx");
     serial_->println("OK");
