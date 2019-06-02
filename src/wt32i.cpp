@@ -496,6 +496,9 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
   } else if (cmd.find("AT+CMGF=") != string::npos) {
     // Set SMS Text Mode (0) or PDU Mode (1)
     serial_->println("OK");
+  } else if (cmd.find("AT+CNMI=") != string::npos) {
+    // Configuration of message routing/display of new messages
+    serial_->println("OK");
   } else if (cmd.find("AT+CSCS=\"") != string::npos) {
     // Set charset to use
     serial_->println("OK");
