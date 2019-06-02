@@ -484,6 +484,10 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
     // position, number, 129 (unkown number format), name
     serial_->println("+CPBR: 1,\"#73\",129,\"bt-trx\"");
     serial_->println("OK");
+  } else if (cmd == "AT+APLSIRI?") {
+    // Return SIRI is not available on this platform
+    serial_->println("+APLSIRI:0");
+    serial_->println("OK");
   }
 
   // Commands which are recognized, but ignored
