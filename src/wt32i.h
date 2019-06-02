@@ -62,6 +62,8 @@ class WT32i {
     vector<string> getInquiredDevices() { return inquired_devices_; };
     vector<string> getActiveConnections() { return active_connections_; }
 
+    ResultType indicateNetworkAvailable();
+
   private:
     typedef std::map<string, int> hfp_status_t;
 

@@ -516,3 +516,14 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
 
   return kSuccess;
 }
+
+/**
+ * @brief Indicate the availability of the mobile phone network to the HFP device
+ * 
+ * @return ResultType 
+ */
+ResultType WT32i::indicateNetworkAvailable() {
+  setStatus("service", "1");
+  setStatus("signal", "5");
+  return kSuccess;
+}

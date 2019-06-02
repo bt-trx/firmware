@@ -118,7 +118,7 @@ void BTTRX_FSM::handleStateConnecting() {
   if (wt32i_.list() == kSuccess) {
     if (wt32i_.getActiveConnections().size()) {
       // Immediately indicate mobile network availability to HFP device
-      wt32i_.setStatus("service", "1");
+      wt32i_.indicateNetworkAvailable();
       setState(STATE_CONNECTED);
       return;
     }
@@ -140,7 +140,7 @@ void BTTRX_FSM::handleStateConnecting() {
   string address = wt32i_.getInquiredDevices().at(0);      
   if (wt32i_.connectHFPAG(address) == kSuccess) {
     // Immediately indicate mobile network availability to HFP device
-    wt32i_.setStatus("service", "1");
+    wt32i_.indicateNetworkAvailable();
     setState(STATE_CONNECTED);
   } else {
     string dbg_output = "ERROR: Could not connect to device " + address;
