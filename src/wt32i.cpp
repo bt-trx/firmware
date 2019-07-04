@@ -359,6 +359,11 @@ ResultType WT32i::getIncomingMessage(iWrapMessage* msg) {
     } else {
       return kError;
     }
+  } else if (splitted_msg[0] == "SSP") {
+    if (splitted_msg[1] == "CONFIRM") {
+      string response = "SSP CONFIRM " + splitted_msg[2] + " OK";
+      serial_->println(response.c_str());
+    }
   } else {
     return kError;
   }
