@@ -24,9 +24,6 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "bttrx_fsm.h"
 #include "git_revision.h"
 
-#define SERIAL_BT Serial3
-#define SERIAL_DBG Serial
-
 BTTRX_FSM bttrx_fsm;
 
 void setup() {
