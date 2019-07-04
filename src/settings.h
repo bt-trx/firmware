@@ -28,8 +28,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define PIN_BTN_0 23  // active low
 #define PIN_LED_0 3  // active high
 #define PIN_LED_1 4  // active high
-#define LED_BUSY PIN_LED_0
-#define LED_CONNECTED PIN_LED_1
+#define LED_BUSY PIN_LED_1
+#define LED_CONNECTED PIN_LED_0
 
 #define PIN_PTT_IN 5
 #define PIN_PTT_OUT 6
