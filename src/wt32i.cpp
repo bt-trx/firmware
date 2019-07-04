@@ -475,10 +475,11 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
     // Return battery status
     serial_->println("+CBC: 0,100"); // Battery connected, 100 %
     serial_->println("OK");
-  } else if (cmd == "ATI") {
-    // TODO implement
-    // Status (Manufacturer, Model, Revision, IMEI, capabilities)
+  } else if (cmd == "ATI" || cmd == "ATI0") {
+    // Return Identification Information
     // Defined in 3GPP TS 27.007
+    serial_->println("bt-trx 1.0");
+    serial_->println("OK");
   } else if (cmd.find("AT+CPBR=1") != string::npos) {
     // Return phonebook contents
     // position, number, 129 (unkown number format), name
