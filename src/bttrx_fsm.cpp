@@ -85,7 +85,6 @@ void BTTRX_FSM::handleStateConfigure() {
   wt32i_.set("BT", "NAME", "bt-trx-1");
   wt32i_.set("PROFILE", "HFP-AG", "ON");
   wt32i_.set("BT", "CLASS", "400204");    // HFP-AG
-  //wt32i_.set("BT", "SSP", "3 0"); 
   wt32i_.set("BT", "SSP", "1 1");    // Display yes/no button, MITM enabled
 
   // Service Class: Audio, Major Device Class: Audio/Video

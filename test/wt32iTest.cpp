@@ -35,6 +35,7 @@ class WT32iTest : public ::testing::Test {
 
   protected:
     SerialWrapperMock serialWrapperMock;
+    ArduinoMock* arduinoMock;
 
     WT32iTest() {
     }
@@ -43,9 +44,11 @@ class WT32iTest : public ::testing::Test {
     }
 
     virtual void SetUp() {
+      arduinoMock = arduinoMockInstance();
     }
 
     virtual void TearDown() {
+      releaseArduinoMock();
     }
 
   };
@@ -147,16 +150,47 @@ TEST_F(WT32iTest, list_success_1result) {
   ASSERT_EQ(0, result[0].compare("de:ad:be:ef:ca:fe"));
 }
 
-TEST_F(WT32iTest, connectHFPAG_success) {
+TEST_F(WT32iTest, connectHFPAG_success_without_SSP) {
   WT32i wt32i(&serialWrapperMock);
 
   EXPECT_CALL(serialWrapperMock, 
       println(Matcher<const char *>(StrEq("call de:ad:be:ef:ca:fe 111e hfp-ag"))));
 
+  EXPECT_CALL(*arduinoMock, millis())
+    .WillOnce(Return(0));
+
+  EXPECT_CALL(serialWrapperMock, readLineToString())
+    .WillOnce(Return(string("CONNECT 0 HFP 3")));
+
   EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
     .WillOnce(DoAll(SetArgPointee<1>("CALL 0"),
                     Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("CONNECT 0 HFP 3"),
+    .WillOnce(DoAll(SetArgPointee<1>("HFP 0 STATUS \"service\" 0"),
+                    Return(ResultType::kSuccess)))
+    .WillOnce(DoAll(SetArgPointee<1>("HFP 0 READY"),
+                    Return(ResultType::kSuccess)));
+
+  ASSERT_EQ(ResultType::kSuccess,
+            wt32i.connectHFPAG("de:ad:be:ef:ca:fe"));
+}
+
+TEST_F(WT32iTest, connectHFPAG_success_with_SSP) {
+  WT32i wt32i(&serialWrapperMock);
+
+  EXPECT_CALL(serialWrapperMock, 
+      println(Matcher<const char *>(StrEq("call de:ad:be:ef:ca:fe 111e hfp-ag"))));
+    EXPECT_CALL(serialWrapperMock, 
+      println(Matcher<const char *>(StrEq("SSP CONFIRM de:ad:be:ef:ca:fe OK"))));
+
+  EXPECT_CALL(*arduinoMock, millis())
+    .WillOnce(Return(0));
+
+  EXPECT_CALL(serialWrapperMock, readLineToString())
+    .WillOnce(Return(string("SSP CONFIRM de:ad:be:ef:ca:fe 123456 ?")))
+    .WillOnce(Return(string("CONNECT 0 HFP 3")));
+
+  EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+    .WillOnce(DoAll(SetArgPointee<1>("CALL 0"),
                     Return(ResultType::kSuccess)))
     .WillOnce(DoAll(SetArgPointee<1>("HFP 0 STATUS \"service\" 0"),
                     Return(ResultType::kSuccess)))
