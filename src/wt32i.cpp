@@ -184,20 +184,24 @@ ResultType WT32i::connectHFPAG(string address) {
         == kTimeoutError) {
     return kTimeoutError;
   }
-
+  
   // Setting timeout to 15 secs, in case of fallback to PIN
   // This should be somewhat enough time to enter the PIN in the HFP device
   ulong start_time = millis();
   while (true) {
-    vector<string> splitted_input = splitString(serial_->readLineToString());
-    if (splitted_input[0] == "SSP" && splitted_input[1] == "CONFIRM") {
-      output = "SSP CONFIRM " + address + " OK";
-      serial_->println(output.c_str());
-    } else if (splitted_input[0] == "CONNECT") {
-      break;
+    input = serial_->readLineToString();
+    if (!input.empty()) {
+      vector<string> splitted_input = splitString(input);
+      serial_->dbg_println(input.c_str());
+      if (splitted_input[0] == "SSP" && splitted_input[1] == "CONFIRM") {
+        output = "SSP CONFIRM " + address + " OK";
+        serial_->println(output.c_str());
+      } else if (splitted_input[0] == "CONNECT") {
+        break;
+      }
     }
 
-    if ((start_time + 15000) > millis()) {
+    if ((start_time + 15000) < millis()) {
       return kTimeoutError;
     }
   }
