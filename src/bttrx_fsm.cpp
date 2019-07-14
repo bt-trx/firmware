@@ -85,14 +85,14 @@ void BTTRX_FSM::handleStateConfigure() {
   wt32i_.set("BT", "NAME", "bt-trx-1");
   wt32i_.set("PROFILE", "HFP-AG", "ON");
   wt32i_.set("BT", "CLASS", "400204");    // HFP-AG
-  wt32i_.set("BT", "SSP", "1 1");    // Display yes/no button, MITM enabled
+  wt32i_.set("BT", "SSP", "1 0");    // Display yes/no button, MITM enabled
 
   // Service Class: Audio, Major Device Class: Audio/Video
   wt32i_.set("BT", "FILTER", "200400 200400");
   // Set PIN to 0000 as fallback if no SSP is available
   wt32i_.set("BT", "AUTH * 0000");
 
-  // Configuration: KLUDGE REMOVE_PAIR HFP_ERROR_BYPASS MITM
+  // Configuration: KLUDGE REMOVE_PAIR HFP_ERROR_BYPASS MITM_DISCARD_L4_KEY
   wt32i_.set("CONTROL", "CONFIG", "0001 0000 0080 1100");
   wt32i_.set("CONTROL", "ECHO", "5"); // Do not echo issued commands
   wt32i_.set("CONTROL", "GAIN", "8 10"); // Set input (ADC) and output (DAC) audio gain
