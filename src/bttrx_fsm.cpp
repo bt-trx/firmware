@@ -91,8 +91,8 @@ void BTTRX_FSM::handleStateConfigure() {
   // Set PIN to 0000 as fallback if no SSP is available
   wt32i_.set("BT", "AUTH * 0000");
 
-  // Configuration: KLUDGE REMOVE_PAIR HFP_ERROR_BYPASS
-  wt32i_.set("CONTROL", "CONFIG", "0000 0000 0090 1100");
+  // Configuration: KLUDGE REMOVE_PAIR NO_AUTO_DATAMODE HFP_ERROR_BYPASS
+  wt32i_.set("CONTROL", "CONFIG", "0000 0000 00A0 1100");
   wt32i_.set("CONTROL", "ECHO", "5"); // Do not echo issued commands
   wt32i_.set("CONTROL", "GAIN", "8 10"); // Set input (ADC) and output (DAC) audio gain
 
