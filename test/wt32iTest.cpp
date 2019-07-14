@@ -183,7 +183,8 @@ TEST_F(WT32iTest, connectHFPAG_success_with_SSP) {
       println(Matcher<const char *>(StrEq("SSP CONFIRM de:ad:be:ef:ca:fe OK"))));
 
   EXPECT_CALL(*arduinoMock, millis())
-    .WillOnce(Return(0));
+    .WillOnce(Return(0))
+    .WillOnce(Return(1));
 
   EXPECT_CALL(serialWrapperMock, readLineToString())
     .WillOnce(Return(string("SSP CONFIRM de:ad:be:ef:ca:fe 123456 ?")))

@@ -192,7 +192,6 @@ ResultType WT32i::connectHFPAG(string address) {
     input = serial_->readLineToString();
     if (!input.empty()) {
       vector<string> splitted_input = splitString(input);
-      serial_->dbg_println(input.c_str());
       if (splitted_input[0] == "SSP" && splitted_input[1] == "CONFIRM") {
         output = "SSP CONFIRM " + address + " OK";
         serial_->println(output.c_str());
