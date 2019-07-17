@@ -181,25 +181,38 @@ ResultType WT32i::connectHFPAG(string address) {
 
   string input;
   if (serial_->waitForInputBlocking("CALL", &input)
-        == ResultType::kTimeoutError) {
-    return ResultType::kTimeoutError;
+        == kTimeoutError) {
+    return kTimeoutError;
   }
-
+  
   // Setting timeout to 15 secs, in case of fallback to PIN
   // This should be somewhat enough time to enter the PIN in the HFP device
-  if (serial_->waitForInputBlocking("CONNECT", &input, 15000)
-        == ResultType::kTimeoutError) {
-    return ResultType::kTimeoutError;
+  ulong start_time = millis();
+  while (true) {
+    input = serial_->readLineToString();
+    if (!input.empty()) {
+      vector<string> splitted_input = splitString(input);
+      if (splitted_input[0] == "SSP" && splitted_input[1] == "CONFIRM") {
+        output = "SSP CONFIRM " + address + " OK";
+        serial_->println(output.c_str());
+      } else if (splitted_input[0] == "CONNECT") {
+        break;
+      }
+    }
+
+    if ((start_time + 15000) < millis()) {
+      return kTimeoutError;
+    }
   }
 
   input.clear();
   while (!containsStringOnPosition(input, "READY", 2)) {
     if (serial_->waitForInputBlocking("HFP-AG", &input)
-        == ResultType::kTimeoutError) {
-      return ResultType::kTimeoutError;
+        == kTimeoutError) {
+      return kTimeoutError;
     }
   }
-  return ResultType::kSuccess;
+  return kSuccess;
 }
 
 /**
@@ -359,6 +372,9 @@ ResultType WT32i::getIncomingMessage(iWrapMessage* msg) {
     } else {
       return kError;
     }
+  } else if (splitted_msg[0] == "SSP" && splitted_msg[1] == "CONFIRM") {
+    string response = "SSP CONFIRM " + splitted_msg[2] + " OK";
+    serial_->println(response.c_str());
   } else {
     return kError;
   }
