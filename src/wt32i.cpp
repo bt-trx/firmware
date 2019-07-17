@@ -503,6 +503,9 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
   } else if (cmd.find("AT+CSCS=\"") != string::npos) {
     // Set charset to use
     serial_->println("OK");
+  } else if (cmd.find("AT+CSRSF=\"") != string::npos) {
+    // TODO Find out what this command is used for (seen in Fiat Fiorino)
+    serial_->println("OK");
   } else if (cmd.find("AT+CPMS=") != string::npos) {
     // Set preferred message storage
     serial_->println("OK");
