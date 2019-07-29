@@ -248,13 +248,16 @@ void BTTRX_FSM::handleIncomingMessage() {
       }      
       break;
     case kHFPAG_NO_CARRIER:
+      // Phone call ended
       setState(STATE_CONNECTED);
       break;
     case kHFPAG_UNKOWN:
+      // Handle AT command
       wt32i_.handleMessage_HFPAG_UNKNOWN(msg);
       break;
     case kNOCARRIER_ERROR_LINK_LOSS:
-      setState(STATE_CONNECTING);
+      // Connection try was unsuccessful
+      setState(STATE_INQUIRY);
       break;
     default:
       break;
