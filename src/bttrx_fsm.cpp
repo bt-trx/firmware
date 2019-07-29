@@ -50,10 +50,14 @@ void BTTRX_FSM::run() {
   switch(current_state_) {
     case STATE_INIT: handleStateInit(); break;
     case STATE_CONFIGURE: handleStateConfigure(); break;
+    case STATE_INQUIRY: handleStateInquiry(); break;
     case STATE_CONNECTING: handleStateConnecting(); break;
     case STATE_CONNECTED: handleStateConnected(); break;
     case STATE_CALL_RUNNING: handleStateCallRunning(); break;
-    default: break;
+    default:
+      serial_.dbg_println("ERROR: TRYING TO REACH UNKOWN STATE");
+      while(true);
+      break;
   }
 }
 
@@ -100,7 +104,40 @@ void BTTRX_FSM::handleStateConfigure() {
   // Future (needs iWrap 6.2)
   //wt32i_.set("CONTROL", "HFPINIT", "SERVICE 1 SIGNAL 5");
 
-  setState(STATE_CONNECTING);
+  setState(STATE_INQUIRY);
+}
+
+/**
+ * @brief 
+ * 
+ */
+void BTTRX_FSM::handleStateInquiry() { 
+  led_busy_.on();
+  led_connected_.off();
+
+  handleIncomingMessage();
+  if (current_state_ != STATE_INQUIRY) {
+    return;
+  }
+
+  ulong now = millis();
+
+  // TODO Let's see if we really need this part
+  /* 
+  static ulong last_read_active_connections = 0;  
+  if (last_read_active_connections + 15000 < now) {
+    last_read_active_connections = now;
+    wt32i_.readActiveConnections();
+  }
+  */
+
+  static ulong last_start_inquiry = -10000;
+  if (last_start_inquiry + 10000 < now
+      && !wt32i_.inquiryRunning()) {
+    last_start_inquiry = now;
+    wt32i_.startInquiry();
+  }
+
 }
 
 /**
@@ -112,41 +149,25 @@ void BTTRX_FSM::handleStateConfigure() {
  */
 void BTTRX_FSM::handleStateConnecting() {
   led_busy_.on();
-  led_connected_.off();
+  led_connected_.blink(250);
 
-  // Check if there is already an active connection. If yes, proceed to 
-  // STATE_CONNECTED
-  if (wt32i_.list() == kSuccess) {
-    if (wt32i_.getActiveConnections().size()) {
-      // Immediately indicate mobile network availability to HFP device
-      wt32i_.indicateNetworkAvailable();
-      setState(STATE_CONNECTED);
-      return;
-    }
-  }
-
-  // Search for nearby devices
-  if (wt32i_.inquiry() != kSuccess) {
-    serial_.dbg_println("ERROR: Inquiry failed");
+  handleIncomingMessage();
+  if (current_state_ != STATE_CONNECTING) {
     return;
   }
 
-  // If there are suitable devices (matching BT FILTER)
-  if (wt32i_.getInquiredDevices().size() == 0) {
-    serial_.dbg_println("INFO: No devices found in inquiry");
+  if (wt32i_.getInquiredDevices().empty()) {
+    setState(STATE_INQUIRY);
     return;
   }
 
-  // Connect to the first device in the list
-  string address = wt32i_.getInquiredDevices().at(0);      
-  if (wt32i_.connectHFPAG(address) == kSuccess) {
-    // Immediately indicate mobile network availability to HFP device
-    wt32i_.indicateNetworkAvailable();
-    setState(STATE_CONNECTED);
-  } else {
-    string dbg_output = "ERROR: Could not connect to device " + address;
-    serial_.dbg_println(dbg_output.c_str());
+  static bool connect_running = false;
+  if (!connect_running) {
+    wt32i_.connectHFPAGnonblocking(wt32i_.getInquiredDevices().at(0));
+    connect_running = true;
   }
+
+  // TODO implement timeout for connection
 }
 
 /**
@@ -157,6 +178,9 @@ void BTTRX_FSM::handleStateConnected() {
   led_busy_.off();
 
   handleIncomingMessage();
+  if (current_state_ != STATE_CONNECTED) {
+    return;
+  }
 
   if(button_.isPressedEdge()) {
     if (wt32i_.dial() == kSuccess) {
@@ -173,7 +197,11 @@ void BTTRX_FSM::handleStateConnected() {
 void BTTRX_FSM::handleStateCallRunning() {
   led_connected_.on();
   led_busy_.blink(500);
+
   handleIncomingMessage();
+  if (current_state_ != STATE_CALL_RUNNING) {
+    return;
+  }
 
   // If the button is pressed, send the "HANGUP" message.
   // State change back to STATE_CONNECTED happens when HFP device indicates 
@@ -191,6 +219,27 @@ void BTTRX_FSM::handleIncomingMessage() {
   wt32i_.getIncomingMessage(&msg);
 
   switch(msg.msg_type) {
+    case kLIST_RESULT:
+      if (!wt32i_.getActiveConnections().empty()) {
+        // Immediately indicate mobile network availability to HFP device
+        wt32i_.indicateNetworkAvailable();
+        if (current_state_ == STATE_INQUIRY
+            || current_state_ == STATE_CONNECTING) {
+          setState(STATE_CONNECTED);
+        }
+      }
+      break;
+    case kINQUIRY_RESULT:
+      if (!wt32i_.getInquiredDevices().empty()) {
+        if (current_state_ == STATE_INQUIRY) {
+          setState(STATE_CONNECTING);
+        }
+      }
+      break;
+    case kHFPAG_READY:
+      wt32i_.indicateNetworkAvailable();
+      setState(STATE_CONNECTED);
+      break;
     case kHFPAG_DIAL:
       if (wt32i_.handleMessage_HFPAG_DIAL(msg) == kSuccess) {
         if (wt32i_.connect() == kSuccess) {
@@ -221,21 +270,26 @@ void BTTRX_FSM::handleIncomingMessage() {
 void BTTRX_FSM::setState(state_t state) {
   current_state_ = state;
   switch (state) {
-    case state_t::STATE_INIT:
+    case STATE_INIT:
       serial_.dbg_println("STATE: INIT");
       break;
-    case state_t::STATE_CONFIGURE:
+    case STATE_CONFIGURE:
       serial_.dbg_println("STATE: CONFIGURE");
       break;
-    case state_t::STATE_CONNECTING:
+    case STATE_INQUIRY:
+      serial_.dbg_println("STATE: INQUIRY");
+      break;
+    case STATE_CONNECTING:
       serial_.dbg_println("STATE: CONNECTING");
       break;
-    case state_t::STATE_CONNECTED:
+    case STATE_CONNECTED:
       serial_.dbg_println("STATE: CONNECTED");
       break;
-    case state_t::STATE_CALL_RUNNING:
+    case STATE_CALL_RUNNING:
       serial_.dbg_println("STATE: CALL_RUNNING");
       break;
-    default: break;
+    default: 
+      serial_.dbg_println("ERROR: Trying to go into unkown state");
+      break;
   }
 }

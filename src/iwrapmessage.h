@@ -27,6 +27,9 @@ Contact: bt-trx.com, mail@bt-trx.com
  */
 enum iWrapMessageType {kEmpty,
                   kUnknown,
+                  kLIST_RESULT,
+                  kINQUIRY_RESULT,
+                  kHFPAG_READY,
                   kHFPAG_DIAL,
                   kHFPAG_NO_CARRIER,
                   kHFPAG_UNKOWN,

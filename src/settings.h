@@ -60,3 +60,5 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define SERIAL_DELIMITER '\n'
 #define SERIAL_MAX_LINE_LENGTH 100
 #define BT_SERIAL_TIMEOUT 1000 // ms  // Time to wait for answers from BT module
+
+#define INQUIRY_DURATION "5" // *1.28s

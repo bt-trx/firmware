@@ -29,5 +29,7 @@ target_link_libraries(test-all
 
 add_dependencies(test-all arduino_mock)
 
+add_compile_definitions(ESP32)
+
 enable_testing()
 add_test(TestAll test-all)

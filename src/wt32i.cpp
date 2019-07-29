@@ -96,6 +96,21 @@ ResultType WT32i::set(string category,
   return ResultType::kSuccess;
 }
 
+ResultType WT32i::startInquiry() {
+  // Clear current list of currently known devices
+  inquired_devices_.clear();
+
+  // Inquiry for x * 1.28 seconds
+  string output = "INQUIRY ";
+  output.append(INQUIRY_DURATION);
+  output.append(" NAME");
+  serial_->println(output.c_str());
+
+  inquiry_running_ = true;
+
+  return kSuccess;
+}
+
 /**
  * @brief Perform inquiry of bluetooth devices nearby
  * Blocks until answer or timeout
@@ -133,6 +148,13 @@ ResultType WT32i::inquiry() {
   return ResultType::kSuccess;
 }
 
+
+ResultType WT32i::readActiveConnections() {
+  active_connections_.clear();
+  serial_->println("LIST");
+  return kSuccess;
+}
+
 /**
  * @brief Get list of active connections
  * Blocks until answer or timeout
@@ -166,6 +188,12 @@ ResultType WT32i::list() {
     active_connections_.push_back(splitString(output)[10]);
   }
   return ResultType::kSuccess;
+}
+
+ResultType WT32i::connectHFPAGnonblocking(string address) {
+  string output = "call " + address + " 111e hfp-ag";
+  serial_->println(output.c_str());
+  return kSuccess;
 }
 
 /**
@@ -347,8 +375,29 @@ ResultType WT32i::getIncomingMessage(iWrapMessage* msg) {
 
   vector<string> splitted_msg = splitString(input);
 
-  if (splitted_msg[0] == "HFP-AG") {
-    if(splitted_msg[2] == "DIAL") {
+  if (splitted_msg[0] == "LIST") {
+    if(splitted_msg.size() > 2) {
+      active_connections_.push_back(splitted_msg[10]); // BT Address
+      (*msg).msg_type = kLIST_RESULT;
+      (*msg).msg = input;
+    }
+  } else if (splitted_msg[0] == "INQUIRY") {
+    if (splitted_msg.size() == 2) {
+      if (stoi(splitted_msg[1]) == 0) {
+        inquiry_running_ = false;
+      }
+    }
+    if (splitted_msg.size() > 2) {
+        inquired_devices_.push_back(splitted_msg[1]); //  BT Address      
+        inquiry_running_ = false;
+        (*msg).msg_type = kINQUIRY_RESULT;
+        (*msg).msg = input; 
+      }
+  } else if (splitted_msg[0] == "HFP-AG") {
+    if (splitted_msg[2] == "READY") {
+      (*msg).msg_type = kHFPAG_READY;
+      (*msg).msg = input;
+    } else if (splitted_msg[2] == "DIAL") {
       (*msg).msg_type = kHFPAG_DIAL;
       (*msg).msg = input;
     } else if (splitted_msg[2] == "NO" && splitted_msg[3] == "CARRIER") {

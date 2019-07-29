@@ -39,6 +39,7 @@ class BTTRX_FSM {
 
     enum state_t { STATE_INIT,
                     STATE_CONFIGURE,
+                    STATE_INQUIRY,
                     STATE_CONNECTING,
                     STATE_CONNECTED,
                     STATE_CALL_RUNNING};
@@ -65,6 +66,7 @@ class BTTRX_FSM {
     // FSM State handler
     void handleStateInit();
     void handleStateConfigure();
+    void handleStateInquiry();
     void handleStateConnecting();
     void handleStateConnected();
     void handleStateCallRunning();

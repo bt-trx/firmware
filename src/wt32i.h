@@ -44,8 +44,12 @@ class WT32i {
     ResultType available();
     ResultType set(string, string = "", string = "");
     ResultType inquiry();
+    ResultType startInquiry();
+    bool inquiryRunning() { return inquiry_running_; }
     ResultType list();
+    ResultType readActiveConnections();
     ResultType connectHFPAG(string);
+    ResultType connectHFPAGnonblocking(string);
     ResultType setStatus(string, string);
     ResultType dial();
     ResultType connect();
@@ -71,4 +75,6 @@ class WT32i {
     vector<string> inquired_devices_;
     vector<string> active_connections_;
     std::map<link_id_t, hfp_status_t> hfp_states_;
+
+    bool inquiry_running_ = false;
 };
