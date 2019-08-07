@@ -156,17 +156,6 @@ void BTTRX_FSM::handleStateConnecting() {
     return;
   }
 
-  if (wt32i_.getInquiredDevices().empty()) {
-    setState(STATE_INQUIRY);
-    return;
-  }
-
-  static bool connect_running = false;
-  if (!connect_running) {
-    wt32i_.connectHFPAGnonblocking(wt32i_.getInquiredDevices().at(0));
-    connect_running = true;
-  }
-
   // TODO implement timeout for connection
 }
 
@@ -232,6 +221,7 @@ void BTTRX_FSM::handleIncomingMessage() {
     case kINQUIRY_RESULT:
       if (!wt32i_.getInquiredDevices().empty()) {
         if (current_state_ == STATE_INQUIRY) {
+          wt32i_.connectHFPAGnonblocking(wt32i_.getInquiredDevices().at(0));
           setState(STATE_CONNECTING);
         }
       }
