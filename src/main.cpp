@@ -31,10 +31,13 @@ void setup() {
   pinMode(PIN_BTN_0, INPUT);
   pinMode(PIN_LED_BLUE, OUTPUT);
   pinMode(PIN_LED_GREEN, OUTPUT);
+  pinMode(PIN_PTT_IN, INPUT);
+  pinMode(PIN_PTT_OUT, OUTPUT);
   pinMode(PIN_BT_RESET, OUTPUT);
 
   digitalWrite(PIN_LED_BLUE, LOW); // LED off
   digitalWrite(PIN_LED_GREEN, LOW); // LED off
+  digitalWrite(PIN_PTT_OUT, HIGH);  // Don't trigger PTT
   digitalWrite(PIN_BT_RESET, HIGH); // Get BT Module out of reset (active-low)
 
   SERIAL_DBG.begin(SERIAL_DBG_RATE);
