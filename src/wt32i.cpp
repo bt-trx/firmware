@@ -508,15 +508,15 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
   } else if (cmd == "AT+CPBS=?") {
     // Return available phonebook storages
     // e.g. "ME" (internal), "SM" (SIM) - we only support SIM
-    serial_->println("+CPBS: \"SM\"");
+    serial_->println("+CPBS: \"ME\"");
     serial_->println("OK");
   } else if (cmd == "AT+CPBS?") {
     // Return status of currently chosen phonebook storage
-    serial_->println("+CPBS: \"SM\", 1, 100"); // name, used entries, max entries
+    serial_->println("+CPBS: \"ME\", 1, 100"); // name, used entries, max entries
     serial_->println("OK");
   } else if (cmd == "AT+CPBR=?") {
     // Return phonebook configuration
-    serial_->println("+CPBR: (1-100),20,18"); // entry range, max number length, max name length
+    serial_->println("+CPBR: (1-10),20,18"); // entry range, max number length, max name length
     serial_->println("OK");
   } else if (cmd == "AT+CSCS?" || cmd == "AT+CSCS=?") {
     // Return supported character sets
@@ -545,10 +545,11 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
     // Defined in 3GPP TS 27.007
     serial_->println("bt-trx 1.0");
     serial_->println("OK");
-  } else if (cmd.find("AT+CPBR=1") != string::npos) {
+  } else if (cmd.find("AT+CPBR=") != string::npos
+             && cmd != "AT+CPBR=?") {
     // Return phonebook contents
     // position, number, 129 (unkown number format), name
-    serial_->println("+CPBR: 1,\"#73\",129,\"bt-trx\"");
+    serial_->println("+CPBR: 1,\"737373\",129,\"bt-trx\"");
     serial_->println("OK");
   } else if (cmd == "AT+APLSIRI?") {
     // Return SIRI is not available on this platform
