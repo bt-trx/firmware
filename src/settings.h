@@ -21,6 +21,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #pragma once
 
 #ifdef ESP32
+  // Bindings for dev-board v4 and newer
   // ESP32 Pin Info:
   // GPIO 34, 35: Input only
   // GPIO 6-11: SPI Flash, do not use
@@ -48,9 +49,6 @@ Contact: bt-trx.com, mail@bt-trx.com
   #define PIN_PTT_OUT 6
   #define PIN_BT_RESET 13  // active low
 #endif
-
-#define LED_BUSY PIN_LED_GREEN
-#define LED_CONNECTED PIN_LED_BLUE
 
 #define SERIAL_DBG_RATE 115200
 #define SERIAL_BT_RATE 115200

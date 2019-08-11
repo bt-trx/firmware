@@ -29,12 +29,12 @@ BTTRX_FSM bttrx_fsm;
 void setup() {
   // Set up GPIOs
   pinMode(PIN_BTN_0, INPUT);
-  pinMode(PIN_LED_0, OUTPUT);
-  pinMode(PIN_LED_1, OUTPUT);
+  pinMode(PIN_LED_BLUE, OUTPUT);
+  pinMode(PIN_LED_GREEN, OUTPUT);
   pinMode(PIN_BT_RESET, OUTPUT);
 
-  digitalWrite(PIN_LED_0, LOW); // LED off
-  digitalWrite(PIN_LED_1, LOW); // LED off
+  digitalWrite(PIN_LED_BLUE, LOW); // LED off
+  digitalWrite(PIN_LED_GREEN, LOW); // LED off
   digitalWrite(PIN_BT_RESET, HIGH); // Get BT Module out of reset (active-low)
 
   SERIAL_DBG.begin(SERIAL_DBG_RATE);

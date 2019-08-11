@@ -23,14 +23,14 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 BTTRX_FSM::BTTRX_FSM()
   : current_state_(STATE_INIT),
-    led_connected_(LED_CONNECTED),
-    led_busy_(LED_BUSY),
+    led_connected_(PIN_LED_BLUE),
+    led_busy_(PIN_LED_GREEN),
     button_(PIN_BTN_0) {}
 
 BTTRX_FSM::BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg)
   : current_state_(STATE_INIT),
-    led_connected_(LED_CONNECTED),
-    led_busy_(LED_BUSY),
+    led_connected_(PIN_LED_BLUE),
+    led_busy_(PIN_LED_GREEN),
     button_(PIN_BTN_0)
   {
     setSerial(serial_bt, serial_dbg);
