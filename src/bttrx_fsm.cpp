@@ -230,12 +230,10 @@ void BTTRX_FSM::handleIncomingMessage() {
       wt32i_.indicateNetworkAvailable();
       setState(STATE_CONNECTED);
       break;
-    case kHFPAG_DIAL:
-      if (wt32i_.handleMessage_HFPAG_DIAL(msg) == kSuccess) {
-        if (wt32i_.connect() == kSuccess) {
-          setState(STATE_CALL_RUNNING);
-        }
-      }      
+    case kHFPAG_CALLING:
+      if (wt32i_.connect() == kSuccess) {
+        setState(STATE_CALL_RUNNING);
+      } 
       break;
     case kHFPAG_NO_CARRIER:
       // Phone call ended

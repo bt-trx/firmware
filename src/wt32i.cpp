@@ -397,8 +397,8 @@ ResultType WT32i::getIncomingMessage(iWrapMessage* msg) {
     if (splitted_msg[2] == "READY") {
       (*msg).msg_type = kHFPAG_READY;
       (*msg).msg = input;
-    } else if (splitted_msg[2] == "DIAL") {
-      (*msg).msg_type = kHFPAG_DIAL;
+    } else if (splitted_msg[2] == "CALLING") {
+      (*msg).msg_type = kHFPAG_CALLING;
       (*msg).msg = input;
     } else if (splitted_msg[2] == "NO" && splitted_msg[3] == "CARRIER") {
       (*msg).msg_type = kHFPAG_NO_CARRIER;
