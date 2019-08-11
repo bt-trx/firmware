@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Build setup for ESP32
 - Added CHANGELOG.md
+- Add pin assignments for PTT pins
+
+### Changed
+- Phonebook works for VW now (using internal 'ME' phonebook instead of SIM 'SM')
+- Asynchronuous detection of incoming BT connections (Bluetooth inquiry is not blocking anymore)
 
 ## [0.1.1] - 2019-07-28
 ### Added
