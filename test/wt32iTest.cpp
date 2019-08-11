@@ -296,17 +296,17 @@ TEST_F(WT32iTest, getIncomingMessage_success_empty) {
   ASSERT_EQ(iWrapMessageType::kEmpty, msg.msg_type);
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_DIAL) {
+TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_CALLING) {
   WT32i wt32i(&serialWrapperMock);
 
   EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("HFP-AG 0 DIAL NUM +49123456789"));
+    .WillOnce(Return("HFP-AG 0 CALLING"));
 
   iWrapMessage msg;
   
   ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kHFPAG_DIAL, msg.msg_type);
-  ASSERT_EQ("HFP-AG 0 DIAL NUM +49123456789", msg.msg);
+  ASSERT_EQ(iWrapMessageType::kHFPAG_CALLING, msg.msg_type);
+  ASSERT_EQ("HFP-AG 0 CALLING", msg.msg);
 }
 
 TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_NO_CARRIER) {
