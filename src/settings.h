@@ -29,8 +29,8 @@ Contact: bt-trx.com, mail@bt-trx.com
   #define SERIAL_DBG Serial
 
   #define PIN_BTN_0 18  // active low
-  #define PIN_LED_0 19  // active high
-  #define PIN_LED_1 20  // active high
+  #define PIN_LED_BLUE 19  // active high
+  #define PIN_LED_GREEN 20  // active high
   #define PIN_PTT_IN 21
   #define PIN_PTT_OUT 22
   #define PIN_BT_RESET 23  // active low
@@ -42,15 +42,15 @@ Contact: bt-trx.com, mail@bt-trx.com
   #define SERIAL_DBG Serial
 
   #define PIN_BTN_0 23  // active low
-  #define PIN_LED_0 3  // active high
-  #define PIN_LED_1 4  // active high
+  #define PIN_LED_BLUE 3  // active high
+  #define PIN_LED_GREEN 4  // active high
   #define PIN_PTT_IN 5
   #define PIN_PTT_OUT 6
   #define PIN_BT_RESET 13  // active low
 #endif
 
-#define LED_BUSY PIN_LED_0
-#define LED_CONNECTED PIN_LED_1
+#define LED_BUSY PIN_LED_GREEN
+#define LED_CONNECTED PIN_LED_BLUE
 
 #define SERIAL_DBG_RATE 115200
 #define SERIAL_BT_RATE 115200
