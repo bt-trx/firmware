@@ -108,8 +108,9 @@ void BTTRX_FSM::handleStateConfigure() {
 }
 
 /**
- * @brief 
- * 
+ * @brief StateInquiry: Wait for connections (automatically 
+ * reestablished by already known partners). If no active connections appear,
+ * make an inquiry for nearby devices regularly
  */
 void BTTRX_FSM::handleStateInquiry() { 
   led_busy_.on();
@@ -122,30 +123,16 @@ void BTTRX_FSM::handleStateInquiry() {
 
   ulong now = millis();
 
-  // TODO Let's see if we really need this part
-  /* 
-  static ulong last_read_active_connections = 0;  
-  if (last_read_active_connections + 15000 < now) {
-    last_read_active_connections = now;
-    wt32i_.readActiveConnections();
-  }
-  */
-
   static ulong last_start_inquiry = -10000;
   if (last_start_inquiry + 10000 < now
       && !wt32i_.inquiryRunning()) {
     last_start_inquiry = now;
     wt32i_.startInquiry();
   }
-
 }
 
 /**
- * @brief StateConnecting: Check for active connections (e.g. automatically 
- * reestablished by already known partners). If no active connections, make 
- * an inquiry for nearby inquiry and try to connect to the first device in
- * the list. If the connection was successfull, proceed to "STATE_CONNECTED"
- * 
+ * @brief StateConnecting: Waiting for the result of the connection request
  */
 void BTTRX_FSM::handleStateConnecting() {
   led_busy_.on();
@@ -155,8 +142,6 @@ void BTTRX_FSM::handleStateConnecting() {
   if (current_state_ != STATE_CONNECTING) {
     return;
   }
-
-  // TODO implement timeout for connection
 }
 
 /**
@@ -219,19 +204,24 @@ void BTTRX_FSM::handleIncomingMessage() {
       }
       break;
     case kINQUIRY_RESULT:
-      if (!wt32i_.getInquiredDevices().empty()) {
-        if (current_state_ == STATE_INQUIRY) {
+      // In the meantime, we may have got an incoming connection and we do not 
+      // need to try to connect. So only do this in case we are still in the 
+      // INQUIRY state
+      if (current_state_ == STATE_INQUIRY) {
+      if (!wt32i_.getInquiredDevices().empty()) {        
           wt32i_.connectHFPAGnonblocking(wt32i_.getInquiredDevices().at(0));
           setState(STATE_CONNECTING);
         }
       }
       break;
     case kHFPAG_READY:
+      // Indication that HFP-AG connection was successful
       wt32i_.indicateNetworkAvailable();
       setState(STATE_CONNECTED);
       break;
     case kHFPAG_CALLING:
-      if (wt32i_.connect() == kSuccess) {
+      // Indication that an outgoing phone call is requested
+      if (wt32i_.connect() == kSuccess) { // Accept call
         setState(STATE_CALL_RUNNING);
       } 
       break;
@@ -244,7 +234,7 @@ void BTTRX_FSM::handleIncomingMessage() {
       wt32i_.handleMessage_HFPAG_UNKNOWN(msg);
       break;
     case kNOCARRIER_ERROR_LINK_LOSS:
-      // Connection try was unsuccessful
+      // Connection try was unsuccessful, get back to inquiry
       setState(STATE_INQUIRY);
       break;
     default:

@@ -116,9 +116,7 @@ ResultType WT32i::startInquiry() {
  * Blocks until answer or timeout
  * 
  * The list of inquiry results gets written to the inquired_devices_ list.
- * 
- * TODO Use "INQUIRY 5 NAME" to get the readable names of the devices also
- * 
+ *  
  * @return ResultType 
  */
 ResultType WT32i::inquiry() {
