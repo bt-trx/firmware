@@ -45,7 +45,9 @@ void setup() {
   SERIAL_BT.begin(SERIAL_BT_RATE);
 
   // Wait for connection on debug Serial
-  while (!SERIAL_DBG && millis() < DEBUG_CONNECT_TIMEOUT);
+  #ifdef TEENSY32
+    while (!SERIAL_DBG && millis() < DEBUG_CONNECT_TIMEOUT);
+  #endif
 
   bttrx_fsm.setSerial(&SERIAL_BT, &SERIAL_DBG);
 
