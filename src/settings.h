@@ -29,12 +29,12 @@ Contact: bt-trx.com, mail@bt-trx.com
   #define SERIAL_BT Serial2 // Default: RX: 16, TX: 17, RTS: 7, CTS: 8
   #define SERIAL_DBG Serial
 
-  #define PIN_BTN_0 18      // active low
-  #define PIN_LED_BLUE 19   // active high
-  #define PIN_LED_GREEN 20  // active high
-  #define PIN_PTT_IN 21     // active Low
-  #define PIN_PTT_OUT 22    // active Low
-  #define PIN_BT_RESET 23   // active low
+  #define PIN_BTN_0 0      // active low
+  #define PIN_LED_BLUE 25   // active high
+  #define PIN_LED_GREEN 26  // active high
+  #define PIN_PTT_IN 32     // active Low
+  #define PIN_PTT_OUT 33    // active Low
+  #define PIN_BT_RESET 4   // active low
 #endif
 
 #ifdef TEENSY32
