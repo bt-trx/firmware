@@ -99,7 +99,7 @@ ResultType SerialWrapper::waitForInputBlocking(string expectation,
  */
 string SerialWrapper::readLineToString() {
   string output = "";
-  char buffer[SERIAL_MAX_LINE_LENGTH+1];  
+  char buffer[SERIAL_MAX_LINE_LENGTH+1] = "";  
   if (serial_bt_->readBytesUntil(SERIAL_DELIMITER,
                                   buffer,
                                   SERIAL_MAX_LINE_LENGTH)) {
