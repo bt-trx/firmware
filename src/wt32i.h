@@ -68,6 +68,9 @@ class WT32i {
 
     ResultType indicateNetworkAvailable();
 
+    // Only public for unit testing
+    ResultType parseMessageString(string, iWrapMessage*);
+
   private:
     typedef std::map<string, int> hfp_status_t;
 

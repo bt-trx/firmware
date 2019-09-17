@@ -356,16 +356,27 @@ ResultType WT32i::hangup() {
 }
 
 /**
- * @brief Poll and dissect incoming iWrap Messages
+ * @brief Poll a line from BT serial and dissect incoming iWrap Messages
  * 
  * If the incoming serial line matches with a known iWrap message, it is 
  * put into the appropriate iWrapMessage struct
  * 
- * @param msg
+ * @param msg Pointer to iWrapMessage struct (output)
  * @return ResultType 
  */
 ResultType WT32i::getIncomingMessage(iWrapMessage* msg) {
   string input = serial_->readLineToString();
+  return parseMessageString(input, msg);
+}
+
+/**
+ * @brief Parse a string into a iWrapMessage struct
+ * 
+ * @param input A string containing a line coming from the Bluetooth module
+ * @param msg Pointer to iWrapMessage struct (output)
+ * @return ResultType
+ */
+ResultType WT32i::parseMessageString(string input, iWrapMessage* msg) {
   if(input.empty()) {
     msg->msg_type = kEmpty;
     return kSuccess;
@@ -425,7 +436,7 @@ ResultType WT32i::getIncomingMessage(iWrapMessage* msg) {
   } else {
     return kError;
   }
-  return ResultType::kSuccess;
+  return kSuccess;
 }
 
 /**
