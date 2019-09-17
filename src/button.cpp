@@ -22,44 +22,46 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 /**
  * @brief Helper class for handling button states
- * 
- * @param pin 
+ *
+ * @param pin
  */
-Button::Button(uint32_t pin)
-  : pin_(pin) {  
-  pinMode(pin_, INPUT);
+Button::Button(uint32_t pin) : pin_(pin)
+{
+	pinMode(pin_, INPUT);
 }
 
 /**
  * @brief Return current state of the button (active low)
- * 
- * @return bool 
+ *
+ * @return bool
  */
-bool Button::isPressed() {
-  return !digitalRead(pin_);
+bool Button::isPressed()
+{
+	return !digitalRead(pin_);
 }
 
 /**
  * @brief Returns if the button was just pressed (edge), not the current state
  * Button is active low
- * 
+ *
  * @return bool
  */
-bool Button::isPressedEdge() {
-    bool edge_detected = false;
-    
-    int button_state = digitalRead(pin_);
+bool Button::isPressedEdge()
+{
+	bool edge_detected = false;
 
-    if (button_state != old_button_state) {
-      if(button_state == LOW) {
-        if (!latch) {
-          edge_detected = true;
-        }
-        latch = true;
-      } else {
-        latch = false;
-      }
-      old_button_state = button_state;
-    }
-    return edge_detected;
+	int button_state = digitalRead(pin_);
+
+	if (button_state != old_button_state) {
+		if (button_state == LOW) {
+			if (!latch) {
+				edge_detected = true;
+			}
+			latch = true;
+		} else {
+			latch = false;
+		}
+		old_button_state = button_state;
+	}
+	return edge_detected;
 }

@@ -27,16 +27,16 @@ Contact: bt-trx.com, mail@bt-trx.com
 #endif
 
 class Button {
-  public:
-    Button(uint32_t pin);
+    public:
+	Button(uint32_t pin);
 
-    bool isPressed();
-    bool isPressedEdge();
+	bool isPressed();
+	bool isPressedEdge();
 
-  private:
-    int pin_;
+    private:
+	int pin_;
 
-    // Needed for edge detection
-    int old_button_state = HIGH;
-    bool latch = false;
+	// Needed for edge detection
+	int old_button_state = HIGH;
+	bool latch           = false;
 };

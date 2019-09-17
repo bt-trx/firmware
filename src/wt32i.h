@@ -34,51 +34,63 @@ using std::vector;
 typedef int link_id_t;
 
 class WT32i {
-  public:
-    WT32i() {};
-    WT32i(SerialWrapperInterface *);
-    void setSerialWrapper(SerialWrapperInterface* serial) { serial_ = serial; };
+    public:
+	WT32i(){};
+	WT32i(SerialWrapperInterface *);
+	void setSerialWrapper(SerialWrapperInterface *serial)
+	{
+		serial_ = serial;
+	};
 
-    // Communication with WT32i device
-    ResultType reset();
-    ResultType available();
-    ResultType set(string, string = "", string = "");
-    ResultType inquiry();
-    ResultType startInquiry();
-    bool inquiryRunning() { return inquiry_running_; }
-    ResultType list();
-    ResultType readActiveConnections();
-    ResultType connectHFPAG(string);
-    ResultType connectHFPAGnonblocking(string);
-    ResultType setStatus(string, string);
-    ResultType dial();
-    ResultType connect();
-    ResultType hangup();
-    ResultType sendSSPConfirmation(string);
+	// Communication with WT32i device
+	ResultType reset();
+	ResultType available();
+	ResultType set(string, string = "", string = "");
+	ResultType inquiry();
+	ResultType startInquiry();
+	bool inquiryRunning()
+	{
+		return inquiry_running_;
+	}
+	ResultType list();
+	ResultType readActiveConnections();
+	ResultType connectHFPAG(string);
+	ResultType connectHFPAGnonblocking(string);
+	ResultType setStatus(string, string);
+	ResultType dial();
+	ResultType connect();
+	ResultType hangup();
+	ResultType sendSSPConfirmation(string);
 
-    // Message handlers
-    ResultType getIncomingMessage(iWrapMessage*);
-    ResultType handleMessage_HFPAG_DIAL(iWrapMessage);
-    ResultType handleMessage_HFPAG_UNKNOWN(iWrapMessage);
+	// Message handlers
+	ResultType getIncomingMessage(iWrapMessage *);
+	ResultType handleMessage_HFPAG_DIAL(iWrapMessage);
+	ResultType handleMessage_HFPAG_UNKNOWN(iWrapMessage);
 
-    // Helper Methods
-    ResultType storeHFPStatus(string);
-    ResultType getHFPStatus(int, string, int*);
-    vector<string> getInquiredDevices() { return inquired_devices_; };
-    vector<string> getActiveConnections() { return active_connections_; }
+	// Helper Methods
+	ResultType storeHFPStatus(string);
+	ResultType getHFPStatus(int, string, int *);
+	vector<string> getInquiredDevices()
+	{
+		return inquired_devices_;
+	};
+	vector<string> getActiveConnections()
+	{
+		return active_connections_;
+	}
 
-    ResultType indicateNetworkAvailable();
+	ResultType indicateNetworkAvailable();
 
-    // Only public for unit testing
-    ResultType parseMessageString(string, iWrapMessage*);
+	// Only public for unit testing
+	ResultType parseMessageString(string, iWrapMessage *);
 
-  private:
-    typedef std::map<string, int> hfp_status_t;
+    private:
+	typedef std::map<string, int> hfp_status_t;
 
-    SerialWrapperInterface *serial_ = NULL;
-    vector<string> inquired_devices_;
-    vector<string> active_connections_;
-    std::map<link_id_t, hfp_status_t> hfp_states_;
+	SerialWrapperInterface *serial_ = NULL;
+	vector<string> inquired_devices_;
+	vector<string> active_connections_;
+	std::map<link_id_t, hfp_status_t> hfp_states_;
 
-    bool inquiry_running_ = false;
+	bool inquiry_running_ = false;
 };

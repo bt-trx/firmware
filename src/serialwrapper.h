@@ -34,32 +34,35 @@ Contact: bt-trx.com, mail@bt-trx.com
 using namespace std;
 
 class SerialWrapperInterface {
-  public:
-  virtual ~SerialWrapperInterface() {}
-  virtual size_t println(const char*) = 0;
-  virtual size_t dbg_println(const char*) = 0;
-  virtual ResultType waitForInputBlocking(string,
-                                          string* = NULL,
-                                          uint32_t = BT_SERIAL_TIMEOUT) = 0;
-  virtual string readLineToString() = 0;
+    public:
+	virtual ~SerialWrapperInterface()
+	{
+	}
+	virtual size_t println(const char *)     = 0;
+	virtual size_t dbg_println(const char *) = 0;
+	virtual ResultType waitForInputBlocking(
+		string, string * = NULL, uint32_t = BT_SERIAL_TIMEOUT) = 0;
+	virtual string readLineToString()                              = 0;
 };
 
 class SerialWrapper : public SerialWrapperInterface {
-  public:
-    SerialWrapper() {};
-    SerialWrapper(Stream*, Stream* = NULL);
-    ~SerialWrapper() {};
+    public:
+	SerialWrapper(){};
+	SerialWrapper(Stream *, Stream * = NULL);
+	~SerialWrapper(){};
 
-    void setSerialStreams(Stream*, Stream*);
+	void setSerialStreams(Stream *, Stream *);
 
-    size_t println(const char*);
-    size_t dbg_println(const char*);
+	size_t println(const char *);
+	size_t dbg_println(const char *);
 
-    ResultType waitForInputBlocking(string expectation,
-                                    string* output = NULL,
-                                    uint32_t timeout = BT_SERIAL_TIMEOUT);
-    string readLineToString();
-  private:
-    Stream* serial_bt_ = NULL;
-    Stream* serial_dbg_ = NULL;
+	ResultType waitForInputBlocking(
+		string expectation,
+		string *output   = NULL,
+		uint32_t timeout = BT_SERIAL_TIMEOUT);
+	string readLineToString();
+
+    private:
+	Stream *serial_bt_  = NULL;
+	Stream *serial_dbg_ = NULL;
 };

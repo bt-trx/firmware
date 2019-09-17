@@ -34,42 +34,46 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include <string>
 using namespace std;
 
-class BTTRX_FSM {  
-  public:
+class BTTRX_FSM {
+    public:
+	enum state_t {
+		STATE_INIT,
+		STATE_CONFIGURE,
+		STATE_INQUIRY,
+		STATE_CONNECTING,
+		STATE_CONNECTED,
+		STATE_CALL_RUNNING
+	};
 
-    enum state_t { STATE_INIT,
-                    STATE_CONFIGURE,
-                    STATE_INQUIRY,
-                    STATE_CONNECTING,
-                    STATE_CONNECTED,
-                    STATE_CALL_RUNNING};
+	BTTRX_FSM();
+	BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg = NULL);
+	void setSerial(Stream *serial_bt, Stream *serial_dbg = NULL);
+	void run();
 
-    BTTRX_FSM();
-    BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg = NULL);
-    void setSerial(Stream *serial_bt, Stream *serial_dbg = NULL);    
-    void run();
+	// only required for unit testing
+	state_t getCurrentState()
+	{
+		return current_state_;
+	};
 
-    // only required for unit testing
-    state_t getCurrentState() { return current_state_; };
-      
-  private:
-    SerialWrapper serial_;
-    WT32i wt32i_;
+    private:
+	SerialWrapper serial_;
+	WT32i wt32i_;
 
-    state_t current_state_;
-    void setState(state_t);
+	state_t current_state_;
+	void setState(state_t);
 
-    LED led_connected_;
-    LED led_busy_;
-    Button button_;
+	LED led_connected_;
+	LED led_busy_;
+	Button button_;
 
-    // FSM State handler
-    void handleStateInit();
-    void handleStateConfigure();
-    void handleStateInquiry();
-    void handleStateConnecting();
-    void handleStateConnected();
-    void handleStateCallRunning();
-    // Message handler
-    void handleIncomingMessage();
+	// FSM State handler
+	void handleStateInit();
+	void handleStateConfigure();
+	void handleStateInquiry();
+	void handleStateConnecting();
+	void handleStateConnected();
+	void handleStateCallRunning();
+	// Message handler
+	void handleIncomingMessage();
 };
