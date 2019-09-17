@@ -284,6 +284,15 @@ TEST_F(WT32iTest, hangup_success) {
   ASSERT_EQ(ResultType::kSuccess, wt32i.hangup());
 }
 
+TEST_F(WT32iTest, sendSSPConfirmation_success) {
+  WT32i wt32i(&serialWrapperMock);
+
+  EXPECT_CALL(serialWrapperMock, 
+    println(Matcher<const char *>(StrEq("SSP CONFIRM de:ad:be:ef:23:42 OK"))));
+
+  ASSERT_EQ(ResultType::kSuccess, wt32i.sendSSPConfirmation("de:ad:be:ef:23:42"));
+}
+
 TEST_F(WT32iTest, getIncomingMessage_success_empty) {
   WT32i wt32i(&serialWrapperMock);
 
@@ -307,71 +316,6 @@ TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_CALLING) {
   ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
   ASSERT_EQ(iWrapMessageType::kHFPAG_CALLING, msg.msg_type);
   ASSERT_EQ("HFP-AG 0 CALLING", msg.msg);
-}
-
-TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_NO_CARRIER) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("HFP-AG 0 NO CARRIER"));
-
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kHFPAG_NO_CARRIER, msg.msg_type);
-  ASSERT_EQ("HFP-AG 0 NO CARRIER", msg.msg);
-}
-
-TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_UNKOWN) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("HFP-AG 0 UNKNOWN (0): AT+NREC=0\r"));
-
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kHFPAG_UNKOWN, msg.msg_type);
-  ASSERT_EQ("HFP-AG 0 UNKNOWN (0): AT+NREC=0\r", msg.msg);
-}
-
-TEST_F(WT32iTest, getIncomingMessage_success_NO_CARRIER_1_ERROR_0) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("NO CARRIER 1 ERROR 0"));
-
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_CALL_ENDED, msg.msg_type);
-  ASSERT_EQ("NO CARRIER 1 ERROR 0", msg.msg);
-}
-
-TEST_F(WT32iTest, getIncomingMessage_success_NO_CARRIER_0_ERROR_L2CAP_LINK_LOSS) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("NO CARRIER 0 ERROR c0c RFC_L2CAP_LINK_LOSS"));
-
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
-  ASSERT_EQ("NO CARRIER 0 ERROR c0c RFC_L2CAP_LINK_LOSS", msg.msg);
-}
-
-TEST_F(WT32iTest, getIncomingMessage_success_NO_CARRIER_0_ERROR_0) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("NO CARRIER 0 ERROR 0"));
-
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
-  ASSERT_EQ("NO CARRIER 0 ERROR 0", msg.msg);
 }
 
 TEST_F(WT32iTest, handleMessage_HFPAG_DIAL_success) {

@@ -35,7 +35,8 @@ enum iWrapMessageType {kEmpty,
                   kHFPAG_NO_CARRIER,
                   kHFPAG_UNKOWN,
                   kNOCARRIER_ERROR_LINK_LOSS,
-                  kNOCARRIER_ERROR_CALL_ENDED};
+                  kNOCARRIER_ERROR_CALL_ENDED,
+                  kSSP_CONFIRM};
 
 /**
  * @brief Contains the content and the MessageType classification of an iWrap 

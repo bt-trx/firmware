@@ -54,6 +54,7 @@ class WT32i {
     ResultType dial();
     ResultType connect();
     ResultType hangup();
+    ResultType sendSSPConfirmation(string);
 
     // Message handlers
     ResultType getIncomingMessage(iWrapMessage*);

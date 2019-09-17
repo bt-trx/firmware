@@ -356,6 +356,17 @@ ResultType WT32i::hangup() {
 }
 
 /**
+ * @brief Send SSP Confirmation string with the given BD address
+ * 
+ * @param address BD adress to confirm
+ */
+ResultType WT32i::sendSSPConfirmation(string bd_address) {
+  string response = "SSP CONFIRM " + bd_address + " OK";
+  serial_->println(response.c_str());
+  return kSuccess;
+}
+
+/**
  * @brief Poll a line from BT serial and dissect incoming iWrap Messages
  * 
  * If the incoming serial line matches with a known iWrap message, it is 
@@ -377,6 +388,9 @@ ResultType WT32i::getIncomingMessage(iWrapMessage* msg) {
  * @return ResultType
  */
 ResultType WT32i::parseMessageString(string input, iWrapMessage* msg) {
+  msg->msg_type = kUnknown;
+  msg->msg = input;
+
   if(input.empty()) {
     msg->msg_type = kEmpty;
     return kSuccess;
@@ -387,8 +401,7 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage* msg) {
   if (splitted_msg[0] == "LIST") {
     if(splitted_msg.size() > 2) {
       active_connections_.push_back(splitted_msg[10]); // BT Address
-      (*msg).msg_type = kLIST_RESULT;
-      (*msg).msg = input;
+      msg->msg_type = kLIST_RESULT;
     }
   } else if (splitted_msg[0] == "INQUIRY") {
     if (splitted_msg.size() == 2) {
@@ -399,43 +412,36 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage* msg) {
     if (splitted_msg.size() > 2) {
         inquired_devices_.push_back(splitted_msg[1]); //  BT Address      
         inquiry_running_ = false;
-        (*msg).msg_type = kINQUIRY_RESULT;
-        (*msg).msg = input; 
+        msg->msg_type = kINQUIRY_RESULT;
       }
   } else if (splitted_msg[0] == "HFP-AG") {
     if (splitted_msg[2] == "READY") {
-      (*msg).msg_type = kHFPAG_READY;
-      (*msg).msg = input;
+      msg->msg_type = kHFPAG_READY;
     } else if (splitted_msg[2] == "CALLING") {
-      (*msg).msg_type = kHFPAG_CALLING;
-      (*msg).msg = input;
+      msg->msg_type = kHFPAG_CALLING;
     } else if (splitted_msg[2] == "NO" && splitted_msg[3] == "CARRIER") {
-      (*msg).msg_type = kHFPAG_NO_CARRIER;
-      (*msg).msg = input;
+      msg->msg_type = kHFPAG_NO_CARRIER;
     } else if (splitted_msg[2] == "UNKNOWN") {
-      (*msg).msg_type = kHFPAG_UNKOWN;
-      (*msg).msg = input;
+      msg->msg_type = kHFPAG_UNKOWN;
     } else {
       return kError;
     }
   } else if (splitted_msg[0] == "NO" && splitted_msg[1] == "CARRIER") {
     if (splitted_msg[3] == "ERROR") {
       if (splitted_msg[2] == "1") {
-        (*msg).msg_type = kNOCARRIER_ERROR_CALL_ENDED;
-        (*msg).msg = input;
+        msg->msg_type = kNOCARRIER_ERROR_CALL_ENDED;
       } else if (splitted_msg[2] == "0") {
-        (*msg).msg_type = kNOCARRIER_ERROR_LINK_LOSS;
-        (*msg).msg = input;
+        msg->msg_type = kNOCARRIER_ERROR_LINK_LOSS;
       }
     } else {
       return kError;
     }
   } else if (splitted_msg[0] == "SSP" && splitted_msg[1] == "CONFIRM") {
-    string response = "SSP CONFIRM " + splitted_msg[2] + " OK";
-    serial_->println(response.c_str());
+    msg->msg_type = kSSP_CONFIRM;
   } else {
     return kError;
   }
+
   return kSuccess;
 }
 

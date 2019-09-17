@@ -20,6 +20,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_fsm.h"
 #include "resulttype.h"
+#include "splitstring.h"
 
 BTTRX_FSM::BTTRX_FSM()
   : current_state_(STATE_INIT),
@@ -236,6 +237,9 @@ void BTTRX_FSM::handleIncomingMessage() {
     case kNOCARRIER_ERROR_LINK_LOSS:
       // Connection try was unsuccessful, get back to inquiry
       setState(STATE_INQUIRY);
+      break;
+    case kSSP_CONFIRM:
+      wt32i_.sendSSPConfirmation(splitString(msg.msg)[2]);
       break;
     default:
       break;
