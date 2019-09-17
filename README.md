@@ -20,9 +20,7 @@ platformio run
 
 The binary is generated at `.pioenvs/teensy32/firmware.hex`
 
-# Unit Testing
-
-### Run Tests
+## Run Tests
 
 No prerequisites required, script will download and build gtest and arduino-mock
 automatically.
@@ -30,4 +28,12 @@ automatically.
 ```bash
 cd test
 ./build.sh
+```
+
+## Lint
+
+Coding style is fixed by clang-format
+
+``` BASH
+./tools/code-style.sh src/*.cpp src/*.h
 ```
