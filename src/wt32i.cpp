@@ -97,6 +97,11 @@ ResultType WT32i::set(string category, string option, string value)
 	return ResultType::kSuccess;
 }
 
+/**
+ * @brief Starts inquiry, non-blocking
+ * 
+ * @return ResultType 
+ */
 ResultType WT32i::startInquiry()
 {
 	// Clear current list of currently known devices
@@ -115,13 +120,13 @@ ResultType WT32i::startInquiry()
 
 /**
  * @brief Perform inquiry of bluetooth devices nearby
- * Blocks until answer or timeout
+ * Blocks until answer or timeout!
  *
  * The list of inquiry results gets written to the inquired_devices_ list.
  *
  * @return ResultType
  */
-ResultType WT32i::inquiry()
+ResultType WT32i::performInquiry()
 {
 	// Clear current list of currently known devices
 	inquired_devices_.clear();

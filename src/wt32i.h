@@ -46,7 +46,7 @@ class WT32i {
 	ResultType reset();
 	ResultType available();
 	ResultType set(string, string = "", string = "");
-	ResultType inquiry();
+	ResultType performInquiry();
 	ResultType startInquiry();
 	bool inquiryRunning()
 	{

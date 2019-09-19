@@ -141,7 +141,7 @@ TEST_F(WT32iTest, inquiry_success_1result)
 			SetArgPointee<1>("INQUIRY de:ad:be:ef:ca:fe 240404"),
 			Return(ResultType::kSuccess)));
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.inquiry());
+	ASSERT_EQ(ResultType::kSuccess, wt32i.performInquiry());
 
 	vector<string> result = wt32i.getInquiredDevices();
 	ASSERT_EQ(1, result.size());
