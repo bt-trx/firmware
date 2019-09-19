@@ -78,6 +78,7 @@ class WT32i {
 	{
 		return active_connections_;
 	}
+	string getBDAddressSuffix();
 
 	ResultType indicateNetworkAvailable();
 
@@ -93,4 +94,7 @@ class WT32i {
 	std::map<link_id_t, hfp_status_t> hfp_states_;
 
 	bool inquiry_running_ = false;
+
+	ResultType getBDAddress(string *);
+	string stripBDAddress(string);
 };

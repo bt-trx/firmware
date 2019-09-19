@@ -408,4 +408,36 @@ TEST_F(WT32iTest, handleMessage_HFPAG_UNKNOWN_NREC_success)
 	msg.msg      = "HFP-AG 0 UNKNOWN (0): AT+NREC=0\\r";
 	ASSERT_EQ(ResultType::kSuccess, wt32i.handleMessage_HFPAG_UNKNOWN(msg));
 }
+
+TEST_F(WT32iTest, getBDAddressSuffix_success)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET BT BDADDR"))));
+
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(DoAll(
+			SetArgPointee<1>("SET BT BDADDR 12:34:56:78:90:11"),
+			Return(ResultType::kSuccess)));
+
+	ASSERT_EQ(0, wt32i.getBDAddressSuffix().compare("789011"));
+}
+
+TEST_F(WT32iTest, getBDAddressSuffix_fail)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET BT BDADDR"))));
+
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>(""),
+			      Return(ResultType::kTimeoutError)));
+
+	ASSERT_EQ(0, wt32i.getBDAddressSuffix().compare("1"));
+}
 } // namespace

@@ -98,6 +98,55 @@ ResultType WT32i::set(string category, string option, string value)
 }
 
 /**
+ * @brief Request BD Address of the WT32i module
+ * 
+ * @param bdaddress BD Address of the WT32i module (output)
+ * @return ResultType 
+ */
+ResultType WT32i::getBDAddress(string *bdaddress)
+{
+	serial_->println("SET BT BDADDR");
+
+	// Expecting "SET BT BDADDR xx:xx:xx:xx:xx:xx"
+	string output;
+	if (serial_->waitForInputBlocking("SET", &output) ==
+	    ResultType::kTimeoutError) {
+		return ResultType::kTimeoutError;
+	}
+	*bdaddress = splitString(output)[3];
+	return kSuccess;
+}
+
+/**
+ * @brief Returns the 6-digit suffix of the given BD Address, without colons
+ * 
+ * @param bdaddress Input BD address
+ * @return string BD Address suffix without colons
+ */
+string WT32i::stripBDAddress(string bdaddress)
+{
+	bdaddress.erase(
+		std::remove(bdaddress.begin(), bdaddress.end(), ':'),
+		bdaddress.end());
+	bdaddress.erase(0, 6);
+	return bdaddress;
+}
+
+/**
+ * @brief Returns the 6 digit BD Address suffix of the BT module
+ * 
+ * @return string 
+ */
+string WT32i::getBDAddressSuffix()
+{
+	string bdaddress = "";
+	if (kSuccess != getBDAddress(&bdaddress)) {
+		return "1";
+	}
+	return stripBDAddress(bdaddress);
+}
+
+/**
  * @brief Starts inquiry, non-blocking
  * 
  * @return ResultType 
