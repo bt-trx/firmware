@@ -24,13 +24,13 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 BTTRX_FSM::BTTRX_FSM()
 	: current_state_(STATE_INIT), led_connected_(PIN_LED_BLUE),
-	  led_busy_(PIN_LED_GREEN), button_(PIN_BTN_0)
+	  led_busy_(PIN_LED_GREEN), helper_button_(PIN_BTN_0),
+	  ptt_button_(PIN_PTT_IN)
 {
 }
 
 BTTRX_FSM::BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg)
-	: current_state_(STATE_INIT), led_connected_(PIN_LED_BLUE),
-	  led_busy_(PIN_LED_GREEN), button_(PIN_BTN_0)
+	: BTTRX_FSM()
 {
 	setSerial(serial_bt, serial_dbg);
 }
@@ -176,12 +176,16 @@ void BTTRX_FSM::handleStateConnected()
 	led_connected_.on();
 	led_busy_.off();
 
+  // TODO Reset the PTT output
+
 	handleIncomingMessage();
 	if (current_state_ != STATE_CONNECTED) {
 		return;
 	}
 
-	if (button_.isPressedEdge()) {
+  // If either the PTT button or the helper button is pressed, start a 
+  // phone call
+	if (ptt_button_.isPressedEdge() || helper_button_.isPressedEdge()) {
 		if (wt32i_.dial() == kSuccess) {
 			if (wt32i_.connect() == kSuccess) {
 				setState(STATE_CALL_RUNNING);
@@ -203,10 +207,16 @@ void BTTRX_FSM::handleStateCallRunning()
 		return;
 	}
 
+  if (ptt_button_.isPressed()) {
+    // TODO Control PTT output pin
+  } else {
+    // TODO Control PTT output pin
+  }
+
 	// If the button is pressed, send the "HANGUP" message.
 	// State change back to STATE_CONNECTED happens when HFP device indicates
 	// end of call
-	if (button_.isPressedEdge()) {
+	if (helper_button_.isPressedEdge()) {
 		wt32i_.hangup();
 	}
 }

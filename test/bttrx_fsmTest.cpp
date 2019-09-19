@@ -62,7 +62,7 @@ class BTTRX_FSMTest : public ::testing::Test {
 
 TEST_F(BTTRX_FSMTest, Run_StateInit_Success1)
 {
-	EXPECT_CALL(*arduinoMock, pinMode(_, _)).Times(3);
+	EXPECT_CALL(*arduinoMock, pinMode(_, _)).Times(4);
 	BTTRX_FSM bttrx_fsm(&Serial, &Serial);
 
 	ASSERT_EQ(BTTRX_FSM::state_t::STATE_INIT, bttrx_fsm.getCurrentState());

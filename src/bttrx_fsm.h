@@ -65,7 +65,8 @@ class BTTRX_FSM {
 
 	LED led_connected_;
 	LED led_busy_;
-	Button button_;
+	Button helper_button_;
+	Button ptt_button_;
 
 	// FSM State handler
 	void handleStateInit();
