@@ -26,16 +26,18 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "arduino-mock/Arduino.h"
 #endif
 
-class LED {
+#include "led.h"
+
+class PTT {
     public:
-	LED(uint32_t pin);
+	PTT(uint32_t ptt_pin, uint32_t led_pin);
 
 	void on();
 	void off();
-	void blink(uint32_t interval);
-	void toggle();
+	void delayed_off(uint32_t);
 
     private:
 	int pin_;
-	unsigned long last_toggle_ = 0;
+	LED led;
+	ulong turned_off;
 };

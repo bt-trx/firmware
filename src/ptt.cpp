@@ -18,24 +18,41 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#pragma once
+#include "ptt.h"
 
-#ifdef ARDUINO
-#include "Arduino.h"
-#else
-#include "arduino-mock/Arduino.h"
-#endif
+/**
+ * @brief Helper class for control of the PTT output
+ * Automatically controls PTT LED
+ *
+ * @param ptt_pin
+ * @param led_pin
+ */
+PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
+	: pin_(ptt_pin), led(led_pin), turned_off(-1)
+{
+	pinMode(pin_, OUTPUT);
+}
 
-class LED {
-    public:
-	LED(uint32_t pin);
+void PTT::on()
+{
+	digitalWrite(pin_, LOW); // active low
+	led.on();
+}
 
-	void on();
-	void off();
-	void blink(uint32_t interval);
-	void toggle();
+void PTT::off()
+{
+	digitalWrite(pin_, HIGH); // active low
+	led.off();
+}
 
-    private:
-	int pin_;
-	unsigned long last_toggle_ = 0;
-};
+void PTT::delayed_off(uint32_t delay)
+{
+	if (turned_off == -1) {
+		turned_off = millis();
+	} else {
+		if ((millis() - turned_off) > delay) {
+			off();
+			turned_off = -1;
+		}
+	}
+}

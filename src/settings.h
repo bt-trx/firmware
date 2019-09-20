@@ -23,8 +23,10 @@ Contact: bt-trx.com, mail@bt-trx.com
 #ifdef ESP32
 // Bindings for dev-board v4 and newer
 // ESP32 Pin Info:
-// GPIO 34, 35: Input only
-// GPIO 6-11: SPI Flash, do not use
+// GPIO 6-11: Do not use! (onboard SPI Flash)
+// GPIO 34-39: Input only
+// GPIO 32-39: ADC1
+// ADC2 is not available when using Wifi!
 // in general, pins > 17 are safe to use
 #define SERIAL_BT Serial2 // Default: RX: 16, TX: 17, RTS: 7, CTS: 8
 #define SERIAL_DBG Serial
@@ -32,8 +34,9 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define PIN_BTN_0 0      // active low
 #define PIN_LED_BLUE 25  // active high
 #define PIN_LED_GREEN 26 // active high
-#define PIN_PTT_IN 32    // active Low
-#define PIN_PTT_OUT 33   // active Low
+#define PIN_PTT_IN 32    // active low
+#define PIN_PTT_OUT 33   // active low
+#define PIN_PTT_LED 35   // active high
 #define PIN_BT_RESET 4   // active low
 #endif
 
@@ -59,4 +62,5 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define SERIAL_MAX_LINE_LENGTH 100
 #define BT_SERIAL_TIMEOUT 1000 // ms  // Time to wait for answers from BT module
 
-#define INQUIRY_DURATION "5" // *1.28s
+#define INQUIRY_DURATION "5"  // *1.28s
+#define PTT_TURNOFF_DELAY 300 // ms
