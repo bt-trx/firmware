@@ -30,6 +30,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "wt32i.h"
 #include "led.h"
 #include "button.h"
+#include "ptt.h"
 
 #include <string>
 using namespace std;
@@ -67,6 +68,7 @@ class BTTRX_FSM {
 	LED led_busy_;
 	Button helper_button_;
 	Button ptt_button_;
+	PTT ptt_output_;
 
 	// FSM State handler
 	void handleStateInit();

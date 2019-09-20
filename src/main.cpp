@@ -34,14 +34,19 @@ void setup()
 	pinMode(PIN_LED_GREEN, OUTPUT);
 	pinMode(PIN_PTT_IN, INPUT);
 	pinMode(PIN_PTT_OUT, OUTPUT);
+	pinMode(PIN_PTT_LED, OUTPUT);
 	pinMode(PIN_BT_RESET, OUTPUT);
 
-	digitalWrite(PIN_LED_BLUE, LOW);  // LED off
-	digitalWrite(PIN_LED_GREEN, LOW); // LED off
-	digitalWrite(PIN_PTT_OUT, HIGH);  // Don't trigger PTT
-	digitalWrite(
-		PIN_BT_RESET, HIGH); // Get BT Module out of reset (active-low)
+	// LEDs off
+	digitalWrite(PIN_LED_BLUE, LOW);
+	digitalWrite(PIN_LED_GREEN, LOW);
+	digitalWrite(PIN_PTT_LED, LOW);
+	// Don't trigger PTT
+	digitalWrite(PIN_PTT_OUT, HIGH);
+	// Get BT Module out of reset (active-low)
+	digitalWrite(PIN_BT_RESET, HIGH);
 
+	// Set up Serial ports
 	SERIAL_DBG.begin(SERIAL_DBG_RATE);
 	SERIAL_DBG.setTimeout(SERIAL_TIMEOUT);
 	SERIAL_BT.begin(SERIAL_BT_RATE);
@@ -54,6 +59,7 @@ void setup()
 
 	bttrx_fsm.setSerial(&SERIAL_BT, &SERIAL_DBG);
 
+	// Print version information
 	string header = "bt-trx v";
 	header.append(GIT_REVISION);
 	SERIAL_DBG.println(header.c_str());

@@ -25,7 +25,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 BTTRX_FSM::BTTRX_FSM()
 	: current_state_(STATE_INIT), led_connected_(PIN_LED_BLUE),
 	  led_busy_(PIN_LED_GREEN), helper_button_(PIN_BTN_0),
-	  ptt_button_(PIN_PTT_IN)
+	  ptt_button_(PIN_PTT_IN), ptt_output_(PIN_PTT_OUT, PIN_PTT_LED)
 {
 }
 
@@ -82,6 +82,7 @@ void BTTRX_FSM::handleStateInit()
 {
 	led_busy_.off();
 	led_connected_.off();
+	ptt_output_.off();
 
 	// Try to reach Bt Module
 	if (wt32i_.available() == ResultType::kSuccess) {
@@ -99,6 +100,7 @@ void BTTRX_FSM::handleStateConfigure()
 {
 	led_busy_.on();
 	led_connected_.off();
+	ptt_output_.off();
 
 	// Enforce configuration
 	string friendly_name = "bt-trx-" + wt32i_.getBDAddressSuffix();
@@ -140,6 +142,7 @@ void BTTRX_FSM::handleStateInquiry()
 {
 	led_busy_.on();
 	led_connected_.off();
+	ptt_output_.off();
 
 	handleIncomingMessage();
 	if (current_state_ != STATE_INQUIRY) {
@@ -162,6 +165,7 @@ void BTTRX_FSM::handleStateConnecting()
 {
 	led_busy_.on();
 	led_connected_.blink(250);
+	ptt_output_.off();
 
 	handleIncomingMessage();
 	if (current_state_ != STATE_CONNECTING) {
@@ -176,8 +180,7 @@ void BTTRX_FSM::handleStateConnected()
 {
 	led_connected_.on();
 	led_busy_.off();
-
-	// TODO Reset the PTT output
+	ptt_output_.off();
 
 	handleIncomingMessage();
 	if (current_state_ != STATE_CONNECTED) {
@@ -209,9 +212,9 @@ void BTTRX_FSM::handleStateCallRunning()
 	}
 
 	if (ptt_button_.isPressed()) {
-		// TODO Control PTT output pin
+		ptt_output_.on();
 	} else {
-		// TODO Control PTT output pin
+		ptt_output_.delayed_off(PTT_TURNOFF_DELAY);
 	}
 
 	// If the button is pressed, send the "HANGUP" message.
