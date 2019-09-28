@@ -46,6 +46,10 @@ void BTTRX_FSM::setSerial(Stream *serial_bt, Stream *serial_dbg)
  */
 void BTTRX_FSM::run()
 {
+	// Read button states
+	ptt_button_.update();
+	helper_button_.update();
+
 	// Run State Machine
 	switch (current_state_) {
 	case STATE_INIT:
@@ -140,8 +144,8 @@ void BTTRX_FSM::handleStateConfigure()
  */
 void BTTRX_FSM::handleStateInquiry()
 {
-	led_busy_.on();
-	led_connected_.off();
+	led_busy_.off();
+	led_connected_.blink(500);
 	ptt_output_.off();
 
 	handleIncomingMessage();
@@ -163,7 +167,7 @@ void BTTRX_FSM::handleStateInquiry()
  */
 void BTTRX_FSM::handleStateConnecting()
 {
-	led_busy_.on();
+	led_busy_.off();
 	led_connected_.blink(250);
 	ptt_output_.off();
 
@@ -204,16 +208,16 @@ void BTTRX_FSM::handleStateConnected()
 void BTTRX_FSM::handleStateCallRunning()
 {
 	led_connected_.on();
-	led_busy_.blink(500);
+	led_busy_.blink(1000);
 
 	handleIncomingMessage();
 	if (current_state_ != STATE_CALL_RUNNING) {
 		return;
 	}
 
-	if (ptt_button_.isPressed()) {
+	if (ptt_button_.isPressedEdge()) {
 		ptt_output_.on();
-	} else {
+	} else if (ptt_button_.isReleased()) {
 		ptt_output_.delayed_off(PTT_TURNOFF_DELAY);
 	}
 
