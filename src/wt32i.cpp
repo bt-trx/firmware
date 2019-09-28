@@ -60,7 +60,7 @@ ResultType WT32i::available()
 {
 	serial_->println("AT");
 
-	return serial_->waitForInputBlocking("OK");
+	return serial_->waitForInputBlocking("OK", NULL, 2000);
 }
 
 /**
