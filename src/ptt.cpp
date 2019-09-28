@@ -33,24 +33,39 @@ PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
 	pinMode(pin_, OUTPUT);
 }
 
+/**
+ * @brief Turn PTT output and PTT LED on
+ * 
+ */
 void PTT::on()
 {
 	digitalWrite(pin_, LOW); // active low
 	led.on();
+	turned_off = -1;
 }
 
+/**
+ * @brief Turn PTT output and PTT LED off
+ * 
+ */
 void PTT::off()
 {
 	digitalWrite(pin_, HIGH); // active low
 	led.off();
+	turned_off = -1;
 }
 
-void PTT::delayed_off(uint32_t delay)
+/**
+ * @brief Turn PTT output and PTT LED off after the defined delay
+ * 
+ * @param delay in ms
+ */
+void PTT::delayed_off(uint32_t delay_ms)
 {
 	if (turned_off == -1) {
 		turned_off = millis();
 	} else {
-		if ((millis() - turned_off) > delay) {
+		if ((millis() - turned_off) >= delay_ms) {
 			off();
 			turned_off = -1;
 		}
