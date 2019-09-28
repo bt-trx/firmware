@@ -31,37 +31,69 @@ Button::Button(uint32_t pin) : pin_(pin)
 }
 
 /**
- * @brief Return current state of the button (active low)
- *
- * @return bool
+ * @brief Update the button state
+ * 
  */
-bool Button::isPressed()
+void Button::update()
 {
-	return !digitalRead(pin_);
+	bool reading      = digitalRead(pin_);
+	ulong currentTime = millis();
+	stateChanged      = false;
+
+	// If the switch changed, due to noise or pressing:
+	if (reading != lastButtonState) {
+		// reset the debouncing timer
+		lastDebounceTime = currentTime;
+	}
+
+	if ((currentTime - lastDebounceTime) >= debounceDelay) {
+		// if the button state has changed:
+		if (reading != buttonState) {
+			buttonState  = reading;
+			stateChanged = true;
+		}
+	}
+	lastButtonState = reading;
 }
 
 /**
- * @brief Returns if the button was just pressed (edge), not the current state
+ * @brief Return current state of the button
+ *
+ * @return bool True if button is pressed
+ */
+bool Button::isPressed()
+{
+	return !buttonState; // active low
+}
+
+/**
+ * @brief Return current state of the button
+ * 
+ * @return bool True if button is released
+ */
+bool Button::isReleased()
+{
+	return buttonState; // active low
+}
+
+/**
+ * @brief Returns true if the button was just pressed (edge), not the current state
  * Button is active low
  *
  * @return bool
  */
 bool Button::isPressedEdge()
 {
-	bool edge_detected = false;
+	return isPressed() && stateChanged;
+}
 
-	int button_state = digitalRead(pin_);
-
-	if (button_state != old_button_state) {
-		if (button_state == LOW) {
-			if (!latch) {
-				edge_detected = true;
-			}
-			latch = true;
-		} else {
-			latch = false;
-		}
-		old_button_state = button_state;
-	}
-	return edge_detected;
+/**
+ * @brief Returns true if the button was just released (edge), not the current state
+ * Button is active low
+ * 
+ * @return bool
+ */
+bool Button::isReleasedEdge()
+{
+	return isReleased() && stateChanged;
 }
