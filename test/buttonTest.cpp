@@ -62,22 +62,13 @@ class ButtonTest : public ::testing::Test {
 TEST_F(ButtonTest, isPressed)
 {
 	EXPECT_CALL(*arduinoMock, digitalRead(_))
-		.WillOnce(Return(1))
-		.WillOnce(Return(0));
-
-	ASSERT_EQ(false, button->isPressed());
-	ASSERT_EQ(true, button->isPressed());
-}
-
-TEST_F(ButtonTest, isPressedEdge)
-{
-	EXPECT_CALL(*arduinoMock, digitalRead(_))
-		.WillOnce(Return(1))
 		.WillOnce(Return(0))
 		.WillOnce(Return(0));
-
-	ASSERT_EQ(false, button->isPressedEdge());
-	ASSERT_EQ(true, button->isPressedEdge());
-	ASSERT_EQ(false, button->isPressedEdge());
+	EXPECT_CALL(*arduinoMock, millis())
+		.WillOnce(Return(0))
+		.WillOnce(Return(50));
+	button->update();
+	button->update();
+	ASSERT_EQ(true, button->isPressed());
 }
 } // namespace
