@@ -36,7 +36,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define PIN_LED_GREEN 26 // active high
 #define PIN_PTT_IN 32    // active low
 #define PIN_PTT_OUT 33   // active low
-#define PIN_PTT_LED 35   // active high
+#define PIN_PTT_LED 12   // active high
 #define PIN_BT_RESET 4   // active low
 #endif
 
@@ -55,12 +55,12 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #define SERIAL_DBG_RATE 115200
 #define SERIAL_BT_RATE 115200
-#define SERIAL_TIMEOUT 100         // serial readline timeout
+#define SERIAL_TIMEOUT 10          // serial readline timeout
 #define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup
 
 #define SERIAL_DELIMITER '\n'
 #define SERIAL_MAX_LINE_LENGTH 100
-#define BT_SERIAL_TIMEOUT 1000 // ms  // Time to wait for answers from BT module
+#define BT_SERIAL_TIMEOUT 100 // ms  // Time to wait for answers from BT module
 
 #define INQUIRY_DURATION "5"  // *1.28s
-#define PTT_TURNOFF_DELAY 300 // ms
+#define PTT_TURNOFF_DELAY 500 // ms
