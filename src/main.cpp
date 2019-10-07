@@ -26,7 +26,6 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "bttrx_fsm.h"
 #include "bttrx_wifi.h"
 
-
 WebServer server;
 BTTRX_FSM bttrx_fsm;
 BTTRX_WIFI bttrx_wifi;
@@ -55,7 +54,7 @@ void setup()
 	SERIAL_DBG.begin(SERIAL_DBG_RATE);
 	SERIAL_DBG.setTimeout(SERIAL_TIMEOUT);
 	SERIAL_BT.begin(SERIAL_BT_RATE);
-  SERIAL_BT.setTimeout(SERIAL_TIMEOUT);
+	SERIAL_BT.setTimeout(SERIAL_TIMEOUT);
 
 // Wait for connection on debug Serial
 #ifdef TEENSY32
@@ -71,11 +70,9 @@ void setup()
 	SERIAL_DBG.println(header.c_str());
 
 	ulong startTime = millis();
-	while (!digitalRead(PIN_BTN_0))
-	{
+	while (!digitalRead(PIN_BTN_0)) {
 		ulong currentTime = millis();
-		if (startTime + BTN_PRESS_WIFI_MODE_TIMEOUT < currentTime)
-		{
+		if (startTime + BTN_PRESS_WIFI_MODE_TIMEOUT < currentTime) {
 			bttrx_wifi.setup();
 			bttrx_wifi.run();
 		}
