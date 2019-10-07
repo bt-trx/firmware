@@ -55,9 +55,9 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #define SERIAL_DBG_RATE 115200
 #define SERIAL_BT_RATE 115200
-#define SERIAL_TIMEOUT 10          // serial readline timeout
-#define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup
-#define BTN_PRESS_WIFI_MODE_TIMEOUT 5000 // ms 
+#define SERIAL_TIMEOUT 10                // serial readline timeout
+#define DEBUG_CONNECT_TIMEOUT 3000       // Needed for Teensy startup
+#define BTN_PRESS_WIFI_MODE_TIMEOUT 5000 // ms
 
 #define SERIAL_DELIMITER '\n'
 #define SERIAL_MAX_LINE_LENGTH 100
