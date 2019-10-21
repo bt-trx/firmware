@@ -31,7 +31,12 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #define INQUIRY_DURATION "5"  // *1.28s
 #define PTT_TURNOFF_DELAY 500 // ms
+
 #define BTN_PRESS_WIFI_MODE_TIMEOUT 5000 // ms
 
+#define WIFI_HOSTNAME "bt-trx"
+#define WIFI_SSID "bt-trx"
+#define WIFI_PASSWORD "bt-trx73" // minimum 8 chars
+
 // Teensy specific
-#define DEBUG_CONNECT_TIMEOUT 3000       // Needed for Teensy startup
+#define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup

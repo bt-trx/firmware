@@ -20,6 +20,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
+#ifdef ARDUINO
+
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -27,15 +29,12 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include <ESPmDNS.h>
 #include <Update.h>
 
+#include "settings.h"
+
 extern WebServer server;
 extern const char *GIT_REVISION;
 
 class BTTRX_WIFI {
-    private:
-	const char *host     = "bt-trx";
-	const char *ssid     = "bt-trx";
-	const char *password = "bt-trx73";
-
     public:
 	void setup();
 	void run();
@@ -75,3 +74,5 @@ static const String serverIndex =
 	"</table>"
 	"</form>" +
 	style;
+
+#endif // ARDUINO

@@ -18,9 +18,9 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
+#ifdef ARDUINO
+
 #include "bttrx_wifi.h"
-#include "settings.h"
-#include "led.h"
 
 String resultPage(bool result)
 {
@@ -38,13 +38,13 @@ void BTTRX_WIFI::setup()
 {
 	Serial.println("Configuring access point...");
 
-	WiFi.softAP(ssid, password);
+	WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
 	IPAddress myIP = WiFi.softAPIP();
 	Serial.print("AP IP address: ");
 	Serial.println(myIP);
 
 	/*use mdns for host name resolution*/
-	if (!MDNS.begin(host)) { //http://bt-trx.local
+	if (!MDNS.begin(WIFI_HOSTNAME)) { //http://bt-trx.local
 		Serial.println("Error setting up MDNS responder!");
 		while (1) {
 			delay(1000);
@@ -101,17 +101,13 @@ void BTTRX_WIFI::setup()
 	server.begin();
 	MDNS.addService("http", "tcp", 80);
 
-	Serial.printf("Ready! Open http://%s.local in your browser\n", host);
+	Serial.printf(
+		"Ready! Open http://%s.local in your browser\n", WIFI_HOSTNAME);
 };
 
 void BTTRX_WIFI::run()
 {
-	LED led_connected(PIN_LED_BLUE);
-	LED led_busy(PIN_LED_GREEN);
-
-	while (1) {
-		led_connected.blink(500);
-		led_busy.blink(500);
-		server.handleClient();
-	}
+	server.handleClient();
 }
+
+#endif //ARDUINO
