@@ -120,7 +120,7 @@ void BTTRX_FSM::handleStateConfigure()
 	// Service Class: Audio, Major Device Class: Audio/Video
 	wt32i_.set("BT", "FILTER", "200400 200400");
 	// Set PIN to 0000 as fallback if no SSP is available
-	wt32i_.set("BT", "AUTH * 0000");
+	wt32i_.set("BT", "AUTH *", "0000");
 
 	// Configuration: KLUDGE REMOVE_PAIR NO_AUTO_DATAMODE HFP_ERROR_BYPASS
 	// MITM_DISCARD_L4_KEY

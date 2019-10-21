@@ -96,14 +96,14 @@ TEST_F(WT32iTest, set_fail_emptyCategory)
 	ASSERT_EQ(ResultType::kError, wt32i.set(string("")));
 }
 
-TEST_F(WT32iTest, set_valueNotSet)
+TEST_F(WT32iTest, set_success_valuenotset)
 {
 	WT32i wt32i(&serialWrapperMock);
 
-	ASSERT_EQ(ResultType::kError, wt32i.set(string("TEST"), string("123")));
+	ASSERT_EQ(ResultType::kSuccess, wt32i.set(string("TEST"), string("123")));
 }
 
-TEST_F(WT32iTest, set_optionNotSet)
+TEST_F(WT32iTest, set_fail_optionNotSet)
 {
 	WT32i wt32i(&serialWrapperMock);
 

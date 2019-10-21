@@ -87,13 +87,12 @@ ResultType WT32i::set(string category, string option, string value)
 	if (option.length() && value.length()) {
 		output += " " + option;
 		output += " " + value;
-	} else if (
-		(option.length() && !value.length()) ||
-		(!option.length() && value.length())) {
+	} else if (!option.length() && value.length()) {
 		return ResultType::kError;
 	}
 
 	serial_->println(output.c_str());
+	//serial_->dbg_println(output.c_str());
 	return ResultType::kSuccess;
 }
 
