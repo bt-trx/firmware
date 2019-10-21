@@ -24,13 +24,39 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "settings.h"
 
 #include "bttrx_fsm.h"
+
+#ifdef ARDUINO
 #include "bttrx_wifi.h"
+#endif
 
 WebServer server;
 BTTRX_FSM bttrx_fsm;
 BTTRX_WIFI bttrx_wifi;
+bool wifi_started_ = false;
 
-void setup()
+void checkForWifiStart()
+{
+#ifdef ARDUINO
+	ulong startTime = millis();
+	while (!digitalRead(PIN_BTN_0)) {
+		if (startTime + BTN_PRESS_WIFI_MODE_TIMEOUT < millis()) {
+			bttrx_wifi.setup();
+			wifi_started_ = true;
+			break;
+		}
+	}
+	if (wifi_started_) {
+		// Indicate Wifi State via LEDs
+		digitalWrite(PIN_LED_BLUE, HIGH);
+		digitalWrite(PIN_LED_GREEN, HIGH);
+		delay(2000);
+		digitalWrite(PIN_LED_BLUE, LOW);
+		digitalWrite(PIN_LED_GREEN, LOW);
+	}
+#endif
+}
+
+void setupPins()
 {
 	// Set up GPIOs
 	pinMode(PIN_BTN_0, INPUT);
@@ -49,6 +75,11 @@ void setup()
 	digitalWrite(PIN_PTT_OUT, HIGH);
 	// Get BT Module out of reset (active-low)
 	digitalWrite(PIN_BT_RESET, HIGH);
+}
+
+void setup()
+{
+	setupPins();
 
 	// Set up Serial ports
 	SERIAL_DBG.begin(SERIAL_DBG_RATE);
@@ -69,17 +100,13 @@ void setup()
 	header.append(GIT_REVISION);
 	SERIAL_DBG.println(header.c_str());
 
-	ulong startTime = millis();
-	while (!digitalRead(PIN_BTN_0)) {
-		ulong currentTime = millis();
-		if (startTime + BTN_PRESS_WIFI_MODE_TIMEOUT < currentTime) {
-			bttrx_wifi.setup();
-			bttrx_wifi.run();
-		}
-	}
+	checkForWifiStart();
 }
 
 void loop()
 {
+	if (wifi_started_) {
+		bttrx_wifi.run();
+	};
 	bttrx_fsm.run();
 }
