@@ -2,7 +2,7 @@ import os
 import subprocess
 
 Import("env")
-print "Pre build scripts"
+print("Pre build scripts")
 
 # Return the git revision as a string
 def git_version():
