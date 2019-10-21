@@ -66,6 +66,8 @@ void setupPins()
 	pinMode(PIN_PTT_OUT, OUTPUT);
 	pinMode(PIN_PTT_LED, OUTPUT);
 	pinMode(PIN_BT_RESET, OUTPUT);
+	pinMode(PIN_HW_VER, INPUT);
+	pinMode(PIN_VOX_IN, INPUT);
 
 	// LEDs off
 	digitalWrite(PIN_LED_BLUE, LOW);
@@ -75,6 +77,15 @@ void setupPins()
 	digitalWrite(PIN_PTT_OUT, HIGH);
 	// Get BT Module out of reset (active-low)
 	digitalWrite(PIN_BT_RESET, HIGH);
+}
+
+String getHardwareVersion()
+{
+	switch(analogRead(PIN_HW_VER))
+	{
+		case 0: return "dev-board v4.1";
+		default: return "unkown";
+	}
 }
 
 void setup()
@@ -96,10 +107,12 @@ void setup()
 	bttrx_fsm.setSerial(&SERIAL_BT, &SERIAL_DBG);
 
 	// Print version information
-	string header = "bt-trx v";
+	SERIAL_DBG.println("bt-trx Hardware: " + getHardwareVersion());
+	string header = "bt-trx Firmware: v";
 	header.append(GIT_REVISION);
 	SERIAL_DBG.println(header.c_str());
 
+	// Check whether to start Wifi
 	checkForWifiStart();
 }
 
