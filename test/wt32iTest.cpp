@@ -100,7 +100,8 @@ TEST_F(WT32iTest, set_success_valuenotset)
 {
 	WT32i wt32i(&serialWrapperMock);
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.set(string("TEST"), string("123")));
+	ASSERT_EQ(
+		ResultType::kSuccess, wt32i.set(string("TEST"), string("123")));
 }
 
 TEST_F(WT32iTest, set_fail_optionNotSet)

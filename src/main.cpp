@@ -81,10 +81,11 @@ void setupPins()
 
 String getHardwareVersion()
 {
-	switch(analogRead(PIN_HW_VER))
-	{
-		case 0: return "dev-board v4.1";
-		default: return "unkown";
+	switch (analogRead(PIN_HW_VER)) {
+	case 0:
+		return "dev-board v4.1";
+	default:
+		return "unkown";
 	}
 }
 

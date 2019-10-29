@@ -28,19 +28,19 @@ Contact: bt-trx.com, mail@bt-trx.com
 // GPIO 32-39: ADC1
 // ADC2 is not available when using Wifi!
 // in general, pins > 17 are safe to use
-#define PIN_BT_RESET 4     // Active Low
-#define PIN_LED_BLUE 25    // Active High
-#define PIN_LED_GREEN 26   // Active High
-#define PIN_BTN_0 18       // Active Low
-#define PIN_PTT_IN 32      // Active Low
-#define PIN_PTT_OUT 33     // Active Low  
-#define PIN_PTT_LED 13     // Active High
-#define PIN_WT32_RX 16     // Serial2 Rx
-#define PIN_WT32_TX 17     // Serial2 Tx
-#define PIN_HW_VER 34      // ADC1 CH6
-#define PIN_VOX_IN 35      // ADC1 CH7
+#define PIN_BT_RESET 4   // Active Low
+#define PIN_LED_BLUE 25  // Active High
+#define PIN_LED_GREEN 26 // Active High
+#define PIN_BTN_0 18     // Active Low
+#define PIN_PTT_IN 32    // Active Low
+#define PIN_PTT_OUT 33   // Active Low
+#define PIN_PTT_LED 13   // Active High
+#define PIN_WT32_RX 16   // Serial2 Rx
+#define PIN_WT32_TX 17   // Serial2 Tx
+#define PIN_HW_VER 34    // ADC1 CH6
+#define PIN_VOX_IN 35    // ADC1 CH7
 #define SERIAL_DBG Serial
-#define SERIAL_BT Serial2  // Default: RX: 16, TX: 17, RTS: 7, CTS: 8
+#define SERIAL_BT Serial2 // Default: RX: 16, TX: 17, RTS: 7, CTS: 8
 #endif
 
 #ifdef TEENSY32
