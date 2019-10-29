@@ -18,38 +18,56 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#include "led.h"
+#include "ptt.h"
 
 /**
- * @brief Helper class for better readability when controlling the LEDs and
- * enable a convenient way for blinking
+ * @brief Helper class for control of the PTT output
+ * Automatically controls PTT LED
  *
- * @param pin
+ * @param ptt_pin
+ * @param led_pin
  */
-LED::LED(uint32_t pin) : pin_(pin)
+PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
+	: pin_(ptt_pin), led(led_pin), turned_off(-1)
 {
 	pinMode(pin_, OUTPUT);
 }
 
-void LED::on()
+/**
+ * @brief Turn PTT output and PTT LED on
+ * 
+ */
+void PTT::on()
 {
-	digitalWrite(pin_, HIGH);
+	digitalWrite(pin_, LOW); // active low
+	led.on();
+	turned_off = -1;
 }
 
-void LED::off()
+/**
+ * @brief Turn PTT output and PTT LED off
+ * 
+ */
+void PTT::off()
 {
-	digitalWrite(pin_, LOW);
+	digitalWrite(pin_, HIGH); // active low
+	led.off();
+	turned_off = -1;
 }
 
-void LED::blink(uint32_t interval)
+/**
+ * @brief Turn PTT output and PTT LED off after the defined delay
+ * 
+ * @param delay in ms
+ */
+void PTT::delayed_off(uint32_t delay_ms)
 {
-	if ((millis() - last_toggle_) > interval) {
-		toggle();
-		last_toggle_ = millis();
+	if (turned_off == -1) {
+		turned_off = millis();
+	} else {
+		if ((millis() - turned_off) >= delay_ms) {
+			off();
+			turned_off = -1;
+		}
 	}
-}
-
-void LED::toggle()
-{
-	digitalWrite(pin_, !digitalRead(pin_));
 }

@@ -20,12 +20,24 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
-#include "settings.h"
+#ifdef ARDUINO
+#include "Arduino.h"
+#else
+#include "arduino-mock/Arduino.h"
+#endif
 
-#include <string>
-#include <vector>
-using namespace std;
+#include "led.h"
 
-vector<string> splitString(string);
-bool containsStringOnPosition(
-	string input_string, string string_to_test, size_t position);
+class PTT {
+    public:
+	PTT(uint32_t ptt_pin, uint32_t led_pin);
+
+	void on();
+	void off();
+	void delayed_off(uint32_t);
+
+    private:
+	int pin_;
+	LED led;
+	ulong turned_off;
+};

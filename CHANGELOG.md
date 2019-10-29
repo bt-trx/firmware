@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-nothing yet
+## 0.1.3 - [Unreleased]
+- Fixed memory allocation for serial input
+- Add lint script (tools/code-style.sh)
+- Start a phone call when PTT is pressed
 
 ## [0.1.2] - 2019-08-11
 ### Added

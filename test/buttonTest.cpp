@@ -29,52 +29,46 @@ using ::testing::Return;
 using ::testing::SetArrayArgument;
 using ::testing::StrEq;
 
-
-namespace {
+namespace
+{
 class ButtonTest : public ::testing::Test {
+    protected:
+	ArduinoMock *arduinoMock;
+	Button *button;
 
-  protected:
-    ArduinoMock* arduinoMock;
-    Button* button;
+	ButtonTest()
+	{
+	}
 
-    ButtonTest() {
-    }
+	virtual ~ButtonTest()
+	{
+	}
 
-    virtual ~ButtonTest() {
-    }
+	virtual void SetUp()
+	{
+		arduinoMock = arduinoMockInstance();
 
-    virtual void SetUp() {
-      arduinoMock = arduinoMockInstance();
+		EXPECT_CALL(*arduinoMock, pinMode(_, INPUT));
+		button = new Button(0);
+	}
 
-      EXPECT_CALL(*arduinoMock, pinMode(_, INPUT));
-      button = new Button(0);
-    }
+	virtual void TearDown()
+	{
+		releaseArduinoMock();
+		delete button;
+	}
+};
 
-    virtual void TearDown() {
-      releaseArduinoMock();
-      delete button;
-    }
-
-  };
-
-TEST_F(ButtonTest, isPressed) {
-
-  EXPECT_CALL(*arduinoMock, digitalRead(_))
-    .WillOnce(Return(1))
-    .WillOnce(Return(0));
-  
-  ASSERT_EQ(false, button->isPressed());
-  ASSERT_EQ(true, button->isPressed());
+TEST_F(ButtonTest, isPressed)
+{
+	EXPECT_CALL(*arduinoMock, digitalRead(_))
+		.WillOnce(Return(0))
+		.WillOnce(Return(0));
+	EXPECT_CALL(*arduinoMock, millis())
+		.WillOnce(Return(0))
+		.WillOnce(Return(50));
+	button->update();
+	button->update();
+	ASSERT_EQ(true, button->isPressed());
 }
-
-TEST_F(ButtonTest, isPressedEdge) {
-  EXPECT_CALL(*arduinoMock, digitalRead(_))
-    .WillOnce(Return(1))
-    .WillOnce(Return(0))
-    .WillOnce(Return(0));
-  
-  ASSERT_EQ(false, button->isPressedEdge());
-  ASSERT_EQ(true, button->isPressedEdge());
-  ASSERT_EQ(false, button->isPressedEdge());
-}
-}
+} // namespace

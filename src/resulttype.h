@@ -20,6 +20,4 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
-enum ResultType {kError,
-                 kTimeoutError,
-                 kSuccess};
+enum ResultType { kError, kTimeoutError, kSuccess };

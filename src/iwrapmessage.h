@@ -25,23 +25,26 @@ Contact: bt-trx.com, mail@bt-trx.com
 /**
  * @brief Non-exhaustive list of iWrap Message types * 
  */
-enum iWrapMessageType {kEmpty,
-                  kUnknown,
-                  kLIST_RESULT,
-                  kINQUIRY_RESULT,
-                  kHFPAG_READY,
-                  kHFPAG_DIAL,
-                  kHFPAG_CALLING,
-                  kHFPAG_NO_CARRIER,
-                  kHFPAG_UNKOWN,
-                  kNOCARRIER_ERROR_LINK_LOSS,
-                  kNOCARRIER_ERROR_CALL_ENDED};
+enum iWrapMessageType {
+	kEmpty,
+	kUnknown,
+	kLIST_RESULT,
+	kINQUIRY_RESULT,
+	kHFPAG_READY,
+	kHFPAG_DIAL,
+	kHFPAG_CALLING,
+	kHFPAG_NO_CARRIER,
+	kHFPAG_UNKOWN,
+	kNOCARRIER_ERROR_LINK_LOSS,
+	kNOCARRIER_ERROR_CALL_ENDED,
+	kSSP_CONFIRM
+};
 
 /**
  * @brief Contains the content and the MessageType classification of an iWrap 
  * Message 
  */
 typedef struct {
-  iWrapMessageType msg_type = kEmpty;
-  std::string msg;
+	iWrapMessageType msg_type = kEmpty;
+	std::string msg;
 } iWrapMessage;

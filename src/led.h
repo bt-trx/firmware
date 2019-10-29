@@ -27,15 +27,15 @@ Contact: bt-trx.com, mail@bt-trx.com
 #endif
 
 class LED {
-  public:
-    LED(uint32_t pin);
+    public:
+	LED(uint32_t pin);
 
-    void on();
-    void off();
-    void blink(uint32_t interval);
-    void toggle();
+	void on();
+	void off();
+	void blink(uint32_t interval);
+	void toggle();
 
-  private:
-    int pin_;
-    uint32_t last_toggle_ = 0;
+    private:
+	int pin_;
+	unsigned long last_toggle_ = 0;
 };

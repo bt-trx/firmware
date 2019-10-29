@@ -2,7 +2,7 @@ import os
 import subprocess
 
 Import("env")
-print "Pre build scripts"
+print("Pre build scripts")
 
 # Return the git revision as a string
 def git_version():
@@ -21,7 +21,7 @@ def git_version():
         return out
 
     try:
-        out = _minimal_ext_cmd("git describe --tags | sed 's/-/.post/' | cut -f1 -d'-'")
+        out = _minimal_ext_cmd("git describe --tags")
         GIT_REVISION = out.strip().decode('ascii')
     except OSError:
         GIT_REVISION = "Unknown"

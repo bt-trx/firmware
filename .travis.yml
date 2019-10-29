@@ -1,13 +1,13 @@
 matrix:
   include:
     - language: cpp
-      dist: trusty
+      dist: bionic
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-7
+            - g++
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
       before_install:
@@ -15,7 +15,7 @@ matrix:
       script:
         - ./test/build.sh
     - language: python
-      python: 2.7
+      python: 3.8
       cache:
         directories:
           - "~/.platformio"

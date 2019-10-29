@@ -25,379 +25,420 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 using ::testing::_;
 using ::testing::Matcher;
-using ::testing::StrEq;
 using ::testing::Return;
-using ::testing::SetArrayArgument;
 using ::testing::SetArgPointee;
+using ::testing::SetArrayArgument;
+using ::testing::StrEq;
 
-namespace {
+namespace
+{
 class WT32iTest : public ::testing::Test {
+    protected:
+	SerialWrapperMock serialWrapperMock;
+	ArduinoMock *arduinoMock;
 
-  protected:
-    SerialWrapperMock serialWrapperMock;
-    ArduinoMock* arduinoMock;
+	WT32iTest()
+	{
+	}
 
-    WT32iTest() {
-    }
+	virtual ~WT32iTest()
+	{
+	}
 
-    virtual ~WT32iTest() {
-    }
+	virtual void SetUp()
+	{
+		arduinoMock = arduinoMockInstance();
+	}
 
-    virtual void SetUp() {
-      arduinoMock = arduinoMockInstance();
-    }
+	virtual void TearDown()
+	{
+		releaseArduinoMock();
+	}
+};
 
-    virtual void TearDown() {
-      releaseArduinoMock();
-    }
+TEST_F(WT32iTest, reset_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  };
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("RESET"))));
 
-TEST_F(WT32iTest, reset_success) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock,
-              println(Matcher<const char *>(StrEq("RESET"))));
-
-  wt32i.reset();
+	wt32i.reset();
 }
 
-TEST_F(WT32iTest, set_success_category) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, set_success_category)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock,
-              println(Matcher<const char *>(StrEq("SET TEST"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET TEST"))));
 
-  wt32i.set(string("TEST"));
+	wt32i.set(string("TEST"));
 }
 
-TEST_F(WT32iTest, set_success_optionAndValue) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, set_success_optionAndValue)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock,
-              println(Matcher<const char *>(StrEq("SET TEST 123 456"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET TEST 123 456"))));
 
-  wt32i.set(string("TEST"), string("123"), string("456"));
+	wt32i.set(string("TEST"), string("123"), string("456"));
 }
 
-TEST_F(WT32iTest, set_fail_emptyCategory) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, set_fail_emptyCategory)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  ASSERT_EQ(ResultType::kError, wt32i.set(string("")));
+	ASSERT_EQ(ResultType::kError, wt32i.set(string("")));
 }
 
-TEST_F(WT32iTest, set_valueNotSet) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, set_success_valuenotset)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  ASSERT_EQ(ResultType::kError, wt32i.set(string("TEST"), string("123")));
+	ASSERT_EQ(
+		ResultType::kSuccess, wt32i.set(string("TEST"), string("123")));
 }
 
-TEST_F(WT32iTest, set_optionNotSet) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, set_fail_optionNotSet)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  ASSERT_EQ(ResultType::kError, wt32i.set(string("TEST"),
-                                          string(""),
-                                          string("456")));
+	ASSERT_EQ(
+		ResultType::kError,
+		wt32i.set(string("TEST"), string(""), string("456")));
 }
 
-TEST_F(WT32iTest, available_success) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, available_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock,
-              println(Matcher<const char *>(StrEq("AT"))));
-  
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking("OK", NULL, _))
-    .WillOnce((Return(ResultType::kSuccess)));
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.available());
+	EXPECT_CALL(
+		serialWrapperMock, println(Matcher<const char *>(StrEq("AT"))));
+
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking("OK", NULL, _))
+		.WillOnce((Return(ResultType::kSuccess)));
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.available());
 }
 
-TEST_F(WT32iTest, inquiry_success_1result) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, inquiry_success_1result)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock,
-              println(Matcher<const char *>(StrEq("INQUIRY 5"))));
-  
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking("INQUIRY", _, _))
-    .WillOnce(DoAll(SetArgPointee<1>("INQUIRY 1"),
-                    Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("INQUIRY de:ad:be:ef:ca:fe 240404"),
-                    Return(ResultType::kSuccess)));
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.inquiry());
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("INQUIRY 5"))));
 
-  vector<string> result = wt32i.getInquiredDevices();
-  ASSERT_EQ(1, result.size());
-  ASSERT_EQ(0, result[0].compare("de:ad:be:ef:ca:fe"));
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking("INQUIRY", _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("INQUIRY 1"),
+			      Return(ResultType::kSuccess)))
+		.WillOnce(DoAll(
+			SetArgPointee<1>("INQUIRY de:ad:be:ef:ca:fe 240404"),
+			Return(ResultType::kSuccess)));
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.performInquiry());
+
+	vector<string> result = wt32i.getInquiredDevices();
+	ASSERT_EQ(1, result.size());
+	ASSERT_EQ(0, result[0].compare("de:ad:be:ef:ca:fe"));
 }
 
-TEST_F(WT32iTest, list_success_1result) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, list_success_1result)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock,
-              println(Matcher<const char *>(StrEq("LIST"))));
-  
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking("LIST", _, _))
-    .WillOnce(DoAll(SetArgPointee<1>("LIST 1"),
-                    Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("LIST 0 CONNECTED HFP-AG 667 0 0 7 8d 8d de:ad:be:ef:ca:fe 3 INCOMING ACTIVE SLAVE ENCRYPTED 0"),
-                    Return(ResultType::kSuccess)));
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.list());
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("LIST"))));
 
-  vector<string> result = wt32i.getActiveConnections();
-  ASSERT_EQ(1, result.size());
-  ASSERT_EQ(0, result[0].compare("de:ad:be:ef:ca:fe"));
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking("LIST", _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("LIST 1"),
+			      Return(ResultType::kSuccess)))
+		.WillOnce(DoAll(
+			SetArgPointee<1>(
+				"LIST 0 CONNECTED HFP-AG 667 0 0 7 8d 8d de:ad:be:ef:ca:fe 3 INCOMING ACTIVE SLAVE ENCRYPTED 0"),
+			Return(ResultType::kSuccess)));
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.list());
+
+	vector<string> result = wt32i.getActiveConnections();
+	ASSERT_EQ(1, result.size());
+	ASSERT_EQ(0, result[0].compare("de:ad:be:ef:ca:fe"));
 }
 
-TEST_F(WT32iTest, connectHFPAG_success_without_SSP) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, connectHFPAG_success_without_SSP)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, 
-      println(Matcher<const char *>(StrEq("call de:ad:be:ef:ca:fe 111e hfp-ag"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(
+			StrEq("call de:ad:be:ef:ca:fe 111e hfp-ag"))));
 
-  EXPECT_CALL(*arduinoMock, millis())
-    .WillOnce(Return(0));
+	EXPECT_CALL(*arduinoMock, millis()).WillOnce(Return(0));
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return(string("CONNECT 0 HFP 3")));
+	EXPECT_CALL(serialWrapperMock, readLineToString())
+		.WillOnce(Return(string("CONNECT 0 HFP 3")));
 
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
-    .WillOnce(DoAll(SetArgPointee<1>("CALL 0"),
-                    Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("HFP 0 STATUS \"service\" 0"),
-                    Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("HFP 0 READY"),
-                    Return(ResultType::kSuccess)));
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("CALL 0"),
+			      Return(ResultType::kSuccess)))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("HFP 0 STATUS \"service\" 0"),
+			      Return(ResultType::kSuccess)))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("HFP 0 READY"),
+			      Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess,
-            wt32i.connectHFPAG("de:ad:be:ef:ca:fe"));
+	ASSERT_EQ(
+		ResultType::kSuccess, wt32i.connectHFPAG("de:ad:be:ef:ca:fe"));
 }
 
-TEST_F(WT32iTest, connectHFPAG_success_with_SSP) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, connectHFPAG_success_with_SSP)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, 
-      println(Matcher<const char *>(StrEq("call de:ad:be:ef:ca:fe 111e hfp-ag"))));
-    EXPECT_CALL(serialWrapperMock, 
-      println(Matcher<const char *>(StrEq("SSP CONFIRM de:ad:be:ef:ca:fe OK"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(
+			StrEq("call de:ad:be:ef:ca:fe 111e hfp-ag"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(
+			StrEq("SSP CONFIRM de:ad:be:ef:ca:fe OK"))));
 
-  EXPECT_CALL(*arduinoMock, millis())
-    .WillOnce(Return(0))
-    .WillOnce(Return(1));
+	EXPECT_CALL(*arduinoMock, millis())
+		.WillOnce(Return(0))
+		.WillOnce(Return(1));
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return(string("SSP CONFIRM de:ad:be:ef:ca:fe 123456 ?")))
-    .WillOnce(Return(string("CONNECT 0 HFP 3")));
+	EXPECT_CALL(serialWrapperMock, readLineToString())
+		.WillOnce(Return(
+			string("SSP CONFIRM de:ad:be:ef:ca:fe 123456 ?")))
+		.WillOnce(Return(string("CONNECT 0 HFP 3")));
 
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
-    .WillOnce(DoAll(SetArgPointee<1>("CALL 0"),
-                    Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("HFP 0 STATUS \"service\" 0"),
-                    Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("HFP 0 READY"),
-                    Return(ResultType::kSuccess)));
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("CALL 0"),
+			      Return(ResultType::kSuccess)))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("HFP 0 STATUS \"service\" 0"),
+			      Return(ResultType::kSuccess)))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("HFP 0 READY"),
+			      Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess,
-            wt32i.connectHFPAG("de:ad:be:ef:ca:fe"));
+	ASSERT_EQ(
+		ResultType::kSuccess, wt32i.connectHFPAG("de:ad:be:ef:ca:fe"));
 }
 
-TEST_F(WT32iTest, setStatus_success) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, setStatus_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, 
-      println(Matcher<const char *>(StrEq("STATUS service 1"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("STATUS service 1"))));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.setStatus("service", "1"));
+	ASSERT_EQ(ResultType::kSuccess, wt32i.setStatus("service", "1"));
 }
 
-TEST_F(WT32iTest, storeHFPStatus_success) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, storeHFPStatus_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  ASSERT_EQ(ResultType::kSuccess,
-            wt32i.storeHFPStatus("HFP 0 STATUS \"service\" 1"));
+	ASSERT_EQ(
+		ResultType::kSuccess,
+		wt32i.storeHFPStatus("HFP 0 STATUS \"service\" 1"));
 
-  int value = -1;
-  ASSERT_EQ(ResultType::kSuccess,
-            wt32i.getHFPStatus(0, "service", &value));
-  ASSERT_EQ(1, value);
+	int value = -1;
+	ASSERT_EQ(
+		ResultType::kSuccess, wt32i.getHFPStatus(0, "service", &value));
+	ASSERT_EQ(1, value);
 }
 
-TEST_F(WT32iTest, storeHFPStatus_fail_insert_no_status) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, storeHFPStatus_fail_insert_no_status)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  ASSERT_EQ(ResultType::kError,
-            wt32i.storeHFPStatus("HFP 0 FOO \"service\" 1"));
+	ASSERT_EQ(
+		ResultType::kError,
+		wt32i.storeHFPStatus("HFP 0 FOO \"service\" 1"));
 }
 
-TEST_F(WT32iTest, storeHFPStatus_fail_insert_too_short) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, storeHFPStatus_fail_insert_too_short)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  ASSERT_EQ(ResultType::kError,
-            wt32i.storeHFPStatus("HFP 0 FOO \"service\""));
+	ASSERT_EQ(
+		ResultType::kError,
+		wt32i.storeHFPStatus("HFP 0 FOO \"service\""));
 }
 
-TEST_F(WT32iTest, getHFPStatus_fail_read) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, getHFPStatus_fail_read)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  ASSERT_EQ(ResultType::kSuccess,
-            wt32i.storeHFPStatus("HFP 0 STATUS \"service\" 1"));
+	ASSERT_EQ(
+		ResultType::kSuccess,
+		wt32i.storeHFPStatus("HFP 0 STATUS \"service\" 1"));
 
-  int value = -1;
-  ASSERT_EQ(ResultType::kError,
-            wt32i.getHFPStatus(0, "foo", &value));
-  ASSERT_EQ(-1, value);
+	int value = -1;
+	ASSERT_EQ(ResultType::kError, wt32i.getHFPStatus(0, "foo", &value));
+	ASSERT_EQ(-1, value);
 }
 
-TEST_F(WT32iTest, dial_success) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, dial_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, 
-      println(Matcher<const char *>(StrEq("DIALING"))));
-  
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
-    .WillOnce(DoAll(SetArgPointee<1>("HFP-AG 0 CALLING"),
-                    Return(ResultType::kSuccess)));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("DIALING"))));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.dial());
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("HFP-AG 0 CALLING"),
+			      Return(ResultType::kSuccess)));
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.dial());
 }
 
-TEST_F(WT32iTest, connect_success) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, connect_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, 
-    println(Matcher<const char *>(StrEq("CONNECT"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("CONNECT"))));
 
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
-    .WillOnce(DoAll(SetArgPointee<1>("HFP-AG 0 CONNECT"),
-                    Return(ResultType::kSuccess)));
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("HFP-AG 0 CONNECT"),
+			      Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.connect());
+	ASSERT_EQ(ResultType::kSuccess, wt32i.connect());
 }
 
-TEST_F(WT32iTest, hangup_success) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, hangup_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, 
-    println(Matcher<const char *>(StrEq("HANGUP"))));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("HANGUP"))));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.hangup());
+	ASSERT_EQ(ResultType::kSuccess, wt32i.hangup());
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_empty) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, sendSSPConfirmation_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return(""));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(
+			StrEq("SSP CONFIRM de:ad:be:ef:23:42 OK"))));
 
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kEmpty, msg.msg_type);
+	ASSERT_EQ(
+		ResultType::kSuccess,
+		wt32i.sendSSPConfirmation("de:ad:be:ef:23:42"));
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_CALLING) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, getIncomingMessage_success_empty)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("HFP-AG 0 CALLING"));
+	EXPECT_CALL(serialWrapperMock, readLineToString()).WillOnce(Return(""));
 
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kHFPAG_CALLING, msg.msg_type);
-  ASSERT_EQ("HFP-AG 0 CALLING", msg.msg);
+	iWrapMessage msg;
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
+	ASSERT_EQ(iWrapMessageType::kEmpty, msg.msg_type);
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_NO_CARRIER) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_CALLING)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("HFP-AG 0 NO CARRIER"));
+	EXPECT_CALL(serialWrapperMock, readLineToString())
+		.WillOnce(Return("HFP-AG 0 CALLING"));
 
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kHFPAG_NO_CARRIER, msg.msg_type);
-  ASSERT_EQ("HFP-AG 0 NO CARRIER", msg.msg);
+	iWrapMessage msg;
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
+	ASSERT_EQ(iWrapMessageType::kHFPAG_CALLING, msg.msg_type);
+	ASSERT_EQ("HFP-AG 0 CALLING", msg.msg);
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_HFPAG_UNKOWN) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, handleMessage_HFPAG_DIAL_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("HFP-AG 0 UNKNOWN (0): AT+NREC=0\r"));
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("CONNECT 1 SCO"),
+			      Return(ResultType::kSuccess)))
+		.WillOnce(
+			DoAll(SetArgPointee<1>("HFP-AG 0 CALLING"),
+			      Return(ResultType::kSuccess)));
 
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kHFPAG_UNKOWN, msg.msg_type);
-  ASSERT_EQ("HFP-AG 0 UNKNOWN (0): AT+NREC=0\r", msg.msg);
+	iWrapMessage msg;
+	msg.msg_type = kHFPAG_DIAL;
+	msg.msg      = "HFP-AG 0 DIAL NUM +49123456789";
+	ASSERT_EQ(ResultType::kSuccess, wt32i.handleMessage_HFPAG_DIAL(msg));
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_NO_CARRIER_1_ERROR_0) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, handleMessage_HFPAG_UNKNOWN_NREC_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("NO CARRIER 1 ERROR 0"));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("ERROR"))));
 
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_CALL_ENDED, msg.msg_type);
-  ASSERT_EQ("NO CARRIER 1 ERROR 0", msg.msg);
+	iWrapMessage msg;
+	msg.msg_type = kHFPAG_UNKOWN;
+	msg.msg      = "HFP-AG 0 UNKNOWN (0): AT+NREC=0\\r";
+	ASSERT_EQ(ResultType::kSuccess, wt32i.handleMessage_HFPAG_UNKNOWN(msg));
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_NO_CARRIER_0_ERROR_L2CAP_LINK_LOSS) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, getBDAddressSuffix_success)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("NO CARRIER 0 ERROR c0c RFC_L2CAP_LINK_LOSS"));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET BT BDADDR"))));
 
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
-  ASSERT_EQ("NO CARRIER 0 ERROR c0c RFC_L2CAP_LINK_LOSS", msg.msg);
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(DoAll(
+			SetArgPointee<1>("SET BT BDADDR 12:34:56:78:90:11"),
+			Return(ResultType::kSuccess)));
+
+	ASSERT_EQ(0, wt32i.getBDAddressSuffix().compare("789011"));
 }
 
-TEST_F(WT32iTest, getIncomingMessage_success_NO_CARRIER_0_ERROR_0) {
-  WT32i wt32i(&serialWrapperMock);
+TEST_F(WT32iTest, getBDAddressSuffix_fail)
+{
+	WT32i wt32i(&serialWrapperMock);
 
-  EXPECT_CALL(serialWrapperMock, readLineToString())
-    .WillOnce(Return("NO CARRIER 0 ERROR 0"));
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET BT BDADDR"))));
 
-  iWrapMessage msg;
-  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.getIncomingMessage(&msg));
-  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
-  ASSERT_EQ("NO CARRIER 0 ERROR 0", msg.msg);
+	EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
+		.WillOnce(
+			DoAll(SetArgPointee<1>(""),
+			      Return(ResultType::kTimeoutError)));
+
+	ASSERT_EQ(0, wt32i.getBDAddressSuffix().compare("1"));
 }
-
-TEST_F(WT32iTest, handleMessage_HFPAG_DIAL_success) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock, waitForInputBlocking(_, _, _))
-    .WillOnce(DoAll(SetArgPointee<1>("CONNECT 1 SCO"),
-                    Return(ResultType::kSuccess)))
-    .WillOnce(DoAll(SetArgPointee<1>("HFP-AG 0 CALLING"),
-                    Return(ResultType::kSuccess)));
-
-  iWrapMessage msg;
-  msg.msg_type = kHFPAG_DIAL;
-  msg.msg = "HFP-AG 0 DIAL NUM +49123456789";  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.handleMessage_HFPAG_DIAL(msg));
-}
-
-TEST_F(WT32iTest, handleMessage_HFPAG_UNKNOWN_NREC_success) {
-  WT32i wt32i(&serialWrapperMock);
-
-  EXPECT_CALL(serialWrapperMock, 
-      println(Matcher<const char *>(StrEq("ERROR"))));
-
-  iWrapMessage msg;
-  msg.msg_type = kHFPAG_UNKOWN;
-  msg.msg = "HFP-AG 0 UNKNOWN (0): AT+NREC=0\\r";  
-  ASSERT_EQ(ResultType::kSuccess, wt32i.handleMessage_HFPAG_UNKNOWN(msg));
-}
-}
+} // namespace
