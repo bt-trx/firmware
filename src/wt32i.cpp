@@ -660,6 +660,11 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 	// Commands which are recognized, but ignored
 	else if (cmd.find("AT+XAPL=") != string::npos) {
 		// Indicates apple specific capabilities of the accessory
+		//serial_->println("ERROR");
+		serial_->println("+XAPL=iPhone,7");
+		serial_->println("OK");
+	} else if (cmd.find("AT+IPHONEACCEV=") != string::npos) {
+		// Indicates apple specific headphone change
 	} else if (cmd.find("AT+CMGF=") != string::npos) {
 		// Set SMS Text Mode (0) or PDU Mode (1)
 		serial_->println("OK");
