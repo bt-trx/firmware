@@ -24,13 +24,13 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 String resultPage(bool error)
 {
-	String resultString = style + "Firmware Update ";
+	String resultString = style + "<form>Firmware Update ";
 	if (error) {
 		resultString += "FAILED";
 	} else {
 		resultString += "OK";
 	}
-	resultString += ", rebooting...";
+	resultString += ", rebooting...</form>";
 	return resultString;
 }
 
@@ -65,7 +65,7 @@ void BTTRX_WIFI::setup()
 			server.sendHeader("Connection", "close");
 			server.send(
 				200,
-				"text/plain",
+				"text/html",
 				resultPage(Update.hasError()).c_str());
 			ESP.restart();
 		},
