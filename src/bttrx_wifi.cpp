@@ -22,16 +22,16 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_wifi.h"
 
-String resultPage(bool result)
+String resultPage(bool error)
 {
-	String resultString = "Firmware Update ";
-	if (result) {
-		resultString += "OK";
-	} else {
+	String resultString = style + "Firmware Update ";
+	if (error) {
 		resultString += "FAILED";
+	} else {
+		resultString += "OK";
 	}
 	resultString += ", rebooting...";
-	return resultString + style;
+	return resultString;
 }
 
 void BTTRX_WIFI::setup()
