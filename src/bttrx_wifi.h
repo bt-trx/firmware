@@ -23,21 +23,18 @@ Contact: bt-trx.com, mail@bt-trx.com
 #ifdef ARDUINO
 
 #include <WiFi.h>
-#include <WiFiClient.h>
-#include <WebServer.h>
 #include <WiFiAP.h>
 #include <ESPmDNS.h>
+#include <ESPAsyncWebServer.h>
 #include <Update.h>
 
 #include "settings.h"
 
-extern WebServer server;
 extern const char *GIT_REVISION;
 
 class BTTRX_WIFI {
     public:
 	void setup();
-	void run();
 };
 
 /* Style */

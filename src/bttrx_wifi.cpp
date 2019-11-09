@@ -22,6 +22,14 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_wifi.h"
 
+AsyncWebServer server(80);
+
+void onRequest(AsyncWebServerRequest *request)
+{
+	//Handle Unknown Request
+	request->send(404);
+}
+
 String resultPage(bool error)
 {
 	String resultString = style + "<form>Firmware Update ";
@@ -52,51 +60,70 @@ void BTTRX_WIFI::setup()
 	}
 	Serial.println("mDNS responder started");
 
+	// respond to GET requests on URL /heap
+	server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request) {
+		request->send(200, "text/plain", String(ESP.getFreeHeap()));
+	});
+
 	/*return index page which is stored in serverIndex */
-	server.on("/", HTTP_GET, []() {
-		server.sendHeader("Connection", "close");
-		server.send(200, "text/html", serverIndex);
+	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+		AsyncWebServerResponse *response =
+			request->beginResponse(200, "text/html", serverIndex);
+		response->addHeader("Connection", "close");
+		request->send(response);
 	});
 	/*handling uploading firmware file */
 	server.on(
 		"/update",
 		HTTP_POST,
-		[]() {
-			server.sendHeader("Connection", "close");
-			server.send(
-				200,
-				"text/html",
-				resultPage(Update.hasError()).c_str());
-			ESP.restart();
+		[](AsyncWebServerRequest *request) {
+			AsyncWebServerResponse *response =
+				request->beginResponse(
+					200,
+					"text/html",
+					resultPage(Update.hasError()));
+			response->addHeader("Connection", "close");
+			request->send(response);
+			if (!Update.hasError()) {
+				Serial.println("rebooting");
+				ESP.restart();
+			}
 		},
-		[]() {
-			HTTPUpload &upload = server.upload();
-			if (upload.status == UPLOAD_FILE_START) {
+		[](AsyncWebServerRequest *request,
+		   String filename,
+		   size_t index,
+		   uint8_t *data,
+		   size_t len,
+		   bool final) {
+			if (!index) {
 				Serial.printf(
-					"Update: %s\n",
-					upload.filename.c_str());
+					"Update Start: %s\n", filename.c_str());
 				if (!Update.begin(
-					    UPDATE_SIZE_UNKNOWN)) { //start with max available size
+					    (ESP.getFreeSketchSpace() - 0x1000) &
+					    0xFFFFF000)) {
 					Update.printError(Serial);
 				}
-			} else if (upload.status == UPLOAD_FILE_WRITE) {
-				/* flashing firmware to ESP*/
-				if (Update.write(
-					    upload.buf, upload.currentSize) !=
-				    upload.currentSize) {
+			}
+			if (!Update.hasError()) {
+				if (Update.write(data, len) != len) {
 					Update.printError(Serial);
 				}
-			} else if (upload.status == UPLOAD_FILE_END) {
-				if (Update.end(
-					    true)) { //true to set the size to the current progress
+			}
+			if (final) {
+				if (Update.end(true)) {
 					Serial.printf(
-						"Update Success: %u\nRebooting...\n",
-						upload.totalSize);
+						"Update Success: %uB\n",
+						index + len);
 				} else {
 					Update.printError(Serial);
 				}
 			}
 		});
+
+	// Catch-All Handler
+	// Any request that can not find a Handler that canHandle it
+	// ends in the callbacks below.
+	server.onNotFound(onRequest);
 
 	server.begin();
 	MDNS.addService("http", "tcp", 80);
@@ -104,10 +131,5 @@ void BTTRX_WIFI::setup()
 	Serial.printf(
 		"Ready! Open http://%s.local in your browser\n", WIFI_HOSTNAME);
 };
-
-void BTTRX_WIFI::run()
-{
-	server.handleClient();
-}
 
 #endif //ARDUINO

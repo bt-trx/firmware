@@ -29,7 +29,6 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "bttrx_wifi.h"
 #endif
 
-WebServer server;
 BTTRX_FSM bttrx_fsm;
 BTTRX_WIFI bttrx_wifi;
 bool wifi_started_ = false;
@@ -119,8 +118,5 @@ void setup()
 
 void loop()
 {
-	if (wifi_started_) {
-		bttrx_wifi.run();
-	};
 	bttrx_fsm.run();
 }
