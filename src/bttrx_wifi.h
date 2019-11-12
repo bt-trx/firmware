@@ -29,12 +29,21 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include <Update.h>
 
 #include "settings.h"
+#include "bttrx_control.h"
 
 extern const char *GIT_REVISION;
 
 class BTTRX_WIFI {
     public:
-	void setup();
+	AsyncWebServer server = AsyncWebServer(80);
+	void setup(BTTRX_CONTROL *);
+	void handleSet(AsyncWebServerRequest *);
+
+    private:
+	BTTRX_CONTROL *bttrx_control_;
+	void firmwareUpdateResponse(AsyncWebServerRequest *);
+	String resultPage(bool);
+	void onRequest(AsyncWebServerRequest *);
 };
 
 /* Style */

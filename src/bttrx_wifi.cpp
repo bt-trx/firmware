@@ -22,15 +22,13 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_wifi.h"
 
-AsyncWebServer server(80);
-
-void onRequest(AsyncWebServerRequest *request)
+void BTTRX_WIFI::onRequest(AsyncWebServerRequest *request)
 {
 	//Handle Unknown Request
 	request->send(404);
 }
 
-String resultPage(bool error)
+String BTTRX_WIFI::resultPage(bool error)
 {
 	String resultString = style + "<form>Firmware Update ";
 	if (error) {
@@ -42,8 +40,48 @@ String resultPage(bool error)
 	return resultString;
 }
 
-void BTTRX_WIFI::setup()
+void BTTRX_WIFI::firmwareUpdateResponse(AsyncWebServerRequest *request)
 {
+	AsyncWebServerResponse *response = request->beginResponse(
+		200, "text/html", resultPage(Update.hasError()));
+	response->addHeader("Connection", "close");
+	request->send(response);
+	if (!Update.hasError()) {
+		Serial.println("rebooting");
+		ESP.restart();
+	}
+}
+
+void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
+{
+	int paramsNr = request->params();
+
+	if (paramsNr == 1) {
+		string name  = request->getParam(0)->name().c_str();
+		string value = request->getParam(0)->value().c_str();
+		bttrx_control_->set(name, value);
+	}
+
+	for (int i = 0; i < paramsNr; i++) {
+		AsyncWebParameter *p = request->getParam(i);
+		Serial.print("Param name: ");
+		Serial.println(p->name());
+		Serial.print("Param value: ");
+		Serial.println(p->value());
+		Serial.println("------");
+	}
+
+	request->send(200, "text/plain", "message received");
+}
+
+void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
+{
+	if (control == nullptr) {
+		Serial.println("nullptr given");
+		return;
+	}
+	bttrx_control_ = control;
+
 	Serial.println("Configuring access point...");
 
 	WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
@@ -76,19 +114,10 @@ void BTTRX_WIFI::setup()
 	server.on(
 		"/update",
 		HTTP_POST,
-		[](AsyncWebServerRequest *request) {
-			AsyncWebServerResponse *response =
-				request->beginResponse(
-					200,
-					"text/html",
-					resultPage(Update.hasError()));
-			response->addHeader("Connection", "close");
-			request->send(response);
-			if (!Update.hasError()) {
-				Serial.println("rebooting");
-				ESP.restart();
-			}
-		},
+		std::bind(
+			&BTTRX_WIFI::firmwareUpdateResponse,
+			this,
+			std::placeholders::_1),
 		[](AsyncWebServerRequest *request,
 		   String filename,
 		   size_t index,
@@ -120,10 +149,16 @@ void BTTRX_WIFI::setup()
 			}
 		});
 
+	server.on(
+		"/set",
+		HTTP_GET,
+		std::bind(&BTTRX_WIFI::handleSet, this, std::placeholders::_1));
+
 	// Catch-All Handler
 	// Any request that can not find a Handler that canHandle it
 	// ends in the callbacks below.
-	server.onNotFound(onRequest);
+	server.onNotFound(
+		std::bind(&BTTRX_WIFI::onRequest, this, std::placeholders::_1));
 
 	server.begin();
 	MDNS.addService("http", "tcp", 80);

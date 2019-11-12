@@ -39,7 +39,7 @@ void checkForWifiStart()
 	ulong startTime = millis();
 	while (!digitalRead(PIN_BTN_0)) {
 		if (startTime + BTN_PRESS_WIFI_MODE_TIMEOUT < millis()) {
-			bttrx_wifi.setup();
+			bttrx_wifi.setup(&(bttrx_fsm.bttrx_control_));
 			wifi_started_ = true;
 			break;
 		}
