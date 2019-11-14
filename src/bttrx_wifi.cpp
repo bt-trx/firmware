@@ -112,6 +112,7 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
 		String website = index_html;
 		website.replace("%STYLE%", style_css);
+		website.replace("%GIT_REVISION%", GIT_REVISION);
 		AsyncWebServerResponse *response =
 			request->beginResponse(200, "text/html", website);
 		response->addHeader("Connection", "close");

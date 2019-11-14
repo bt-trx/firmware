@@ -67,7 +67,8 @@
 	<table border=0>
 	<tr><td><h1>Firmware Update</h1></td></tr>
 	<tr><td><input type='file' name='update' id='file'></td></tr>
-	<tr><td><input type='submit' class=btn value='Update'></td></tr>
+  <tr><td><input type='submit' class=btn value='Update'></td></tr>
+  <tr><td><center>Current Firmware Version: %GIT_REVISION%</center></td></tr>
 	</table>
 </form>
 
@@ -127,7 +128,7 @@
   var x = document.getElementById("snackbar");
 
   x.innerHTML = snackbarText;
-  
+
   /* Add the "show" class to DIV */
   x.className = "show";
 
