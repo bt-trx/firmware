@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<style type="text/css">
+%STYLE%
+</style>
+<body onload="getAllParameters()">
+<p class="title">bt-trx</p>
+<form>
+<table width=100%>
+  <tr><td colspan="4"><h1>Settings</h1></td></tr>
+  <tr><td>ADC Gain</td>
+    <td><select name="adc_gain" onchange='OnDropdownChange(this.form.adc_gain);'>
+    <option value="0">-27 dB</option>
+    <option value="1">-24 dB</option>
+    <option value="2">-21 dB</option>
+    <option value="3">-18 dB</option>
+    <option value="4">-15 dB</option>
+    <option value="5">-12 dB</option>
+    <option value="6">- 9 dB</option>
+    <option value="7">- 6 dB</option>
+    <option value="8" selected>- 3 dB</option>
+    <option value="9">  0 dB</option>
+    <option value="a">  3 dB</option>
+    <option value="b">  6 dB</option>
+    <option value="c">  9 dB</option>
+    <option value="d"> 12 dB</option>
+    <option value="e"> 15 dB</option>
+    <option value="f"> 18 dB</option>
+    <option value="10"> 21 dB</option>
+    <option value="11"> 24 dB</option>
+    <option value="12"> 27 dB</option>
+    <option value="13"> 30 dB</option>
+    <option value="14"> 33 dB</option>
+    <option value="15"> 36 dB</option>
+    <option value="16"> 39 dB</option>
+  </select></td>
+  <td>DAC Gain</td>
+    <td><select name="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
+      <option value="0">-42 dB</option>
+      <option value="1">-39 dB</option>
+      <option value="2">-36 dB</option>
+      <option value="3">-33 dB</option>
+      <option value="4">-30 dB</option>
+      <option value="5">-27 dB</option>
+      <option value="6">-24 dB</option>
+      <option value="7">-21 dB</option>
+      <option value="8">-18 dB</option>
+      <option value="9">-15 dB</option>
+      <option value="a">-12 dB</option>
+      <option value="b">- 9 dB</option>
+      <option value="c">- 6 dB</option>
+      <option value="d">- 3 dB</option>
+      <option value="e">  0 dB</option>
+      <option value="f">  3 dB</option>
+      <option value="10" selected>  6 dB</option>
+      <option value="11">  9 dB</option>
+      <option value="12"> 12 dB</option>
+      <option value="13"> 15 dB</option>
+      <option value="14"> 18 dB</option>
+      <option value="15"> 21 dB</option>
+      <option value="16"> 24 dB</option>
+  </select></td></tr>
+</table>
+</form>
+
+<form method='POST' action='/update' enctype='multipart/form-data' id='upload_form'>
+	<table border=0>
+	<tr><td><h1>Firmware Update</h1></td></tr>
+	<tr><td><input type='file' name='update' id='file'></td></tr>
+	<tr><td><input type='submit' class=btn value='Update'></td></tr>
+	</table>
+</form>
+
+<div id="snackbar">Some text some message..</div>
+</body>
+
+<script>
+ 
+  /*setInterval(function() {
+    Call a function repetatively with 2 Second interval
+    getData();
+  }, 2000); /* 2000mSeconds update rate*/
+
+  function setSelectedIndexByValue(s, v) {
+    for (var i = 0; i < s.options.length; i++) {
+      if (s.options[i].value == v) {
+        s.options[i].selected = true;
+        return;
+      }
+    }
+  }
+
+  function getAllParameters() {
+    getDropdownData("adc_gain");
+    getDropdownData("dac_gain");
+  };
+   
+  function getDropdownData(parameter) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        setSelectedIndexByValue(document.getElementById(parameter),
+                                this.responseText);
+      }
+    };
+    xhttp.open("GET", "get?id=" + parameter, true);
+    xhttp.send();
+  }
+
+  function OnDropdownChange(dropdown) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        showSnackbar(this.responseText);
+      }
+    };
+    var index  = dropdown.selectedIndex;
+    xhttp.open("GET",
+               "set?id=" 
+               + dropdown.name + "&value=" + dropdown.options[index].value,
+               true);
+    xhttp.send();
+  }
+
+  function showSnackbar(snackbarText) {
+  /* Get the snackbar DIV */
+  var x = document.getElementById("snackbar");
+
+  x.innerHTML = snackbarText;
+  
+  /* Add the "show" class to DIV */
+  x.className = "show";
+
+  /* After 3 seconds, remove the show class from DIV */
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+  }
+</script>
+</html>

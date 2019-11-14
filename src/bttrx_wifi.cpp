@@ -30,7 +30,7 @@ void BTTRX_WIFI::onRequest(AsyncWebServerRequest *request)
 
 String BTTRX_WIFI::resultPage(bool error)
 {
-	String resultString = style + "<form>Firmware Update ";
+	String resultString = "<style>" + style_css + "</style><form>Firmware Update ";
 	if (error) {
 		resultString += "FAILED";
 	} else {
@@ -56,22 +56,27 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
 {
 	int paramsNr = request->params();
 
-	if (paramsNr == 1) {
-		string name  = request->getParam(0)->name().c_str();
-		string value = request->getParam(0)->value().c_str();
-		bttrx_control_->set(name, value);
+	if (paramsNr != 2) {
+		// TODO Send Error to Website
+		return;
 	}
 
+	string name  = "";
+	string value = "";
+		
 	for (int i = 0; i < paramsNr; i++) {
 		AsyncWebParameter *p = request->getParam(i);
-		Serial.print("Param name: ");
-		Serial.println(p->name());
-		Serial.print("Param value: ");
-		Serial.println(p->value());
-		Serial.println("------");
+		if (p->name() == "id")
+		{ name = p->value().c_str(); }
+		else if (p->name() == "value")
+		{ value = p->value().c_str(); }
 	}
-
-	request->send(200, "text/plain", "message received");
+	if (name.empty() || value.empty()) {
+		// TODO Send Error to Website
+		return;
+	}
+	bttrx_control_->set(name, value);
+	request->send(200, "text/plain", "Setting changed");
 }
 
 void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
@@ -105,8 +110,10 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 
 	/*return index page which is stored in serverIndex */
 	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+		String website = index_html;
+		website.replace("%STYLE%", style_css);
 		AsyncWebServerResponse *response =
-			request->beginResponse(200, "text/html", serverIndex);
+			request->beginResponse(200, "text/html", website);
 		response->addHeader("Connection", "close");
 		request->send(response);
 	});

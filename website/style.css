@@ -1,0 +1,54 @@
+body{background:#3498db;font-family:sans-serif;font-size:14px;color:#777}
+.title{color:#fff; font-weight: bold; text-align: center; font-size: 3em; margin: 40px;}
+table{margin-left: auto; margin-right: auto; width: 100%;}
+td{text-align: center;}
+form{background:#fff;max-width:480px;margin:40px auto;padding:30px;border-radius:5px;text-align:center;box-shadow: 0px 2px 18px -4px rgba(0,0,0,0.75);}
+input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}
+input{border:0;padding:0 15px}
+.btn{background:#3498db;color:#fff;cursor:pointer; width: 60%}
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-color: #333; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  top: 30px; /* 30px from the top */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {top: 30px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {top: 30px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
