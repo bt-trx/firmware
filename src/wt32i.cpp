@@ -506,7 +506,8 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg)
 	if (splitted_msg[0] == "SET") {
 		msg->msg_type = kSETTING_UNKNOWN;
 		if (splitted_msg.size() == 5) {
-			if (splitted_msg[1] == "CONTROL" && splitted_msg[2] == "GAIN") {
+			if (splitted_msg[1] == "CONTROL" &&
+			    splitted_msg[2] == "GAIN") {
 				msg->msg_type = kSETTING_CONTROL_GAIN;
 			}
 		}

@@ -20,9 +20,10 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_control.h"
 
-BTTRX_CONTROL::BTTRX_CONTROL(SerialWrapper* _serial, WT32i* _wt32i)
-: serial_(_serial), wt32i_(_wt32i)
-{}
+BTTRX_CONTROL::BTTRX_CONTROL(SerialWrapper *_serial, WT32i *_wt32i)
+	: serial_(_serial), wt32i_(_wt32i)
+{
+}
 
 ResultType BTTRX_CONTROL::set(string name, string value)
 {
@@ -31,58 +32,61 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 	// Call handler method
 	ResultType result = kError;
 	switch (parameter) {
-		case kADCGain:
-			result = handleSetADCGain(value);
-			break;
-		case kDACGain:
-			result = handleSetDACGain(value);
-			break;
-		default:
-			return kError;
-			break;
+	case kADCGain:
+		result = handleSetADCGain(value);
+		break;
+	case kDACGain:
+		result = handleSetDACGain(value);
+		break;
+	default:
+		return kError;
+		break;
 	}
 	return result;
 }
 
-ResultType BTTRX_CONTROL::get(string name, string* value)
+ResultType BTTRX_CONTROL::get(string name, string *value)
 {
 	// Search for name in enum
 	ParameterType parameter = getParameter(name);
 
 	// Reply with value / call handler method
 	switch (parameter) {
-		case kADCGain:
-			*value = adc_gain_;
-			break;
-		case kDACGain:
-			*value = dac_gain_;
-			break;
-		default:
-			return kError;
-			break;
+	case kADCGain:
+		*value = adc_gain_;
+		break;
+	case kDACGain:
+		*value = dac_gain_;
+		break;
+	default:
+		return kError;
+		break;
 	}
 	return kSuccess;
 }
 
 void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 {
-	switch (type)
-	{
-		case kADCGain:
-			adc_gain_ = value;
+	switch (type) {
+	case kADCGain:
+		adc_gain_ = value;
 		break;
-		case kDACGain:
-			dac_gain_ = value;
+	case kDACGain:
+		dac_gain_ = value;
 		break;
-		default:
+	default:
 		break;
 	}
 }
 
 ParameterType BTTRX_CONTROL::getParameter(string name)
 {
-	if (name == "adc_gain") { return kADCGain; }
-	if (name == "dac_gain") { return kDACGain; }	
+	if (name == "adc_gain") {
+		return kADCGain;
+	}
+	if (name == "dac_gain") {
+		return kDACGain;
+	}
 	return kUnkownParameter;
 }
 

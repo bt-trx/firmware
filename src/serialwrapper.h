@@ -39,9 +39,9 @@ class SerialWrapperInterface {
 	{
 	}
 	virtual size_t println(const char *)     = 0;
-	virtual size_t println(string) = 0;
+	virtual size_t println(string)           = 0;
 	virtual size_t dbg_println(const char *) = 0;
-	virtual size_t dbg_println(string) = 0;
+	virtual size_t dbg_println(string)       = 0;
 	virtual ResultType waitForInputBlocking(
 		string, string * = NULL, uint32_t = BT_SERIAL_TIMEOUT) = 0;
 	virtual string readLineToString()                              = 0;

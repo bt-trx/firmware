@@ -31,19 +31,19 @@ enum ParameterType { kUnkownParameter, kADCGain, kDACGain };
 
 class BTTRX_CONTROL {
     public:
-    BTTRX_CONTROL(SerialWrapper*, WT32i*);
+	BTTRX_CONTROL(SerialWrapper *, WT32i *);
 	ResultType set(string, string);
-    ResultType get(string, string*);
-    void storeSetting(ParameterType, string);
+	ResultType get(string, string *);
+	void storeSetting(ParameterType, string);
 
     private:
-    SerialWrapper* serial_;
-    WT32i* wt32i_;
+	SerialWrapper *serial_;
+	WT32i *wt32i_;
 
-    ParameterType getParameter(string);
-    ResultType handleSetADCGain(string);
-    ResultType handleSetDACGain(string);
+	ParameterType getParameter(string);
+	ResultType handleSetADCGain(string);
+	ResultType handleSetDACGain(string);
 
-    string adc_gain_ = "0";
-    string dac_gain_ = "0";
+	string adc_gain_ = "0";
+	string dac_gain_ = "0";
 };

@@ -23,9 +23,10 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "splitstring.h"
 
 BTTRX_FSM::BTTRX_FSM()
-	: bttrx_control_(&serial_, &wt32i_), current_state_(STATE_INIT), led_connected_(PIN_LED_BLUE),
-	  led_busy_(PIN_LED_GREEN), helper_button_(PIN_BTN_0),
-	  ptt_button_(PIN_PTT_IN), ptt_output_(PIN_PTT_OUT, PIN_PTT_LED)		
+	: bttrx_control_(&serial_, &wt32i_), current_state_(STATE_INIT),
+	  led_connected_(PIN_LED_BLUE), led_busy_(PIN_LED_GREEN),
+	  helper_button_(PIN_BTN_0), ptt_button_(PIN_PTT_IN),
+	  ptt_output_(PIN_PTT_OUT, PIN_PTT_LED)
 {
 }
 
@@ -105,7 +106,7 @@ void BTTRX_FSM::handleStateConfigure()
 	led_busy_.on();
 	led_connected_.off();
 	ptt_output_.off();
-	
+
 	handleIncomingMessage();
 	if (current_state_ != STATE_CONFIGURE) {
 		return;

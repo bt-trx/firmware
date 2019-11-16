@@ -112,8 +112,8 @@ TEST_F(WT32iTest, set_success_valuenotset)
 	WT32i wt32i(&serialWrapperMock);
 
 	EXPECT_CALL(
-	serialWrapperMock,
-	println(Matcher<const char *>(StrEq("SET TEST 123"))));
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET TEST 123"))));
 
 	ASSERT_EQ(
 		ResultType::kSuccess, wt32i.set(string("TEST"), string("123")));
@@ -133,8 +133,8 @@ TEST_F(WT32iTest, setAudioGain_success)
 	WT32i wt32i(&serialWrapperMock);
 
 	EXPECT_CALL(
-	serialWrapperMock,
-	println(Matcher<const char *>(StrEq("SET CONTROL GAIN 2 3"))));
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET CONTROL GAIN 2 3"))));
 
 	ASSERT_EQ(
 		ResultType::kSuccess,
