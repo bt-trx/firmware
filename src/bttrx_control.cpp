@@ -44,6 +44,26 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 	return result;
 }
 
+ResultType BTTRX_CONTROL::get(string name, string* value)
+{
+	// Search for name in enum
+	ParameterType parameter = getParameter(name);
+
+	// Reply with value / call handler method
+	switch (parameter) {
+		case kADCGain:
+			*value = adc_gain_;
+			break;
+		case kDACGain:
+			*value = dac_gain_;
+			break;
+		default:
+			return kError;
+			break;
+	}
+	return kSuccess;
+}
+
 void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 {
 	switch (type)

@@ -9,7 +9,7 @@
 <table width=100%>
   <tr><td colspan="4"><h1>Settings</h1></td></tr>
   <tr><td>ADC Gain</td>
-    <td><select name="adc_gain" onchange='OnDropdownChange(this.form.adc_gain);'>
+    <td><select name="adc_gain" id="adc_gain" onchange='OnDropdownChange(this.form.adc_gain);'>
     <option value="0">-27 dB</option>
     <option value="1">-24 dB</option>
     <option value="2">-21 dB</option>
@@ -35,7 +35,7 @@
     <option value="16"> 39 dB</option>
   </select></td>
   <td>DAC Gain</td>
-    <td><select name="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
+    <td><select name="dac_gain" id="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
       <option value="0">-42 dB</option>
       <option value="1">-39 dB</option>
       <option value="2">-36 dB</option>
@@ -111,8 +111,9 @@
   function OnDropdownChange(dropdown) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
+      if (this.readyState == 4 /*&& this.status == 200*/) {
         showSnackbar(this.responseText);
+        getDropdownData(dropdown.name);
       }
     };
     var index  = dropdown.selectedIndex;
