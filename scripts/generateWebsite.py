@@ -9,6 +9,7 @@ print("Generating include file for website...")
 
 inputFiles = {
   "index_html": "website/index.html",
+  "update_result_html": "website/update_result.html",
   "style_css": "website/style.css",
   "script_js": "website/script.js"
 }

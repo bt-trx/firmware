@@ -30,15 +30,17 @@ void BTTRX_WIFI::onRequest(AsyncWebServerRequest *request)
 
 String BTTRX_WIFI::resultPage(bool error)
 {
-	String resultString =
-		"<style>" + style_css + "</style><form>Firmware Update ";
+	String resultString = "";
 	if (error) {
 		resultString += "FAILED";
 	} else {
 		resultString += "OK";
 	}
-	resultString += ", rebooting...</form>";
-	return resultString;
+	
+	String website = update_result_html;
+	website.replace("%STYLE%", style_css);
+	website.replace("%RESULT%", resultString);
+	return website;
 }
 
 void BTTRX_WIFI::firmwareUpdateResponse(AsyncWebServerRequest *request)
