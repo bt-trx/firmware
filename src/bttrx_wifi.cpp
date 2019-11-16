@@ -36,7 +36,7 @@ String BTTRX_WIFI::resultPage(bool error)
 	} else {
 		resultString += "OK";
 	}
-	
+
 	String website = update_result_html;
 	website.replace("%STYLE%", style_css);
 	website.replace("%RESULT%", resultString);
@@ -49,10 +49,9 @@ void BTTRX_WIFI::firmwareUpdateResponse(AsyncWebServerRequest *request)
 		200, "text/html", resultPage(Update.hasError()));
 	response->addHeader("Connection", "close");
 	request->send(response);
-	if (!Update.hasError()) {
-		Serial.println("rebooting");
-		ESP.restart();
-	}
+	delay(3000);
+	Serial.println("rebooting");
+	ESP.restart();
 }
 
 void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
