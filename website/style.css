@@ -7,7 +7,7 @@ input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}
 input{border:0;padding:0 15px}
 .btn{background:#3498db;color:#fff;cursor:pointer; width: 60%}
 
-/* The snackbar - position it at the bottom and in the middle of the screen */
+/* The Snackbar */
 #snackbar {
   visibility: hidden; /* Hidden by default. Visible on click */
   min-width: 250px; /* Set a default minimum width */
@@ -25,9 +25,7 @@ input{border:0;padding:0 15px}
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */
 #snackbar.show {
-  visibility: visible; /* Show the snackbar */
-  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
-  However, delay the fade out process for 2.5 seconds */
+  visibility: visible;
   -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
   animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
