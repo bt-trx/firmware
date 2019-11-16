@@ -23,7 +23,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "splitstring.h"
 
 BTTRX_FSM::BTTRX_FSM()
-	: bttrx_control_(&serial_), current_state_(STATE_INIT), led_connected_(PIN_LED_BLUE),
+	: bttrx_control_(&serial_, &wt32i_), current_state_(STATE_INIT), led_connected_(PIN_LED_BLUE),
 	  led_busy_(PIN_LED_GREEN), helper_button_(PIN_BTN_0),
 	  ptt_button_(PIN_PTT_IN), ptt_output_(PIN_PTT_OUT, PIN_PTT_LED)		
 {
@@ -105,6 +105,11 @@ void BTTRX_FSM::handleStateConfigure()
 	led_busy_.on();
 	led_connected_.off();
 	ptt_output_.off();
+	
+	handleIncomingMessage();
+	if (current_state_ != STATE_CONFIGURE) {
+		return;
+	}
 
 	// Enforce configuration
 	string friendly_name = "bt-trx-" + wt32i_.getBDAddressSuffix();
@@ -126,13 +131,12 @@ void BTTRX_FSM::handleStateConfigure()
 	// MITM_DISCARD_L4_KEY
 	wt32i_.set("CONTROL", "CONFIG", "0001 0000 00A0 1100");
 	wt32i_.set("CONTROL", "ECHO", "5"); // Do not echo issued commands
-	wt32i_.set(
-		"CONTROL",
-		"GAIN",
-		"8 10"); // Set input (ADC) and output (DAC) audio gain
 
 	// Future (needs iWrap 6.2)
 	// wt32i_.set("CONTROL", "HFPINIT", "SERVICE 1 SIGNAL 5");
+
+	// Read wt32i configuration
+	wt32i_.set();
 
 	setState(STATE_INQUIRY);
 }
@@ -238,6 +242,10 @@ void BTTRX_FSM::handleIncomingMessage()
 	wt32i_.getIncomingMessage(&msg);
 
 	switch (msg.msg_type) {
+	case kSETTING_CONTROL_GAIN:
+		bttrx_control_.storeSetting(kADCGain, splitString(msg.msg)[3]);
+		bttrx_control_.storeSetting(kDACGain, splitString(msg.msg)[4]);
+		break;
 	case kLIST_RESULT:
 		if (!wt32i_.getActiveConnections().empty()) {
 			// Immediately indicate mobile network availability to HFP device

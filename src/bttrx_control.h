@@ -22,21 +22,27 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "resulttype.h"
 #include "serialwrapper.h"
+#include "wt32i.h"
 
 #include <string>
 using namespace std;
 
-enum ParameterType { kUnkownParameter, kDACGain, kADCGain };
+enum ParameterType { kUnkownParameter, kADCGain, kDACGain };
 
 class BTTRX_CONTROL {
     public:
-    BTTRX_CONTROL(SerialWrapper*);
+    BTTRX_CONTROL(SerialWrapper*, WT32i*);
 	ResultType set(string, string);
+    void storeSetting(ParameterType, string);
 
     private:
     SerialWrapper* serial_;
+    WT32i* wt32i_;
 
     ParameterType getParameter(string);
     ResultType handleSetADCGain(string);
     ResultType handleSetDACGain(string);
+
+    string adc_gain_ = "0";
+    string dac_gain_ = "0";
 };

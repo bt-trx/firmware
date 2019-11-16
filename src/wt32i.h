@@ -45,7 +45,9 @@ class WT32i {
 	// Communication with WT32i device
 	ResultType reset();
 	ResultType available();
+	void set();
 	ResultType set(string, string = "", string = "");
+	ResultType setAudioGain(string, string);
 	ResultType performInquiry();
 	ResultType startInquiry();
 	bool inquiryRunning()

@@ -20,7 +20,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_control.h"
 
-BTTRX_CONTROL::BTTRX_CONTROL(SerialWrapper* _serial) : serial_(_serial)
+BTTRX_CONTROL::BTTRX_CONTROL(SerialWrapper* _serial, WT32i* _wt32i)
+: serial_(_serial), wt32i_(_wt32i)
 {}
 
 ResultType BTTRX_CONTROL::set(string name, string value)
@@ -34,12 +35,28 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 			result = handleSetADCGain(value);
 			break;
 		case kDACGain:
+			result = handleSetDACGain(value);
 			break;
 		default:
 			return kError;
 			break;
 	}
 	return result;
+}
+
+void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
+{
+	switch (type)
+	{
+		case kADCGain:
+			adc_gain_ = value;
+		break;
+		case kDACGain:
+			dac_gain_ = value;
+		break;
+		default:
+		break;
+	}
 }
 
 ParameterType BTTRX_CONTROL::getParameter(string name)
@@ -49,25 +66,24 @@ ParameterType BTTRX_CONTROL::getParameter(string name)
 	return kUnkownParameter;
 }
 
-ResultType BTTRX_CONTROL::handleSetADCGain(string value)
+ResultType BTTRX_CONTROL::handleSetADCGain(string adc_gain)
 {
-	string output = "Set ADC Gain to: " + value;
-	serial_->dbg_println(output);
+	serial_->dbg_println("Set ADC Gain to: " + adc_gain);
 
 	// TODO Check value range
 
+	adc_gain_ = adc_gain;
 	// Set on wt32i
-
-	return kSuccess;
+	return wt32i_->setAudioGain(adc_gain_, dac_gain_);
 }
 
-ResultType BTTRX_CONTROL::handleSetDACGain(string value)
+ResultType BTTRX_CONTROL::handleSetDACGain(string dac_gain)
 {
-	string output = "Set DAC Gain to: " + value;
-	serial_->dbg_println(output);
+	serial_->dbg_println("Set DAC Gain to: " + dac_gain);
+
 	// TODO Check value range
 
+	dac_gain_ = dac_gain;
 	// Set on wt32i
-
-	return kSuccess;
+	return wt32i_->setAudioGain(adc_gain_, dac_gain_);
 }

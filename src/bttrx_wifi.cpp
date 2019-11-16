@@ -56,11 +56,6 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
 {
 	int paramsNr = request->params();
 
-	if (paramsNr != 2) {
-		// TODO Send Error to Website
-		return;
-	}
-
 	string name  = "";
 	string value = "";
 		
@@ -68,15 +63,20 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
 		AsyncWebParameter *p = request->getParam(i);
 		if (p->name() == "id")
 		{ name = p->value().c_str(); }
-		else if (p->name() == "value")
+		if (p->name() == "value")
 		{ value = p->value().c_str(); }
 	}
 	if (name.empty() || value.empty()) {
 		// TODO Send Error to Website
 		return;
 	}
-	bttrx_control_->set(name, value);
-	request->send(200, "text/plain", "Setting changed");
+	if (bttrx_control_->set(name, value) == kSuccess)
+	{
+		request->send(200, "text/plain", "Setting changed");
+	}
+	else {
+		request->send(500, "text/plain", "Error");
+	}
 }
 
 void BTTRX_WIFI::setup(BTTRX_CONTROL *control)

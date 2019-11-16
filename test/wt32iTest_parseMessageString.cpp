@@ -64,6 +64,30 @@ TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_empty)
 	ASSERT_EQ(input, msg.msg);
 }
 
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_CONTROL_GAIN)
+{
+	WT32i wt32i(nullptr);
+	iWrapMessage msg;
+	string input =
+		"SET CONTROL GAIN 8 10";
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+	ASSERT_EQ(iWrapMessageType::kSETTING_CONTROL_GAIN, msg.msg_type);
+	ASSERT_EQ(input, msg.msg);
+}
+
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_UNKOWN)
+{
+	WT32i wt32i(nullptr);
+	iWrapMessage msg;
+	string input =
+		"SET DEADBEEF";
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+	ASSERT_EQ(iWrapMessageType::kSETTING_UNKNOWN, msg.msg_type);
+	ASSERT_EQ(input, msg.msg);
+}
+
 TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_LIST)
 {
 	WT32i wt32i(nullptr);

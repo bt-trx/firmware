@@ -28,6 +28,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 enum iWrapMessageType {
 	kEmpty,
 	kUnknown,
+	kSETTING_CONTROL_GAIN,
+	kSETTING_UNKNOWN,
 	kLIST_RESULT,
 	kINQUIRY_RESULT,
 	kHFPAG_READY,
