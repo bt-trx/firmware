@@ -48,6 +48,7 @@ class WT32i {
 	void set();
 	ResultType set(string, string = "", string = "");
 	ResultType setAudioGain(string, string);
+	ResultType setPinCode(string);
 	ResultType performInquiry();
 	ResultType startInquiry();
 	bool inquiryRunning()

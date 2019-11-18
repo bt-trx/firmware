@@ -38,6 +38,9 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 	case kDACGain:
 		result = handleSetDACGain(value);
 		break;
+	case kPinCode:
+		result = handleSetPinCode(value);
+		break;
 	default:
 		return kError;
 		break;
@@ -57,6 +60,9 @@ ResultType BTTRX_CONTROL::get(string name, string *value)
 		break;
 	case kDACGain:
 		*value = dac_gain_;
+		break;
+	case kPinCode:
+		*value = pin_code_;
 		break;
 	default:
 		return kError;
@@ -83,6 +89,9 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 	case kDACGain:
 		dac_gain_ = value;
 		break;
+	case kPinCode:
+		pin_code_ = value;
+		break;
 	default:
 		break;
 	}
@@ -95,6 +104,9 @@ ParameterType BTTRX_CONTROL::getParameter(string name)
 	}
 	if (name == "dac_gain") {
 		return kDACGain;
+	}
+	if (name == "pin_code") {
+		return kPinCode;
 	}
 	return kUnkownParameter;
 }
@@ -119,4 +131,18 @@ ResultType BTTRX_CONTROL::handleSetDACGain(string dac_gain)
 	dac_gain_ = dac_gain;
 	// Set on wt32i
 	return wt32i_->setAudioGain(adc_gain_, dac_gain_);
+}
+
+ResultType BTTRX_CONTROL::handleSetPinCode(string pin_code)
+{
+	serial_->dbg_println("Set PIN to: " + pin_code);
+
+	// TODO Check value range
+	if (pin_code.length() != 4) {
+		return kError;
+	}
+
+	pin_code_ = pin_code;
+	// Set on wt32i
+	return wt32i_->setPinCode(pin_code_);
 }

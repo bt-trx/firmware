@@ -10,7 +10,20 @@ function setSelectedIndexByValue(s, v) {
 function getAllParameters() {
   getDropdownData("adc_gain");
   getDropdownData("dac_gain");
+  getData("pin_code");
 };
+
+function getData(parameter) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = document.getElementById(parameter);
+      x.value = this.responseText;
+    }
+  };
+  xhttp.open("GET", "get?id=" + parameter, true);
+  xhttp.send();
+}
 
 function getDropdownData(parameter) {
   var xhttp = new XMLHttpRequest();
@@ -21,6 +34,17 @@ function getDropdownData(parameter) {
     }
   };
   xhttp.open("GET", "get?id=" + parameter, true);
+  xhttp.send();
+}
+
+function setData(name, value) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 /*&& this.status == 200*/) {
+      showSnackbar(this.responseText);
+    }
+  };
+  xhttp.open("GET", "set?id=" + name + "&value=" + value, true);
   xhttp.send();
 }
 
@@ -40,14 +64,14 @@ function OnDropdownChange(dropdown) {
   xhttp.send();
 }
 
-function OnButtonClick(button) {
+function OnButtonClick(actionname) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 /*&& this.status == 200*/) {
       showSnackbar(this.responseText);
     }
   };
-  xhttp.open("GET", "action?id=" + button, true);
+  xhttp.open("GET", "action?id=" + actionname, true);
   xhttp.send();
 }
 

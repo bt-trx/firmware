@@ -27,7 +27,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include <string>
 using namespace std;
 
-enum ParameterType { kUnkownParameter, kADCGain, kDACGain };
+enum ParameterType { kUnkownParameter, kADCGain, kDACGain, kPinCode };
 
 class BTTRX_CONTROL {
     public:
@@ -44,7 +44,9 @@ class BTTRX_CONTROL {
 	ParameterType getParameter(string);
 	ResultType handleSetADCGain(string);
 	ResultType handleSetDACGain(string);
+	ResultType handleSetPinCode(string);
 
 	string adc_gain_ = "0";
 	string dac_gain_ = "0";
+	string pin_code_ = "0000";
 };

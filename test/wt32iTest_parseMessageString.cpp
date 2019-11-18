@@ -76,6 +76,18 @@ TEST_F(WT32i_parseMessageString_Test,
 	ASSERT_EQ(input, msg.msg);
 }
 
+TEST_F(WT32i_parseMessageString_Test,
+       parseMessageString_success_SET_BT_AUTH)
+{
+	WT32i wt32i(nullptr);
+	iWrapMessage msg;
+	string input = "SET BT AUTH * 2342";
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+	ASSERT_EQ(iWrapMessageType::kSETTING_PIN_CODE, msg.msg_type);
+	ASSERT_EQ(input, msg.msg);
+}
+
 TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_UNKOWN)
 {
 	WT32i wt32i(nullptr);

@@ -5,10 +5,10 @@
 <body onload="getAllParameters()">
 <p class="title">bt-trx</p>
 <form>
-<table width=100%>
-  <tr><td colspan="4"><h1>Settings</h1></td></tr>
+<h1>Settings</h1>
+<table width=100%>  
   <tr><td>ADC Gain</td>
-    <td><select name="adc_gain" id="adc_gain" onchange='OnDropdownChange(this.form.adc_gain);'>
+    <td><select class=slct name="adc_gain" id="adc_gain" onchange='OnDropdownChange(this.form.adc_gain);'>
     <option value="0">-27 dB</option>
     <option value="1">-24 dB</option>
     <option value="2">-21 dB</option>
@@ -34,7 +34,7 @@
     <option value="16"> 39 dB</option>
   </select></td></tr>
   <tr><td>DAC Gain</td>
-    <td><select name="dac_gain" id="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
+    <td><select class=slct name="dac_gain" id="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
       <option value="0">-42 dB</option>
       <option value="1">-39 dB</option>
       <option value="2">-36 dB</option>
@@ -59,8 +59,13 @@
       <option value="15"> 21 dB</option>
       <option value="16"> 24 dB</option>
   </select></td></tr>
+  <tr>
+    <td>Bluetooth PIN Code</td>
+    <td><input type="text" name="pin_code" id="pin_code" class=pin maxlength=4 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+      <input type="button" class=btn value="Set" onclick='setData("pin_code", this.form.pin_code.value);'></td>
+  </tr>
   <tr><td>Reset Bluetooth Pairings</td>
-  <td><input type="button" value="reset" onclick='OnButtonClick("resetBTPairings");'></td></tr>
+  <td><input type="button" class=btn value="Reset" onclick='OnButtonClick("resetBTPairings");'></td></tr>
 </table>
 </form>
 

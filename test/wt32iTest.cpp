@@ -141,6 +141,19 @@ TEST_F(WT32iTest, setAudioGain_success)
 		wt32i.setAudioGain(string("2"), string("3")));
 }
 
+TEST_F(WT32iTest, setPinCode_success)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET BT AUTH * 2342"))));
+
+	ASSERT_EQ(
+		ResultType::kSuccess,
+		wt32i.setPinCode(string("2342")));
+}
+
 TEST_F(WT32iTest, available_success)
 {
 	WT32i wt32i(&serialWrapperMock);

@@ -29,6 +29,7 @@ enum iWrapMessageType {
 	kEmpty,
 	kUnknown,
 	kSETTING_CONTROL_GAIN,
+	kSETTING_PIN_CODE,
 	kSETTING_UNKNOWN,
 	kLIST_RESULT,
 	kINQUIRY_RESULT,

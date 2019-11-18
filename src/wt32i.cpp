@@ -130,6 +130,21 @@ ResultType WT32i::setAudioGain(string adc_gain, string dac_gain)
 }
 
 /**
+ * @brief Set BT Pairing PIN
+ * 
+ * see UG218 6.51
+ * 
+ * @param pin 4-digit PIN Code
+ * @return ResultType 
+ */
+ResultType WT32i::setPinCode(string pin_code)
+{
+	string output = "SET BT AUTH * " + pin_code;
+	serial_->println(output.c_str());
+	return kSuccess;
+}
+
+/**
  * @brief Request BD Address of the WT32i module
  * 
  * @param bdaddress BD Address of the WT32i module (output)
@@ -518,6 +533,10 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg)
 			if (splitted_msg[1] == "CONTROL" &&
 			    splitted_msg[2] == "GAIN") {
 				msg->msg_type = kSETTING_CONTROL_GAIN;
+			}
+			if (splitted_msg[1] == "BT" &&
+					splitted_msg[2] == "AUTH") {
+				msg->msg_type = kSETTING_PIN_CODE;
 			}
 		}
 	} else if (splitted_msg[0] == "LIST") {

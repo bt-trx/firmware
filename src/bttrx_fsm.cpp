@@ -247,6 +247,9 @@ void BTTRX_FSM::handleIncomingMessage()
 		bttrx_control_.storeSetting(kADCGain, splitString(msg.msg)[3]);
 		bttrx_control_.storeSetting(kDACGain, splitString(msg.msg)[4]);
 		break;
+	case kSETTING_PIN_CODE:
+		bttrx_control_.storeSetting(kPinCode, splitString(msg.msg)[4]);
+		break;
 	case kLIST_RESULT:
 		if (!wt32i_.getActiveConnections().empty()) {
 			// Immediately indicate mobile network availability to HFP device
