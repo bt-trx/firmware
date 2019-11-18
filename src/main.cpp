@@ -112,6 +112,11 @@ void setup()
 	header.append(GIT_REVISION);
 	SERIAL_DBG.println(header.c_str());
 
+	// Print Chip ID
+	uint64_t chipid = ESP.getEfuseMac();
+	SERIAL_DBG.printf("ESP32 ID: %04X",(uint16_t)(chipid>>32));
+	SERIAL_DBG.printf("%08X\n",(uint32_t)chipid);
+
 	// Check whether to start Wifi
 	checkForWifiStart();
 }
