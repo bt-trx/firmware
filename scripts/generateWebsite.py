@@ -28,7 +28,7 @@ for inputFile in inputFiles:
       line = line.strip() # Remove leading and trailing spaces
       line = line.split('//', 1)[0] # Remove comments starting with //
       line = line.replace( '\n', '' ) # Remove newlines
-      line = line.replace( '"', '\'') # Convert " to '
+      line = line.replace( '"', '\\"') # Escape " characters
       line = re.sub(r"\/\*.*\*\/", "", line) # Remove comments within /* */
       line = re.sub(r"\/\*.*\*\/", "", line) # Remove comments within /* */
       
