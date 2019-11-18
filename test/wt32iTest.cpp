@@ -201,6 +201,18 @@ TEST_F(WT32iTest, list_success_1result)
 	ASSERT_EQ(0, result[0].compare("de:ad:be:ef:ca:fe"));
 }
 
+TEST_F(WT32iTest, resetBTPairings)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(
+			StrEq("SET BT PAIR *"))));
+
+	wt32i.resetBTPairings();
+}
+
 TEST_F(WT32iTest, connectHFPAG_success_without_SSP)
 {
 	WT32i wt32i(&serialWrapperMock);

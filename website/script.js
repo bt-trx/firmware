@@ -40,6 +40,17 @@ function OnDropdownChange(dropdown) {
   xhttp.send();
 }
 
+function OnButtonClick(button) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 /*&& this.status == 200*/) {
+      showSnackbar(this.responseText);
+    }
+  };
+  xhttp.open("GET", "action?id=" + button, true);
+  xhttp.send();
+}
+
 function showSnackbar(snackbarText) {
 /* Get the snackbar DIV */
 var x = document.getElementById("snackbar");

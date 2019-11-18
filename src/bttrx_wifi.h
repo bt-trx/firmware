@@ -40,6 +40,7 @@ class BTTRX_WIFI {
 	void setup(BTTRX_CONTROL *);
 	void handleSet(AsyncWebServerRequest *);
 	void handleGet(AsyncWebServerRequest *);
+	void handleAction(AsyncWebServerRequest *);
 
     private:
 	BTTRX_CONTROL *bttrx_control_;

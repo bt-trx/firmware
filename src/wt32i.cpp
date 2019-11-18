@@ -243,6 +243,15 @@ ResultType WT32i::readActiveConnections()
 }
 
 /**
+ * @brief Remove all pairings
+ * This is useful in case a pairing with a device
+ * went wrong and is stuck in a deadlock.
+ */
+void WT32i::resetBTPairings() {
+	serial_->println("SET BT PAIR *");
+}
+
+/**
  * @brief Get list of active connections
  * Blocks until answer or timeout
  *

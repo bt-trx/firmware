@@ -65,6 +65,15 @@ ResultType BTTRX_CONTROL::get(string name, string *value)
 	return kSuccess;
 }
 
+ResultType BTTRX_CONTROL::action(string name)
+{
+	if (name == "resetBTPairings") {
+		wt32i_->resetBTPairings();
+		return kSuccess;
+	}
+	return kError;
+}
+
 void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 {
 	switch (type) {

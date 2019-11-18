@@ -56,6 +56,7 @@ class WT32i {
 	}
 	ResultType list();
 	ResultType readActiveConnections();
+	void resetBTPairings();
 	ResultType connectHFPAG(string);
 	ResultType connectHFPAGnonblocking(string);
 	ResultType setStatus(string, string);

@@ -32,8 +32,8 @@
     <option value="14"> 33 dB</option>
     <option value="15"> 36 dB</option>
     <option value="16"> 39 dB</option>
-  </select></td>
-  <td>DAC Gain</td>
+  </select></td></tr>
+  <tr><td>DAC Gain</td>
     <td><select name="dac_gain" id="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
       <option value="0">-42 dB</option>
       <option value="1">-39 dB</option>
@@ -59,6 +59,8 @@
       <option value="15"> 21 dB</option>
       <option value="16"> 24 dB</option>
   </select></td></tr>
+  <tr><td>Reset Bluetooth Pairings</td>
+  <td><input type="button" value="reset" onclick='OnButtonClick("resetBTPairings");'></td></tr>
 </table>
 </form>
 

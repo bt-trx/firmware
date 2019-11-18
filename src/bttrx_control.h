@@ -34,6 +34,7 @@ class BTTRX_CONTROL {
 	BTTRX_CONTROL(SerialWrapper *, WT32i *);
 	ResultType set(string, string);
 	ResultType get(string, string *);
+	ResultType action(string);
 	void storeSetting(ParameterType, string);
 
     private:

@@ -106,6 +106,30 @@ void BTTRX_WIFI::handleGet(AsyncWebServerRequest *request)
 	}
 }
 
+void BTTRX_WIFI::handleAction(AsyncWebServerRequest *request)
+{
+	int paramsNr = request->params();
+
+	string name = "";
+
+	for (int i = 0; i < paramsNr; i++) {
+		AsyncWebParameter *p = request->getParam(i);
+		if (p->name() == "id") {
+			name = p->value().c_str();
+		}
+	}
+	if (name.empty()) {
+		// TODO Send Error to Website
+		return;
+	}
+
+	if (bttrx_control_->action(name) == kSuccess) {
+		request->send(200, "text/plain", "Success");
+		return;
+	}
+	request->send(500, "text/plain", "Error");
+}
+
 void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 {
 	if (control == nullptr) {
@@ -194,6 +218,11 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 		"/get",
 		HTTP_GET,
 		std::bind(&BTTRX_WIFI::handleGet, this, std::placeholders::_1));
+
+	server.on(
+		"/action",
+		HTTP_GET,
+		std::bind(&BTTRX_WIFI::handleAction, this, std::placeholders::_1));
 
 	// Catch-All Handler
 	// Any request that can not find a Handler that canHandle it
