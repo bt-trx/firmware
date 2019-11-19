@@ -32,4 +32,5 @@ matrix:
       draft: true
       on:
         repo: bt-trx/firmware
-      tags: true
+        tags: true
+        all_branches: true
