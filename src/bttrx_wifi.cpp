@@ -28,11 +28,12 @@ void BTTRX_WIFI::onRequest(AsyncWebServerRequest *request)
 	request->send(404);
 }
 
-String BTTRX_WIFI::resultPage(bool error)
+String BTTRX_WIFI::resultPage(uint8_t error)
 {
 	String resultString = "";
 	if (error) {
-		resultString += "FAILED";
+		resultString += "FAILED, Errorcode: ";
+		resultString += error;
 	} else {
 		resultString += "OK";
 	}
@@ -46,7 +47,7 @@ String BTTRX_WIFI::resultPage(bool error)
 void BTTRX_WIFI::firmwareUpdateResponse(AsyncWebServerRequest *request)
 {
 	AsyncWebServerResponse *response = request->beginResponse(
-		200, "text/html", resultPage(Update.hasError()));
+		200, "text/html", resultPage(Update.getError()));
 	response->addHeader("Connection", "close");
 	request->send(response);
 	delay(3000);
