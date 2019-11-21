@@ -7,7 +7,7 @@
 <form>
 <h1>Settings</h1>
 <table width=100%>  
-  <tr><td>ADC Gain</td>
+  <tr><td>ADC Gain (Audio from TRX)</td>
     <td><select class=slct name="adc_gain" id="adc_gain" onchange='OnDropdownChange(this.form.adc_gain);'>
     <option value="0">-27 dB</option>
     <option value="1">-24 dB</option>
@@ -33,7 +33,7 @@
     <option value="15"> 36 dB</option>
     <option value="16"> 39 dB</option>
   </select></td></tr>
-  <tr><td>DAC Gain</td>
+  <tr><td>DAC Gain (Audio to TRX)</td>
     <td><select class=slct name="dac_gain" id="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
       <option value="0">-42 dB</option>
       <option value="1">-39 dB</option>
@@ -70,7 +70,7 @@
 </form>
 
 <form method='POST' action='/update' enctype='multipart/form-data' id='upload_form'>
-	<table border=0>
+	<table>
 	<tr><td><h1>Firmware Update</h1></td></tr>
 	<tr><td><input type='file' name='update' id='file'></td></tr>
   <tr><td><input type='submit' class=btn value='Update'></td></tr>
