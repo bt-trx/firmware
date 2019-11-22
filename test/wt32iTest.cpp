@@ -149,9 +149,7 @@ TEST_F(WT32iTest, setPinCode_success)
 		serialWrapperMock,
 		println(Matcher<const char *>(StrEq("SET BT AUTH * 2342"))));
 
-	ASSERT_EQ(
-		ResultType::kSuccess,
-		wt32i.setPinCode(string("2342")));
+	ASSERT_EQ(ResultType::kSuccess, wt32i.setPinCode(string("2342")));
 }
 
 TEST_F(WT32iTest, available_success)
@@ -220,8 +218,7 @@ TEST_F(WT32iTest, resetBTPairings)
 
 	EXPECT_CALL(
 		serialWrapperMock,
-		println(Matcher<const char *>(
-			StrEq("SET BT PAIR *"))));
+		println(Matcher<const char *>(StrEq("SET BT PAIR *"))));
 
 	wt32i.resetBTPairings();
 }

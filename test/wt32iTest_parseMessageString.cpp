@@ -76,8 +76,7 @@ TEST_F(WT32i_parseMessageString_Test,
 	ASSERT_EQ(input, msg.msg);
 }
 
-TEST_F(WT32i_parseMessageString_Test,
-       parseMessageString_success_SET_BT_AUTH)
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_BT_AUTH)
 {
 	WT32i wt32i(nullptr);
 	iWrapMessage msg;

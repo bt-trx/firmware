@@ -262,7 +262,8 @@ ResultType WT32i::readActiveConnections()
  * This is useful in case a pairing with a device
  * went wrong and is stuck in a deadlock.
  */
-void WT32i::resetBTPairings() {
+void WT32i::resetBTPairings()
+{
 	serial_->println("SET BT PAIR *");
 }
 
@@ -535,7 +536,7 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg)
 				msg->msg_type = kSETTING_CONTROL_GAIN;
 			}
 			if (splitted_msg[1] == "BT" &&
-					splitted_msg[2] == "AUTH") {
+			    splitted_msg[2] == "AUTH") {
 				msg->msg_type = kSETTING_PIN_CODE;
 			}
 		}

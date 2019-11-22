@@ -20,7 +20,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_control.h"
 
-BTTRX_CONTROL::BTTRX_CONTROL(SerialWrapper *_serial, WT32i *_wt32i)
+BTTRX_CONTROL::BTTRX_CONTROL(
+	SerialWrapperInterface *_serial, WT32iInterface *_wt32i)
 	: serial_(_serial), wt32i_(_wt32i)
 {
 }

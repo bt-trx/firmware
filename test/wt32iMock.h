@@ -20,33 +20,11 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
-#include "resulttype.h"
-#include "serialwrapper.h"
-#include "wt32i.h"
+#include "../src/wt32i.h"
 
-#include <string>
-using namespace std;
-
-enum ParameterType { kUnkownParameter, kADCGain, kDACGain, kPinCode };
-
-class BTTRX_CONTROL {
+class WT32iMock : public WT32iInterface {
     public:
-	BTTRX_CONTROL(SerialWrapperInterface *, WT32iInterface *);
-	ResultType set(string, string);
-	ResultType get(string, string *);
-	ResultType action(string);
-	void storeSetting(ParameterType, string);
-
-    private:
-	SerialWrapperInterface *serial_;
-	WT32iInterface *wt32i_;
-
-	ParameterType getParameter(string);
-	ResultType handleSetADCGain(string);
-	ResultType handleSetDACGain(string);
-	ResultType handleSetPinCode(string);
-
-	string adc_gain_ = "0";
-	string dac_gain_ = "0";
-	string pin_code_ = "0000";
+	MOCK_METHOD0(resetBTPairings, void());
+	MOCK_METHOD2(setAudioGain, ResultType(string, string));
+	MOCK_METHOD1(setPinCode, ResultType(string));
 };

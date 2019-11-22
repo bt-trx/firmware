@@ -33,7 +33,14 @@ using std::vector;
 
 typedef int link_id_t;
 
-class WT32i {
+class WT32iInterface {
+    public:
+	virtual void resetBTPairings()                  = 0;
+	virtual ResultType setAudioGain(string, string) = 0;
+	virtual ResultType setPinCode(string)           = 0;
+};
+
+class WT32i : public WT32iInterface {
     public:
 	WT32i(){};
 	WT32i(SerialWrapperInterface *);
