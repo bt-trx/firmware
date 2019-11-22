@@ -1,58 +1,59 @@
 body{
   background:#3498db;
   font-family:sans-serif;
-  font-size:14px;
-  color:#777
+  color:#777;
+  min-width: 20em;
+  text-align: center;
 }
 
 .title{
   color:#fff;
   font-weight: bold;
-  text-align: center;
   font-size: 3em;
-  margin: 40px;
-}
-
-table{
-  margin-left: auto; 
-  margin-right: auto;
-  width: 100%;
-}
-
-td{
-  text-align: center;
-  font-size: 1.1em;
+  margin: 0.6em;
 }
 
 form{
   background:#fff;
-  max-width:480px;
-  margin:40px auto;
-  padding:30px;
+  max-width:30em;
+  margin:2em auto;
+  padding:0.5em;
   border-radius:5px;
-  text-align:center;
   box-shadow: 0px 2px 18px -4px rgba(0,0,0,0.75);
 }
 
-input,.slct{
-  height:44px;
+table{
+  width: 100%;
+}
+td{
+  width: 50%;
+}
+td.descr{
+  text-align: right;
+}
+td.set{
+  text-align: center;
+}
+
+input,select{
+  height:3em;
   border-radius:4px;
-  margin:10px auto;
-  font-size:15px;
+  margin:0.8em auto;
   border:none;
-  padding:0 15px;
+  padding:0 1em;
+  font-size: 0.8em;
 }
 
-.pin {
-  background-color: #eeeeee;
-  width: 2.2em;
-}
-
-.btn,.slct{
+.btn,select{
   background:#3498db;
   color:#fff;
   cursor:pointer;
-  width: 60%;
+  min-width: 6em;
+}
+
+.pin {
+  background-color: #eee;
+  width: 2.3em;
 }
 
 /* The Snackbar */
