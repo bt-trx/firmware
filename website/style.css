@@ -44,16 +44,23 @@ input,select{
   font-size: 0.8em;
 }
 
-.btn,select{
+input[type=button],
+input[type=submit],
+select{
   background:#3498db;
   color:#fff;
   cursor:pointer;
   min-width: 6em;
 }
 
-.text {
+input[type=text] {
   background-color: #eee;
+}
+.textshort {
   width: 2.3em;
+}
+.textmd5{
+  width: 18em;
 }
 
 /* The Snackbar */

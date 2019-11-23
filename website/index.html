@@ -73,20 +73,20 @@
   <tr><td colspan=2><h2>PTT</h2></td></tr>
   <tr>
     <td class=descr>PTT Hang Time<br>(0-999 ms)</td>
-    <td class=set><input type="text" name="ptt_hang_time" id="ptt_hang_time" class=text maxlength=3 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
-      <input type="button" class=btn value="Set" onclick='setData("ptt_hang_time", this.form.ptt_hang_time.value);'>
+    <td class=set><input type="text" name="ptt_hang_time" id="ptt_hang_time" class=textshort maxlength=3 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+      <input type="button" value="Set" onclick='setData("ptt_hang_time", this.form.ptt_hang_time.value);'>
     </td>
   </tr>
   <tr><td colspan=2><h2>Bluetooth</h2></td></tr>
   <tr>
     <td class=descr>Bluetooth PIN Code</td>
-    <td class=set><input type="text" name="pin_code" id="pin_code" class=text maxlength=4 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
-      <input type="button" class=btn value="Set" onclick='setData("pin_code", this.form.pin_code.value);'>
+    <td class=set><input type="text" name="pin_code" id="pin_code" class=textshort maxlength=4 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+      <input type="button" value="Set" onclick='setData("pin_code", this.form.pin_code.value);'>
     </td>
   </tr>
   <tr>
     <td class=descr>Reset Bluetooth Pairings</td>
-    <td class=set><input type="button" class=btn value="Reset" onclick='OnButtonClick("resetBTPairings");'></td>
+    <td class=set><input type="button" value="Reset" onclick='OnButtonClick("resetBTPairings");'></td>
   </tr>
 </table>
 </form>
@@ -94,8 +94,9 @@
 <form method='POST' action='/update' enctype='multipart/form-data' id='upload_form'>
 	<table>
 	<tr><td><h1>Firmware Update</h1></td></tr>
-	<tr><td><input type='file' name='update' id='file'></td></tr>
-  <tr><td><input type='submit' class=btn value='Update'></td></tr>
+  <tr><td><input type='file' name='update' id='file'></td></tr>
+  <tr><td>MD5 Hash (optional): <input type="text" name="update_md5" class=textmd5 maxlength=32></td></tr>
+  <tr><td><input type='submit' value='Update'></td></tr>
   <tr><td>Current Firmware Version: %GIT_REVISION%</td></tr>
 	</table>
 </form>

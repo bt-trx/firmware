@@ -82,6 +82,14 @@ String BTTRX_WIFI::updateErrorcodeToString(uint8_t update_error)
 
 void BTTRX_WIFI::firmwareUpdateResponse(AsyncWebServerRequest *request)
 {
+	//Check if MD5 parameter exists
+	if(request->hasParam("update_md5", true))
+	{
+		AsyncWebParameter* md5_hash = request->getParam("update_md5", true);				
+		SERIAL_DBG.printf("MD5 Hash: %s\n", md5_hash->value().c_str());
+		Update.setMD5(md5_hash->value().c_str());
+	}
+	
 	AsyncWebServerResponse *response = request->beginResponse(
 		200, "text/html", resultPage(Update.getError()));
 	response->addHeader("Connection", "close");
@@ -223,7 +231,7 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 		   bool final) {
 			if (!index) {
 				Serial.printf(
-					"Update Start: %s\n", filename.c_str());
+					"Update Start: %s\n", filename.c_str());				
 				if (!Update.begin(
 					    (ESP.getFreeSketchSpace() - 0x1000) &
 					    0xFFFFF000)) {
