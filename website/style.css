@@ -35,7 +35,8 @@ td.set{
   text-align: center;
 }
 
-input,select{
+input,
+select{
   height:3em;
   border-radius:4px;
   margin:0.8em auto;
@@ -44,14 +45,16 @@ input,select{
   font-size: 0.8em;
 }
 
-.btn,select{
+input[type=button],
+input[type=submit],
+select{
   background:#3498db;
   color:#fff;
   cursor:pointer;
   min-width: 6em;
 }
 
-.text {
+input[type=text] {
   background-color: #eee;
   width: 2.3em;
 }
