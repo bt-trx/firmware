@@ -20,6 +20,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_control.h"
 
+extern Preferences preferences;
+
 BTTRX_CONTROL::BTTRX_CONTROL(
 	SerialWrapperInterface *_serial, WT32iInterface *_wt32i)
 	: serial_(_serial), wt32i_(_wt32i)
@@ -29,7 +31,7 @@ BTTRX_CONTROL::BTTRX_CONTROL(
 ResultType BTTRX_CONTROL::set(string name, string value)
 {
 	// Search for name in enum
-	ParameterType parameter = getParameter(name);
+	ParameterType parameter = stringToParameterType(name);
 	// Call handler method
 	ResultType result = kError;
 	switch (parameter) {
@@ -42,6 +44,9 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 	case kPinCode:
 		result = handleSetPinCode(value);
 		break;
+	case kPTTHangTime:
+		result = handleSetPTTHangTime(value);
+		break;
 	default:
 		return kError;
 		break;
@@ -52,8 +57,12 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 ResultType BTTRX_CONTROL::get(string name, string *value)
 {
 	// Search for name in enum
-	ParameterType parameter = getParameter(name);
+	ParameterType parameter = stringToParameterType(name);
+	return get(parameter, value);
+}
 
+ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value)
+{
 	// Reply with value / call handler method
 	switch (parameter) {
 	case kADCGain:
@@ -64,6 +73,10 @@ ResultType BTTRX_CONTROL::get(string name, string *value)
 		break;
 	case kPinCode:
 		*value = pin_code_;
+		break;
+	case kPTTHangTime:
+		*value = to_string(preferences.getUShort(
+			ParameterTypeToString(kPTTHangTime).c_str(), 0));
 		break;
 	default:
 		return kError;
@@ -98,7 +111,14 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 	}
 }
 
-ParameterType BTTRX_CONTROL::getParameter(string name)
+uint16_t BTTRX_CONTROL::getPTTHangTime()
+{
+	string value = "";
+	get(kPTTHangTime, &value);
+	return stoi(value);
+}
+
+ParameterType BTTRX_CONTROL::stringToParameterType(string name)
 {
 	if (name == "adc_gain") {
 		return kADCGain;
@@ -109,7 +129,32 @@ ParameterType BTTRX_CONTROL::getParameter(string name)
 	if (name == "pin_code") {
 		return kPinCode;
 	}
+	if (name == "ptt_hang_time") {
+		return kPTTHangTime;
+	}
 	return kUnkownParameter;
+}
+
+string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type)
+{
+	string return_value = "unknown parameter";
+	switch (parameter_type) {
+	case kADCGain:
+		return_value = "adc_gain";
+		break;
+	case kDACGain:
+		return_value = "dac_gain";
+		break;
+	case kPinCode:
+		return_value = "pin_code";
+		break;
+	case kPTTHangTime:
+		return_value = "ptt_hang_time";
+		break;
+	default:
+		break;
+	}
+	return return_value;
 }
 
 ResultType BTTRX_CONTROL::handleSetADCGain(string adc_gain)
@@ -146,4 +191,15 @@ ResultType BTTRX_CONTROL::handleSetPinCode(string pin_code)
 	pin_code_ = pin_code;
 	// Set on wt32i
 	return wt32i_->setPinCode(pin_code_);
+}
+
+ResultType BTTRX_CONTROL::handleSetPTTHangTime(string hang_time)
+{
+	uint16_t value = stoi(hang_time);
+	if (value < 1000) {
+		preferences.putUShort(
+			ParameterTypeToString(kPTTHangTime).c_str(), value);
+		return kSuccess;
+	}
+	return kError;
 }

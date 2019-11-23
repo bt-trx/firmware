@@ -223,7 +223,7 @@ void BTTRX_FSM::handleStateCallRunning()
 	if (ptt_button_.isPressedEdge()) {
 		ptt_output_.on();
 	} else if (ptt_button_.isReleased()) {
-		ptt_output_.delayed_off(PTT_TURNOFF_DELAY);
+		ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
 	}
 
 	// If the button is pressed, send the "HANGUP" message.

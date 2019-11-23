@@ -29,6 +29,13 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "bttrx_wifi.h"
 #endif
 
+#ifdef ARDUINO
+#include "Preferences.h"
+#else
+#include "../test/esp32_mock/Preferences.h"
+#endif
+
+Preferences preferences;
 BTTRX_FSM bttrx_fsm;
 BTTRX_WIFI bttrx_wifi;
 bool wifi_started_ = false;
@@ -90,6 +97,10 @@ String getHardwareVersion()
 
 void setup()
 {
+	// Initialize Preferences
+	preferences.begin("bttrx-settings");
+
+	// Setup Pins
 	setupPins();
 
 	// Set up Serial ports
@@ -114,8 +125,8 @@ void setup()
 
 	// Print Chip ID
 	uint64_t chipid = ESP.getEfuseMac();
-	SERIAL_DBG.printf("ESP32 ID: %04X",(uint16_t)(chipid>>32));
-	SERIAL_DBG.printf("%08X\n",(uint32_t)chipid);
+	SERIAL_DBG.printf("ESP32 ID: %04X", (uint16_t)(chipid >> 32));
+	SERIAL_DBG.printf("%08X\n", (uint32_t)chipid);
 
 	// Check whether to start Wifi
 	checkForWifiStart();

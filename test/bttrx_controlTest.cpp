@@ -31,6 +31,8 @@ using ::testing::SetArgPointee;
 using ::testing::SetArrayArgument;
 using ::testing::StrEq;
 
+Preferences preferences;
+
 namespace
 {
 class BTTRX_CONTROLTest : public ::testing::Test {
@@ -93,6 +95,19 @@ TEST_F(BTTRX_CONTROLTest, set_pin_code_success)
 		.WillOnce((Return(ResultType::kSuccess)));
 
 	ASSERT_EQ(ResultType::kSuccess, bttrx_control.set("pin_code", "2342"));
+}
+
+TEST_F(BTTRX_CONTROLTest, set_ptt_hang_time)
+{
+	BTTRX_CONTROL bttrx_control(&serialWrapperMock, &wt32iMock);
+
+	ASSERT_EQ(
+		ResultType::kSuccess, bttrx_control.set("ptt_hang_time", "0"));
+	ASSERT_EQ(
+		ResultType::kSuccess,
+		bttrx_control.set("ptt_hang_time", "999"));
+	ASSERT_EQ(
+		ResultType::kError, bttrx_control.set("ptt_hang_time", "1000"));
 }
 
 TEST_F(BTTRX_CONTROLTest, get_pin_code_success)

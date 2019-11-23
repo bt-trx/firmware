@@ -10,6 +10,7 @@ function setSelectedIndexByValue(s, v) {
 function getAllParameters() {
   getDropdownData("adc_gain");
   getDropdownData("dac_gain");
+  getData("ptt_hang_time");
   getData("pin_code");
 };
 

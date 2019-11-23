@@ -9,35 +9,40 @@
 <body onload="getAllParameters()">
 <p class="title">bt-trx</p>
 <form>
-<h1>Settings</h1>
-<table>  
-  <tr><td class=descr>ADC Gain<br>(Audio from TRX)</td>
+<table>
+  <tr><td colspan=2><h1>Settings</h1></td></tr>
+  <tr><td colspan=2><h2>Audio</h2></td></tr>
+  <tr>
+    <td class=descr>ADC Gain<br>(Audio from TRX)</td>
     <td class=set><select name="adc_gain" id="adc_gain" onchange='OnDropdownChange(this.form.adc_gain);'>
-    <option value="0">-27 dB</option>
-    <option value="1">-24 dB</option>
-    <option value="2">-21 dB</option>
-    <option value="3">-18 dB</option>
-    <option value="4">-15 dB</option>
-    <option value="5">-12 dB</option>
-    <option value="6">- 9 dB</option>
-    <option value="7">- 6 dB</option>
-    <option value="8">- 3 dB</option>
-    <option value="9">  0 dB</option>
-    <option value="a">  3 dB</option>
-    <option value="b">  6 dB</option>
-    <option value="c">  9 dB</option>
-    <option value="d"> 12 dB</option>
-    <option value="e"> 15 dB</option>
-    <option value="f"> 18 dB</option>
-    <option value="10"> 21 dB</option>
-    <option value="11"> 24 dB</option>
-    <option value="12"> 27 dB</option>
-    <option value="13"> 30 dB</option>
-    <option value="14"> 33 dB</option>
-    <option value="15"> 36 dB</option>
-    <option value="16"> 39 dB</option>
-  </select></td></tr>
-  <tr><td class=descr>DAC Gain<br>(Audio to TRX)</td>
+      <option value="0">-27 dB</option>
+      <option value="1">-24 dB</option>
+      <option value="2">-21 dB</option>
+      <option value="3">-18 dB</option>
+      <option value="4">-15 dB</option>
+      <option value="5">-12 dB</option>
+      <option value="6">- 9 dB</option>
+      <option value="7">- 6 dB</option>
+      <option value="8">- 3 dB</option>
+      <option value="9">  0 dB</option>
+      <option value="a">  3 dB</option>
+      <option value="b">  6 dB</option>
+      <option value="c">  9 dB</option>
+      <option value="d"> 12 dB</option>
+      <option value="e"> 15 dB</option>
+      <option value="f"> 18 dB</option>
+      <option value="10"> 21 dB</option>
+      <option value="11"> 24 dB</option>
+      <option value="12"> 27 dB</option>
+      <option value="13"> 30 dB</option>
+      <option value="14"> 33 dB</option>
+      <option value="15"> 36 dB</option>
+      <option value="16"> 39 dB</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td class=descr>DAC Gain<br>(Audio to TRX)</td>
     <td class=set><select name="dac_gain" id="dac_gain" onchange='OnDropdownChange(this.form.dac_gain);'>
       <option value="0">-42 dB</option>
       <option value="1">-39 dB</option>
@@ -62,14 +67,27 @@
       <option value="14"> 18 dB</option>
       <option value="15"> 21 dB</option>
       <option value="16"> 24 dB</option>
-  </select></td></tr>
+      </select>
+    </td>
+  </tr>
+  <tr><td colspan=2><h2>PTT</h2></td></tr>
+  <tr>
+    <td class=descr>PTT Hang Time<br>(0-999 ms)</td>
+    <td class=set><input type="text" name="ptt_hang_time" id="ptt_hang_time" class=text maxlength=3 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+      <input type="button" class=btn value="Set" onclick='setData("ptt_hang_time", this.form.ptt_hang_time.value);'>
+    </td>
+  </tr>
+  <tr><td colspan=2><h2>Bluetooth</h2></td></tr>
   <tr>
     <td class=descr>Bluetooth PIN Code</td>
-    <td class=set><input type="text" name="pin_code" id="pin_code" class=pin maxlength=4 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
-      <input type="button" class=btn value="Set" onclick='setData("pin_code", this.form.pin_code.value);'></td>
+    <td class=set><input type="text" name="pin_code" id="pin_code" class=text maxlength=4 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+      <input type="button" class=btn value="Set" onclick='setData("pin_code", this.form.pin_code.value);'>
+    </td>
   </tr>
-  <tr><td class=descr>Reset Bluetooth Pairings</td>
-  <td class=set><input type="button" class=btn value="Reset" onclick='OnButtonClick("resetBTPairings");'></td></tr>
+  <tr>
+    <td class=descr>Reset Bluetooth Pairings</td>
+    <td class=set><input type="button" class=btn value="Reset" onclick='OnButtonClick("resetBTPairings");'></td>
+  </tr>
 </table>
 </form>
 

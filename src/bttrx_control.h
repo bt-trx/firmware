@@ -24,27 +24,44 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "serialwrapper.h"
 #include "wt32i.h"
 
+#ifdef ARDUINO
+#include "Preferences.h"
+#else
+#include "../test/esp32_mock/Preferences.h"
+#endif
+
 #include <string>
 using namespace std;
 
-enum ParameterType { kUnkownParameter, kADCGain, kDACGain, kPinCode };
+enum ParameterType {
+	kUnkownParameter,
+	kADCGain,
+	kDACGain,
+	kPinCode,
+	kPTTHangTime
+};
 
 class BTTRX_CONTROL {
     public:
 	BTTRX_CONTROL(SerialWrapperInterface *, WT32iInterface *);
 	ResultType set(string, string);
 	ResultType get(string, string *);
+	ResultType get(ParameterType, string *);
 	ResultType action(string);
 	void storeSetting(ParameterType, string);
+
+	uint16_t getPTTHangTime();
 
     private:
 	SerialWrapperInterface *serial_;
 	WT32iInterface *wt32i_;
 
-	ParameterType getParameter(string);
+	ParameterType stringToParameterType(string);
+	string ParameterTypeToString(ParameterType);
 	ResultType handleSetADCGain(string);
 	ResultType handleSetDACGain(string);
 	ResultType handleSetPinCode(string);
+	ResultType handleSetPTTHangTime(string);
 
 	string adc_gain_ = "0";
 	string dac_gain_ = "0";
