@@ -93,24 +93,22 @@ void BTTRX_WIFI::firmwareUpdateResponse(AsyncWebServerRequest *request)
 
 void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
 {
-	int paramsNr = request->params();
-
 	string name  = "";
 	string value = "";
-
-	for (int i = 0; i < paramsNr; i++) {
-		AsyncWebParameter *p = request->getParam(i);
-		if (p->name() == "id") {
-			name = p->value().c_str();
-		}
-		if (p->name() == "value") {
-			value = p->value().c_str();
-		}
+	if(request->hasParam("id"))
+	{
+  	name = request->getParam("id")->value().c_str();
 	}
+	if(request->hasParam("value"))
+	{
+  	value = request->getParam("value")->value().c_str();
+	}
+
 	if (name.empty() || value.empty()) {
 		// TODO Send Error to Website
 		return;
 	}
+
 	if (bttrx_control_->set(name, value) == kSuccess) {
 		request->send(200, "text/plain", "Setting changed");
 	} else {
@@ -120,16 +118,12 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
 
 void BTTRX_WIFI::handleGet(AsyncWebServerRequest *request)
 {
-	int paramsNr = request->params();
-
 	string name = "";
-
-	for (int i = 0; i < paramsNr; i++) {
-		AsyncWebParameter *p = request->getParam(i);
-		if (p->name() == "id") {
-			name = p->value().c_str();
-		}
+	if(request->hasParam("id"))
+	{
+  	name = request->getParam("id")->value().c_str();
 	}
+
 	if (name.empty()) {
 		// TODO Send Error to Website
 		return;
@@ -145,15 +139,10 @@ void BTTRX_WIFI::handleGet(AsyncWebServerRequest *request)
 
 void BTTRX_WIFI::handleAction(AsyncWebServerRequest *request)
 {
-	int paramsNr = request->params();
-
 	string name = "";
-
-	for (int i = 0; i < paramsNr; i++) {
-		AsyncWebParameter *p = request->getParam(i);
-		if (p->name() == "id") {
-			name = p->value().c_str();
-		}
+	if(request->hasParam("id"))
+	{
+  	name = request->getParam("id")->value().c_str();
 	}
 	if (name.empty()) {
 		// TODO Send Error to Website
