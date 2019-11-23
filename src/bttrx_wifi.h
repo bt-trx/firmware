@@ -46,6 +46,7 @@ class BTTRX_WIFI {
 	BTTRX_CONTROL *bttrx_control_;
 	void firmwareUpdateResponse(AsyncWebServerRequest *);
 	String resultPage(uint8_t);
+	String updateErrorcodeToString(uint8_t);
 	void onRequest(AsyncWebServerRequest *);
 };
 

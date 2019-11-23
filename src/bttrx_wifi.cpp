@@ -28,12 +28,12 @@ void BTTRX_WIFI::onRequest(AsyncWebServerRequest *request)
 	request->send(404);
 }
 
-String BTTRX_WIFI::resultPage(uint8_t error)
+String BTTRX_WIFI::resultPage(uint8_t update_error)
 {
 	String resultString = "";
-	if (error) {
-		resultString += "FAILED, Errorcode: ";
-		resultString += error;
+	if (update_error) {
+		resultString += "FAILED, Error: ";
+		resultString += updateErrorcodeToString(update_error);
 	} else {
 		resultString += "OK";
 	}
@@ -42,6 +42,42 @@ String BTTRX_WIFI::resultPage(uint8_t error)
 	website.replace("%STYLE%", style_css);
 	website.replace("%RESULT%", resultString);
 	return website;
+}
+
+String BTTRX_WIFI::updateErrorcodeToString(uint8_t update_error)
+{
+	String return_value = "";
+	switch (update_error) {
+	case UPDATE_ERROR_OK:
+		return_value = "UPDATE_OK";
+		break;
+	case UPDATE_ERROR_WRITE:
+	case UPDATE_ERROR_ERASE:
+	case UPDATE_ERROR_READ:
+		return_value = "FLASH_ERROR";
+		break;
+	case UPDATE_ERROR_SPACE:
+	case UPDATE_ERROR_NO_PARTITION:
+		return_value = "NOT_ENOUGH_SPACE";
+		break;
+	case UPDATE_ERROR_SIZE: // new firmware size is zero
+	case UPDATE_ERROR_STREAM:
+	case UPDATE_ERROR_MAGIC_BYTE: // new firmware does not have 0xE9 in first byte
+		return_value = "BAD_FIRMWARE_IMAGE";
+		break;
+	case UPDATE_ERROR_MD5:
+		return_value = "BAD_CHECKSUM";
+		break;
+	case UPDATE_ERROR_ACTIVATE:
+	case UPDATE_ERROR_BAD_ARGUMENT:
+	case UPDATE_ERROR_ABORT:
+		return_value = "OTHER_ERROR";
+		break;
+	default:
+		return_value = "UNKNOWN_ERROR";
+		break;
+	}
+	return return_value + " (" + update_error + ")";
 }
 
 void BTTRX_WIFI::firmwareUpdateResponse(AsyncWebServerRequest *request)
@@ -223,7 +259,8 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 	server.on(
 		"/action",
 		HTTP_GET,
-		std::bind(&BTTRX_WIFI::handleAction, this, std::placeholders::_1));
+		std::bind(
+			&BTTRX_WIFI::handleAction, this, std::placeholders::_1));
 
 	// Catch-All Handler
 	// Any request that can not find a Handler that canHandle it
