@@ -67,6 +67,17 @@ TEST_F(WT32iTest, reset_success)
 	wt32i.reset();
 }
 
+TEST_F(WT32iTest, set_success)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET"))));
+
+	wt32i.set();
+}
+
 TEST_F(WT32iTest, set_success_category)
 {
 	WT32i wt32i(&serialWrapperMock);
@@ -100,6 +111,10 @@ TEST_F(WT32iTest, set_success_valuenotset)
 {
 	WT32i wt32i(&serialWrapperMock);
 
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET TEST 123"))));
+
 	ASSERT_EQ(
 		ResultType::kSuccess, wt32i.set(string("TEST"), string("123")));
 }
@@ -111,6 +126,30 @@ TEST_F(WT32iTest, set_fail_optionNotSet)
 	ASSERT_EQ(
 		ResultType::kError,
 		wt32i.set(string("TEST"), string(""), string("456")));
+}
+
+TEST_F(WT32iTest, setAudioGain_success)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET CONTROL GAIN 2 3"))));
+
+	ASSERT_EQ(
+		ResultType::kSuccess,
+		wt32i.setAudioGain(string("2"), string("3")));
+}
+
+TEST_F(WT32iTest, setPinCode_success)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET BT AUTH * 2342"))));
+
+	ASSERT_EQ(ResultType::kSuccess, wt32i.setPinCode(string("2342")));
 }
 
 TEST_F(WT32iTest, available_success)
@@ -171,6 +210,17 @@ TEST_F(WT32iTest, list_success_1result)
 	vector<string> result = wt32i.getActiveConnections();
 	ASSERT_EQ(1, result.size());
 	ASSERT_EQ(0, result[0].compare("de:ad:be:ef:ca:fe"));
+}
+
+TEST_F(WT32iTest, resetBTPairings)
+{
+	WT32i wt32i(&serialWrapperMock);
+
+	EXPECT_CALL(
+		serialWrapperMock,
+		println(Matcher<const char *>(StrEq("SET BT PAIR *"))));
+
+	wt32i.resetBTPairings();
 }
 
 TEST_F(WT32iTest, connectHFPAG_success_without_SSP)

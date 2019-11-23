@@ -33,7 +33,14 @@ using std::vector;
 
 typedef int link_id_t;
 
-class WT32i {
+class WT32iInterface {
+    public:
+	virtual void resetBTPairings()                  = 0;
+	virtual ResultType setAudioGain(string, string) = 0;
+	virtual ResultType setPinCode(string)           = 0;
+};
+
+class WT32i : public WT32iInterface {
     public:
 	WT32i(){};
 	WT32i(SerialWrapperInterface *);
@@ -45,7 +52,10 @@ class WT32i {
 	// Communication with WT32i device
 	ResultType reset();
 	ResultType available();
+	void set();
 	ResultType set(string, string = "", string = "");
+	ResultType setAudioGain(string, string);
+	ResultType setPinCode(string);
 	ResultType performInquiry();
 	ResultType startInquiry();
 	bool inquiryRunning()
@@ -54,6 +64,7 @@ class WT32i {
 	}
 	ResultType list();
 	ResultType readActiveConnections();
+	void resetBTPairings();
 	ResultType connectHFPAG(string);
 	ResultType connectHFPAGnonblocking(string);
 	ResultType setStatus(string, string);

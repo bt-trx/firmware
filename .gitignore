@@ -8,6 +8,7 @@
 
 
 src/git_revision.h
+src/website.h
 build/
 *.bak
 

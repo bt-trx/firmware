@@ -20,15 +20,11 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
-#include "../src/serialwrapper.h"
+#include "../src/wt32i.h"
 
-class SerialWrapperMock : public SerialWrapperInterface {
+class WT32iMock : public WT32iInterface {
     public:
-	MOCK_METHOD1(println, size_t(const char *));
-	MOCK_METHOD1(println, size_t(string));
-	MOCK_METHOD1(dbg_println, size_t(const char *));
-	MOCK_METHOD1(dbg_println, size_t(string));
-	MOCK_METHOD3(
-		waitForInputBlocking, ResultType(string, string *, uint32_t));
-	MOCK_METHOD0(readLineToString, string());
+	MOCK_METHOD0(resetBTPairings, void());
+	MOCK_METHOD2(setAudioGain, ResultType(string, string));
+	MOCK_METHOD1(setPinCode, ResultType(string));
 };

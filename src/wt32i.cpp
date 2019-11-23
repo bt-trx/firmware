@@ -64,6 +64,18 @@ ResultType WT32i::available()
 }
 
 /**
+ * @brief Display iWrap configuration values
+ *
+ * see UG218 6.50
+ *
+ * @return ResultType
+ */
+void WT32i::set()
+{
+	serial_->println("SET");
+}
+
+/**
  * @brief Set iWrap configuration values
  *
  * see UG218 Page 118 *
@@ -84,16 +96,52 @@ ResultType WT32i::set(string category, string option, string value)
 	}
 	output += category;
 
-	if (option.length() && value.length()) {
+	if (option.length()) {
 		output += " " + option;
+	}
+
+	if (option.length() && value.length()) {
 		output += " " + value;
 	} else if (!option.length() && value.length()) {
 		return ResultType::kError;
 	}
 
 	serial_->println(output.c_str());
-	//serial_->dbg_println(output.c_str());
 	return ResultType::kSuccess;
+}
+
+/**
+ * @brief Set ADC and DAC Gain
+ *
+ * see UG218 6.79
+ * Example: "SET CONTROL GAIN 2 3"
+ *
+ * There is no verification if the parameter has been set successfully
+ *
+ * @param adc_gain (string between "0" and "16")
+ * @param dac_gain (string between "0" and "16")
+ * @return ResultType
+ */
+ResultType WT32i::setAudioGain(string adc_gain, string dac_gain)
+{
+	string output = "SET CONTROL GAIN " + adc_gain + " " + dac_gain;
+	serial_->println(output.c_str());
+	return kSuccess;
+}
+
+/**
+ * @brief Set BT Pairing PIN
+ * 
+ * see UG218 6.51
+ * 
+ * @param pin 4-digit PIN Code
+ * @return ResultType 
+ */
+ResultType WT32i::setPinCode(string pin_code)
+{
+	string output = "SET BT AUTH * " + pin_code;
+	serial_->println(output.c_str());
+	return kSuccess;
 }
 
 /**
@@ -207,6 +255,16 @@ ResultType WT32i::readActiveConnections()
 	active_connections_.clear();
 	serial_->println("LIST");
 	return kSuccess;
+}
+
+/**
+ * @brief Remove all pairings
+ * This is useful in case a pairing with a device
+ * went wrong and is stuck in a deadlock.
+ */
+void WT32i::resetBTPairings()
+{
+	serial_->println("SET BT PAIR *");
 }
 
 /**
@@ -470,7 +528,19 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg)
 
 	vector<string> splitted_msg = splitString(input);
 
-	if (splitted_msg[0] == "LIST") {
+	if (splitted_msg[0] == "SET") {
+		msg->msg_type = kSETTING_UNKNOWN;
+		if (splitted_msg.size() == 5) {
+			if (splitted_msg[1] == "CONTROL" &&
+			    splitted_msg[2] == "GAIN") {
+				msg->msg_type = kSETTING_CONTROL_GAIN;
+			}
+			if (splitted_msg[1] == "BT" &&
+			    splitted_msg[2] == "AUTH") {
+				msg->msg_type = kSETTING_PIN_CODE;
+			}
+		}
+	} else if (splitted_msg[0] == "LIST") {
 		if (splitted_msg.size() > 2) {
 			active_connections_.push_back(
 				splitted_msg[10]); // BT Address
@@ -660,6 +730,11 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 	// Commands which are recognized, but ignored
 	else if (cmd.find("AT+XAPL=") != string::npos) {
 		// Indicates apple specific capabilities of the accessory
+		//serial_->println("ERROR");
+		serial_->println("+XAPL=iPhone,7");
+		serial_->println("OK");
+	} else if (cmd.find("AT+IPHONEACCEV=") != string::npos) {
+		// Indicates apple specific headphone change
 	} else if (cmd.find("AT+CMGF=") != string::npos) {
 		// Set SMS Text Mode (0) or PDU Mode (1)
 		serial_->println("OK");

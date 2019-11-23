@@ -27,6 +27,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #endif
 
 #include "settings.h"
+#include "bttrx_control.h"
 #include "wt32i.h"
 #include "led.h"
 #include "button.h"
@@ -50,6 +51,8 @@ class BTTRX_FSM {
 	BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg = NULL);
 	void setSerial(Stream *serial_bt, Stream *serial_dbg = NULL);
 	void run();
+
+	BTTRX_CONTROL bttrx_control_;
 
 	// only required for unit testing
 	state_t getCurrentState()

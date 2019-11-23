@@ -49,6 +49,23 @@ size_t SerialWrapper::println(const char *_string)
 }
 
 /**
+ * @brief Passing through the println command to the wrapped Stream.
+ * Printing also to debug Stream, if defined.
+ *
+ * @param _string String to write to the Stream
+ * @return Bytes written to the Stream
+ */
+size_t SerialWrapper::println(string _string)
+{
+	if (serial_dbg_ != NULL) {
+		string dbg_output = "> ";
+		dbg_output += string(_string);
+		serial_dbg_->println(dbg_output.c_str());
+	}
+	return serial_bt_->println(_string.c_str());
+}
+
+/**
  * @brief Prints to the debug Stream
  *
  * @param _string
@@ -57,6 +74,17 @@ size_t SerialWrapper::println(const char *_string)
 size_t SerialWrapper::dbg_println(const char *_string)
 {
 	return serial_dbg_->println(_string);
+}
+
+/**
+ * @brief Prints to the debug Stream
+ *
+ * @param _string
+ * @return size_t
+ */
+size_t SerialWrapper::dbg_println(string _string)
+{
+	return serial_dbg_->println(_string.c_str());
 }
 
 /**

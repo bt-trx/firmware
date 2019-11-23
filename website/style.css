@@ -1,0 +1,104 @@
+body{
+  background:#3498db;
+  font-family:sans-serif;
+  color:#777;
+  min-width: 20em;
+  text-align: center;
+}
+
+.title{
+  color:#fff;
+  font-weight: bold;
+  font-size: 3em;
+  margin: 0.6em;
+}
+
+form{
+  background:#fff;
+  max-width:30em;
+  margin:2em auto;
+  padding:0.5em;
+  border-radius:5px;
+  box-shadow: 0px 2px 18px -4px rgba(0,0,0,0.75);
+}
+
+table{
+  width: 100%;
+}
+td{
+  width: 50%;
+}
+td.descr{
+  text-align: right;
+}
+td.set{
+  text-align: center;
+}
+
+input,
+select{
+  height:3em;
+  border-radius:4px;
+  margin:0.8em auto;
+  border:none;
+  padding:0 1em;
+  font-size: 0.8em;
+}
+
+input[type=button],
+input[type=submit],
+select{
+  background:#3498db;
+  color:#fff;
+  cursor:pointer;
+  min-width: 6em;
+}
+
+input[type=text] {
+  background-color: #eee;
+  width: 2.3em;
+}
+
+/* The Snackbar */
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-color: #333; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  top: 30px; /* 30px from the top */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {top: 30px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {top: 30px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
