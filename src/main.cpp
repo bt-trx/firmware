@@ -27,6 +27,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #ifdef ARDUINO
 #include "bttrx_wifi.h"
+#include "bttrx_ble.h"
 #endif
 
 #ifdef ARDUINO
@@ -38,6 +39,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 Preferences preferences;
 BTTRX_FSM bttrx_fsm;
 BTTRX_WIFI bttrx_wifi;
+BTTRX_BLE bttrx_ble;
 bool wifi_started_ = false;
 
 void checkForWifiStart()
@@ -130,9 +132,18 @@ void setup()
 
 	// Check whether to start Wifi
 	checkForWifiStart();
+
+	// Start BLE
+	// Currently, BLE can't run simultaneously with Wifi
+	// (Wifi does not serve pages then)
+	// TODO investigate if this is a resource issue
+	if (!wifi_started_) {
+		bttrx_ble.setupBLE();
+	}
 }
 
 void loop()
 {
 	bttrx_fsm.run();
+	bttrx_ble.run();
 }
