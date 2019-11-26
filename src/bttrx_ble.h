@@ -54,6 +54,9 @@ class BTTRX_BLE {
 		return is_connected;
 	}
 
+	static void
+	notifyCallback(BLERemoteCharacteristic *, uint8_t *, size_t, bool);
+
     private:
 	BLEAdvertisedDevice *ble_device;
 	bool is_started;

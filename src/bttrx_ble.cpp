@@ -54,7 +54,7 @@ class MyClientCallback : public BLEClientCallbacks {
 	}
 };
 
-static void notifyCallback(
+void BTTRX_BLE::notifyCallback(
 	BLERemoteCharacteristic *pBLERemoteCharacteristic,
 	uint8_t *pData,
 	size_t length,
@@ -74,8 +74,7 @@ void BTTRX_BLE::setupBLE()
 {
 	BLEDevice::init("");
 	// Retrieve a Scanner and set the callback we want to use to be informed when we
-	// have detected a new device. Specify that we want active scanning and start the
-	// scan to run for 5 seconds.
+	// have detected a new device.
 	BLEScan *pBLEScan = BLEDevice::getScan();
 	pBLEScan->setAdvertisedDeviceCallbacks(
 		new MyAdvertisedDeviceCallbacks());
@@ -97,7 +96,15 @@ void BTTRX_BLE::run()
 		}
 		do_connect = false;
 	} else if (!is_connected && do_scan) {
-		BLEDevice::getScan()->start(1, false);
+		// No connection, scan for BLE devices
+		static ulong lastscan = 0;
+		if (lastscan + (BLE_SCAN_INTERVAL * 1000) < millis()) {
+			// start(duration, is_continue) is blocking,
+			// start(duration, callback, is_continue) is non-blocking!
+			BLEDevice::getScan()->start(
+				BLE_SCAN_DURATION, nullptr, false);
+			lastscan = millis();
+		}
 	}
 }
 
