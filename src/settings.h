@@ -32,7 +32,6 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define INQUIRY_DURATION "5"  // *1.28s
 #define BLE_SCAN_DURATION 1   // s
 #define BLE_SCAN_INTERVAL 5   // s
-#define PTT_TURNOFF_DELAY 500 // ms
 
 #define BTN_PRESS_WIFI_MODE_TIMEOUT 5000 // ms
 
