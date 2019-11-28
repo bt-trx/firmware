@@ -26,6 +26,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "arduino-mock/Arduino.h"
 #endif
 
+#define BUTTON_DEBOUNCE_DELAY 50 // ms the debounce time; increase if the output flickers
+
 class Button {
     public:
 	Button(uint32_t pin);
@@ -44,6 +46,4 @@ class Button {
 
 	unsigned long lastDebounceTime =
 		0; // the last time the output pin was toggled
-	unsigned long debounceDelay =
-		50; // the debounce time; increase if the output flickers
 };

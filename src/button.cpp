@@ -46,7 +46,7 @@ void Button::update()
 		lastDebounceTime = currentTime;
 	}
 
-	if ((currentTime - lastDebounceTime) >= debounceDelay) {
+	if ((lastDebounceTime + BUTTON_DEBOUNCE_DELAY) <= currentTime) {
 		// if the button state has changed:
 		if (reading != buttonState) {
 			buttonState  = reading;
