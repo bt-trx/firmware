@@ -735,6 +735,7 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 		serial_->println("OK");
 	} else if (cmd.find("AT+IPHONEACCEV=") != string::npos) {
 		// Indicates apple specific headphone change
+		serial_->println("OK");
 	} else if (cmd.find("AT+CMGF=") != string::npos) {
 		// Set SMS Text Mode (0) or PDU Mode (1)
 		serial_->println("OK");
