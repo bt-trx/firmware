@@ -30,7 +30,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "bttrx_control.h"
 #include "wt32i.h"
 #include "led.h"
-#include "button.h"
+#include "button_hw.h"
+#include "button_ble.h"
 #include "ptt.h"
 
 #include <string>
@@ -52,6 +53,8 @@ class BTTRX_FSM {
 	void setSerial(Stream *serial_bt, Stream *serial_dbg = NULL);
 	void run();
 
+	ButtonBLE* getBLEButtonHandler() {return &ble_button_;};
+
 	BTTRX_CONTROL bttrx_control_;
 
 	// only required for unit testing
@@ -69,8 +72,9 @@ class BTTRX_FSM {
 
 	LED led_connected_;
 	LED led_busy_;
-	Button helper_button_;
-	Button ptt_button_;
+	ButtonHW helper_button_;
+	ButtonHW ptt_button_;
+	ButtonBLE ble_button_;
 	PTT ptt_output_;
 
 	// FSM State handler

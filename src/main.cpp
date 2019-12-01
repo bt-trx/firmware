@@ -138,7 +138,7 @@ void setup()
 	// (Wifi does not serve pages then)
 	// TODO investigate if this is a resource issue
 	if (!wifi_started_) {
-		bttrx_ble.setupBLE();
+		bttrx_ble.setupBLE(bttrx_fsm.getBLEButtonHandler());
 	}
 }
 

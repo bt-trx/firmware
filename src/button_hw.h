@@ -20,20 +20,30 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
-enum ButtonState {
-	BTNSTATE_UNKNOWN,
-	BTNSTATE_RELEASED,
-	BTNSTATE_PRESSED
-};
+#ifdef ARDUINO
+#include "Arduino.h"
+#else
+#include "arduino-mock/Arduino.h"
+#endif
 
-class Button {
+class ButtonHW {
     public:
+	ButtonHW(uint32_t pin);
+
 	bool isPressed();
 	bool isReleased();
 	bool isPressedEdge();
 	bool isReleasedEdge();
+	void update();
 
-    protected:
-	ButtonState button_state = BTNSTATE_UNKNOWN;
-	bool state_changed    = false;
+    private:
+	int pin_;
+	bool buttonState;
+	bool lastButtonState = HIGH;
+	bool stateChanged    = false;
+
+	unsigned long lastDebounceTime =
+		0; // the last time the output pin was toggled
+	unsigned long debounceDelay =
+		50; // the debounce time; increase if the output flickers
 };

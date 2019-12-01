@@ -23,6 +23,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #ifdef ARDUINO
 
 #include "BLEDevice.h"
+#include "button_ble.h"
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -38,7 +39,8 @@ static BLEUUID charUUID("ff02");
 class BTTRX_BLE {
     public:
 	BTTRX_BLE();
-	void setupBLE();
+	void setupBLE(ButtonBLE*);
+	ButtonBLE* getButton() { return ble_button_;};
 	void run();
 	void doConnect(BLEAdvertisedDevice *device)
 	{
@@ -59,6 +61,7 @@ class BTTRX_BLE {
 
     private:
 	BLEAdvertisedDevice *ble_device;
+	ButtonBLE *ble_button_ = nullptr;
 	bool is_started;
 	bool do_scan;
 	bool do_connect;

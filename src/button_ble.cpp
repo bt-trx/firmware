@@ -18,22 +18,36 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#pragma once
+#include "button_ble.h"
 
-enum ButtonState {
-	BTNSTATE_UNKNOWN,
-	BTNSTATE_RELEASED,
-	BTNSTATE_PRESSED
-};
+/**
+ * @brief Update the button state
+ * 
+ */
+void ButtonBLE::update()
+{
+  state_changed = false;
+  if (next_state != button_state)
+  {
+    button_state = next_state;
+    state_changed = true;
+  }
+}
 
-class Button {
-    public:
-	bool isPressed();
-	bool isReleased();
-	bool isPressedEdge();
-	bool isReleasedEdge();
+/**
+ * @brief Update the button state
+ * 
+ */
+void ButtonBLE::setPressed()
+{
+	next_state = BTNSTATE_PRESSED;
+}
 
-    protected:
-	ButtonState button_state = BTNSTATE_UNKNOWN;
-	bool state_changed    = false;
-};
+/**
+ * @brief Update the button state
+ * 
+ */
+void ButtonBLE::setReleased()
+{
+	next_state = BTNSTATE_RELEASED;
+}

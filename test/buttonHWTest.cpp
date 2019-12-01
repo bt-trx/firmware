@@ -22,7 +22,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "arduino-mock/Arduino.h"
 
-#include "../src/button.h"
+#include "../src/button_hw.h"
 
 using ::testing::_;
 using ::testing::Return;
@@ -31,16 +31,16 @@ using ::testing::StrEq;
 
 namespace
 {
-class ButtonTest : public ::testing::Test {
+class ButtonHWTest : public ::testing::Test {
     protected:
 	ArduinoMock *arduinoMock;
-	Button *button;
+	ButtonHW *button;
 
-	ButtonTest()
+	ButtonHWTest()
 	{
 	}
 
-	virtual ~ButtonTest()
+	virtual ~ButtonHWTest()
 	{
 	}
 
@@ -49,7 +49,7 @@ class ButtonTest : public ::testing::Test {
 		arduinoMock = arduinoMockInstance();
 
 		EXPECT_CALL(*arduinoMock, pinMode(_, INPUT));
-		button = new Button(0);
+		button = new ButtonHW(0);
 	}
 
 	virtual void TearDown()
@@ -59,7 +59,7 @@ class ButtonTest : public ::testing::Test {
 	}
 };
 
-TEST_F(ButtonTest, isPressed)
+TEST_F(ButtonHWTest, isPressed)
 {
 	EXPECT_CALL(*arduinoMock, digitalRead(_))
 		.WillOnce(Return(0))
@@ -71,4 +71,5 @@ TEST_F(ButtonTest, isPressed)
 	button->update();
 	ASSERT_EQ(true, button->isPressed());
 }
+
 } // namespace

@@ -50,6 +50,7 @@ void BTTRX_FSM::run()
 	// Read button states
 	ptt_button_.update();
 	helper_button_.update();
+	ble_button_.update();
 
 	// Run State Machine
 	switch (current_state_) {
@@ -198,7 +199,9 @@ void BTTRX_FSM::handleStateConnected()
 
 	// If either the PTT button or the helper button is pressed, start a
 	// phone call
-	if (ptt_button_.isPressedEdge() || helper_button_.isPressedEdge()) {
+	if (ptt_button_.isPressedEdge()
+		|| ble_button_.isPressedEdge()
+		|| helper_button_.isPressedEdge()) {
 		if (wt32i_.dial() == kSuccess) {
 			if (wt32i_.connect() == kSuccess) {
 				setState(STATE_CALL_RUNNING);
@@ -220,9 +223,9 @@ void BTTRX_FSM::handleStateCallRunning()
 		return;
 	}
 
-	if (ptt_button_.isPressedEdge()) {
+	if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge()) {
 		ptt_output_.on();
-	} else if (ptt_button_.isReleased()) {
+	} else if (ptt_button_.isReleased() && ble_button_.isReleased()) {
 		ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
 	}
 

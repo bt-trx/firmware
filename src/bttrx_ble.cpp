@@ -18,6 +18,8 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
+#ifdef ARDUINO
+
 #include "bttrx_ble.h"
 
 #include "Arduino.h"
@@ -60,8 +62,20 @@ void BTTRX_BLE::notifyCallback(
 	size_t length,
 	bool isNotify)
 {
-	SERIAL_DBG.print("BLE data: ");
-	SERIAL_DBG.println((char *)pData);
+	//SERIAL_DBG.print("BLE data: ");
+	//SERIAL_DBG.println((char *)pData);
+	
+	ButtonBLE* button = bttrx_ble.getButton();
+	if (button == nullptr) {
+		return;
+	}
+	String data = (char*)pData;
+	if (data.compareTo("ELET1") == 0) {
+		button->setPressed();
+	} else if (data.compareTo("ELET2") == 0) {
+		button->setReleased();
+	}
+	// "BATTx" message not handled
 }
 
 BTTRX_BLE::BTTRX_BLE()
@@ -70,7 +84,7 @@ BTTRX_BLE::BTTRX_BLE()
 {
 }
 
-void BTTRX_BLE::setupBLE()
+void BTTRX_BLE::setupBLE(ButtonBLE* ptr)
 {
 	BLEDevice::init("");
 	// Retrieve a Scanner and set the callback we want to use to be informed when we
@@ -78,6 +92,8 @@ void BTTRX_BLE::setupBLE()
 	BLEScan *pBLEScan = BLEDevice::getScan();
 	pBLEScan->setAdvertisedDeviceCallbacks(
 		new MyAdvertisedDeviceCallbacks());
+
+	ble_button_ = ptr;
 	SERIAL_DBG.println("BLE: setup done");
 	is_started = true;
 }
@@ -144,3 +160,5 @@ bool BTTRX_BLE::connectToDevice()
 	is_connected = true;
 	return true;
 }
+
+#endif // ARDUINO
