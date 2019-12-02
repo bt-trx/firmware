@@ -20,11 +20,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
-enum ButtonState {
-	BTNSTATE_UNKNOWN,
-	BTNSTATE_RELEASED,
-	BTNSTATE_PRESSED
-};
+enum ButtonState { BTNSTATE_UNKNOWN, BTNSTATE_RELEASED, BTNSTATE_PRESSED };
 
 class Button {
     public:
@@ -35,5 +31,5 @@ class Button {
 
     protected:
 	ButtonState button_state = BTNSTATE_UNKNOWN;
-	bool state_changed    = false;
+	bool state_changed       = false;
 };

@@ -27,11 +27,10 @@ Contact: bt-trx.com, mail@bt-trx.com
  */
 bool Button::isPressed()
 {
-  if (button_state == BTNSTATE_PRESSED)
-  {
-    return true;
-  }
-  return false;
+	if (button_state == BTNSTATE_PRESSED) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -41,11 +40,10 @@ bool Button::isPressed()
  */
 bool Button::isReleased()
 {
-	if (button_state == BTNSTATE_RELEASED)
-  {
-    return true;
-  }
-  return false;
+	if (button_state == BTNSTATE_RELEASED) {
+		return true;
+	}
+	return false;
 }
 
 /**

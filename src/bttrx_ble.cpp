@@ -64,12 +64,12 @@ void BTTRX_BLE::notifyCallback(
 {
 	//SERIAL_DBG.print("BLE data: ");
 	//SERIAL_DBG.println((char *)pData);
-	
-	ButtonBLE* button = bttrx_ble.getButton();
+
+	ButtonBLE *button = bttrx_ble.getButton();
 	if (button == nullptr) {
 		return;
 	}
-	String data = (char*)pData;
+	String data = (char *)pData;
 	if (data.compareTo("ELET1") == 0) {
 		button->setPressed();
 	} else if (data.compareTo("ELET2") == 0) {
@@ -84,7 +84,7 @@ BTTRX_BLE::BTTRX_BLE()
 {
 }
 
-void BTTRX_BLE::setupBLE(ButtonBLE* ptr)
+void BTTRX_BLE::setupBLE(ButtonBLE *ptr)
 {
 	BLEDevice::init("");
 	// Retrieve a Scanner and set the callback we want to use to be informed when we
@@ -122,6 +122,12 @@ void BTTRX_BLE::run()
 			lastscan = millis();
 		}
 	}
+
+	ButtonBLE *button = bttrx_ble.getButton();
+	if (button == nullptr) {
+		return;
+	}
+	button->setConnected(is_connected);
 }
 
 bool BTTRX_BLE::connectToDevice()

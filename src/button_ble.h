@@ -30,9 +30,20 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 class ButtonBLE : public Button {
     public:
-  void setPressed();
-  void setReleased();
-  void update();
-  private:
-  ButtonState next_state = BTNSTATE_UNKNOWN;
+	void setPressed();
+	void setReleased();
+	void update();
+
+	bool isConnected()
+	{
+		return is_connected;
+	}
+	void setConnected(bool state)
+	{
+		is_connected = state;
+	};
+
+    private:
+	bool is_connected      = false;
+	ButtonState next_state = BTNSTATE_UNKNOWN;
 };

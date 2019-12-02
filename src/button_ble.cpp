@@ -26,12 +26,11 @@ Contact: bt-trx.com, mail@bt-trx.com
  */
 void ButtonBLE::update()
 {
-  state_changed = false;
-  if (next_state != button_state)
-  {
-    button_state = next_state;
-    state_changed = true;
-  }
+	state_changed = false;
+	if (next_state != button_state) {
+		button_state  = next_state;
+		state_changed = true;
+	}
 }
 
 /**

@@ -39,8 +39,11 @@ static BLEUUID charUUID("ff02");
 class BTTRX_BLE {
     public:
 	BTTRX_BLE();
-	void setupBLE(ButtonBLE*);
-	ButtonBLE* getButton() { return ble_button_;};
+	void setupBLE(ButtonBLE *);
+	ButtonBLE *getButton()
+	{
+		return ble_button_;
+	};
 	void run();
 	void doConnect(BLEAdvertisedDevice *device)
 	{

@@ -53,7 +53,10 @@ class BTTRX_FSM {
 	void setSerial(Stream *serial_bt, Stream *serial_dbg = NULL);
 	void run();
 
-	ButtonBLE* getBLEButtonHandler() {return &ble_button_;};
+	ButtonBLE *getBLEButtonHandler()
+	{
+		return &ble_button_;
+	};
 
 	BTTRX_CONTROL bttrx_control_;
 
