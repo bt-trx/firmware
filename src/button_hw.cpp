@@ -18,19 +18,52 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#include "button.h"
+#include "button_hw.h"
+
+/**
+ * @brief Helper class for handling button states
+ *
+ * @param pin
+ */
+ButtonHW::ButtonHW(uint32_t pin) : pin_(pin)
+{
+	pinMode(pin_, INPUT);
+}
+
+/**
+ * @brief Update the button state
+ * 
+ */
+void ButtonHW::update()
+{
+	bool reading      = digitalRead(pin_);
+	ulong currentTime = millis();
+	stateChanged      = false;
+
+	// If the switch changed, due to noise or pressing:
+	if (reading != lastButtonState) {
+		// reset the debouncing timer
+		lastDebounceTime = currentTime;
+	}
+
+	if ((currentTime - lastDebounceTime) >= debounceDelay) {
+		// if the button state has changed:
+		if (reading != buttonState) {
+			buttonState  = reading;
+			stateChanged = true;
+		}
+	}
+	lastButtonState = reading;
+}
 
 /**
  * @brief Return current state of the button
  *
  * @return bool True if button is pressed
  */
-bool Button::isPressed()
+bool ButtonHW::isPressed()
 {
-	if (button_state == BTNSTATE_PRESSED) {
-		return true;
-	}
-	return false;
+	return !buttonState; // active low
 }
 
 /**
@@ -38,12 +71,9 @@ bool Button::isPressed()
  * 
  * @return bool True if button is released
  */
-bool Button::isReleased()
+bool ButtonHW::isReleased()
 {
-	if (button_state == BTNSTATE_RELEASED) {
-		return true;
-	}
-	return false;
+	return buttonState; // active low
 }
 
 /**
@@ -52,9 +82,9 @@ bool Button::isReleased()
  *
  * @return bool
  */
-bool Button::isPressedEdge()
+bool ButtonHW::isPressedEdge()
 {
-	return isPressed() && state_changed;
+	return isPressed() && stateChanged;
 }
 
 /**
@@ -63,7 +93,7 @@ bool Button::isPressedEdge()
  * 
  * @return bool
  */
-bool Button::isReleasedEdge()
+bool ButtonHW::isReleasedEdge()
 {
-	return isReleased() && state_changed;
+	return isReleased() && stateChanged;
 }
