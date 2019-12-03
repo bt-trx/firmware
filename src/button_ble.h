@@ -20,16 +20,30 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
-enum ButtonState { BTNSTATE_UNKNOWN, BTNSTATE_RELEASED, BTNSTATE_PRESSED };
+#ifdef ARDUINO
+#include "Arduino.h"
+#else
+#include "arduino-mock/Arduino.h"
+#endif
 
-class Button {
+#include "button.h"
+
+class ButtonBLE : public Button {
     public:
-	bool isPressed();
-	bool isReleased();
-	bool isPressedEdge();
-	bool isReleasedEdge();
+	void setPressed();
+	void setReleased();
+	void update();
 
-    protected:
-	ButtonState button_state = BTNSTATE_UNKNOWN;
-	bool state_changed       = false;
+	bool isConnected()
+	{
+		return is_connected;
+	}
+	void setConnected(bool state)
+	{
+		is_connected = state;
+	};
+
+    private:
+	bool is_connected      = false;
+	ButtonState next_state = BTNSTATE_UNKNOWN;
 };
