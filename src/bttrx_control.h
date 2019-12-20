@@ -38,7 +38,8 @@ enum ParameterType {
 	kADCGain,
 	kDACGain,
 	kPinCode,
-	kPTTHangTime
+	kPTTHangTime,
+	kDirectAudioEnabled
 };
 
 class BTTRX_CONTROL {
@@ -47,6 +48,7 @@ class BTTRX_CONTROL {
 	ResultType set(string, string);
 	ResultType get(string, string *);
 	ResultType get(ParameterType, string *);
+	ResultType get(ParameterType, bool *);
 	ResultType action(string);
 	void storeSetting(ParameterType, string);
 
@@ -62,6 +64,7 @@ class BTTRX_CONTROL {
 	ResultType handleSetDACGain(string);
 	ResultType handleSetPinCode(string);
 	ResultType handleSetPTTHangTime(string);
+	ResultType handleSetDirectAudioEnabled(string);
 
 	string adc_gain_ = "0";
 	string dac_gain_ = "0";

@@ -12,7 +12,8 @@ function getAllParameters() {
   getDropdownData("dac_gain");
   getData("ptt_hang_time");
   getData("pin_code");
-};
+  getCheckboxData("direct_audio_en");
+}
 
 function getData(parameter) {
   var xhttp = new XMLHttpRequest();
@@ -20,6 +21,22 @@ function getData(parameter) {
     if (this.readyState == 4 && this.status == 200) {
       var x = document.getElementById(parameter);
       x.value = this.responseText;
+    }
+  };
+  xhttp.open("GET", "get?id=" + parameter, true);
+  xhttp.send();
+}
+
+function getCheckboxData(parameter) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var x = document.getElementById(parameter);
+      if (this.responseText == "1") {
+        x.checked = true;
+      } else {
+        x.checked = false;
+      }
     }
   };
   xhttp.open("GET", "get?id=" + parameter, true);
@@ -46,6 +63,21 @@ function setData(name, value) {
     }
   };
   xhttp.open("GET", "set?id=" + name + "&value=" + value, true);
+  xhttp.send();
+}
+
+function OnCheckboxChange(checkbox) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 /*&& this.status == 200*/) {
+      showSnackbar(this.responseText);
+      getCheckboxData(checkbox.name);
+    }
+  };
+  xhttp.open("GET",
+              "set?id=" 
+              + checkbox.name + "&value=" + checkbox.checked,
+              true);
   xhttp.send();
 }
 

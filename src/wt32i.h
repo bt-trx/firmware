@@ -71,6 +71,8 @@ class WT32i : public WT32iInterface {
 	ResultType dial();
 	ResultType connect();
 	ResultType hangup();
+	ResultType scoOpen();
+	ResultType scoClose();
 	ResultType sendSSPConfirmation(string);
 
 	// Message handlers
