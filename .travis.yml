@@ -23,11 +23,15 @@ matrix:
     - pip install -U platformio
     script:
     - platformio run -v
+    before_deploy:
+      - export TRAVIS_TAG=$(git describe)
+      - mv .pio/build/esp32/firmware.bin ./bt-trx_esp32_firmware_${TRAVIS_TAG}.bin
+      - mv .pio/build/esp32/partitions.bin ./bt-trx_esp32_partitions_${TRAVIS_TAG}.bin
     deploy:
       provider: releases
       api_key:
         secure: TUloXpFNfRbvwXJZxjW8bOO79Ycl85CXI1fBk7el9hs1++12N4GJdAPfxQWychr66U1Efl3PTEUMwCLvMTgp71mGTp4fKwejCRz5anWnDs1SkQlvrCnQsI2RTaODkTZN6UtBBMa/35pgmFm4MBl0re+WEnmR4DvGT31mk2JphjxM9T3y7dPt3CK8kBlx7kfSDxFcIdb7L+/3FGbyyovL2VYQ3WARB4/AYFezgUFjRKm9oZJiMAPqiBbqDwIPxiGeaktz9GG+j/S77ymtW1jR4NQRZoS2t36cKlcfXOT/9im+5v4jR8DV5njeTUxJdm2dCveCSVhhjth9QP8+oeru//O/Nx2LZeVtv+6bCrGkSwKZav8EXWwRypOrza7PQb7BQkEwdsybKnd8z/lW02yz9TBH+kgRVYR8tiL8zF2oFcRC1/6Rng+/0xwOw/cT67Y7gpXJH6GU0xnuimH333rfYXg8PKmZaRdLosuAousY4/ZzlL0y4B8qcD6kk1fbiBT+EwhvXT0/hRQQRSD6A1C175TEt45ZI6WLIIbnAvecDaZaFq4HONIlX+jftHJltRVHEUncbgrbrAqq5JGNyFRs5fPFFWLPIJN/9mVS/XjOjZyeyE5Z5QCu4EQGIKW9Iv4BCSjN27FpvR1Gr6Bc8aty22H6hzurpajXMd7UJpJoMOw=
-      file: ".pio/build/esp32/firmware.bin"
+      file: "./*.bin"
       skip_cleanup: true
       draft: true
       on:
