@@ -641,23 +641,23 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 		serial_->println("ERROR");
 	} else if (cmd == "AT+CGMR" || cmd == "AT+GMR") {
 		// Return Manufacturer OS revision
-		serial_->println("+CGMR: \"1.0\"");
+		serial_->println(AT_OS_REVISION);
 		serial_->println("OK");
 	} else if (cmd == "AT+CGSN" || cmd == "AT+GSN") {
 		// Return serial number
-		serial_->println("+CGSN: 123456");
+		serial_->println(AT_SERIAL_NUMBER);
 		serial_->println("OK");
 	} else if (
 		cmd == "AT+CGMI" || cmd == "AT+CGMI?" || cmd == "AT+GMI" ||
 		cmd == "AT+GMI?") {
 		// Return Manufacturer identification
-		serial_->println("+CGMI: bt-trx");
+		serial_->println(AT_MANUFACTURER_IDENTIFICATION);
 		serial_->println("OK");
 	} else if (
 		cmd == "AT+CGMM" || cmd == "AT+CGMM?" || cmd == "AT+GMM" ||
 		cmd == "AT+GMM?") {
 		// Return Model identification
-		serial_->println("+CGMM: bt-trx");
+		serial_->println(AT_MODEL_IDENTIFICATION);
 		serial_->println("OK");
 	} else if (cmd == "AT+CREG?") {
 		//  Return Network registration
@@ -701,7 +701,7 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 		serial_->println("ERROR");
 	} else if (cmd == "AT+CIMI" || cmd == "AT+CIMI?" || cmd == "AT+CIMI=?") {
 		// Return IMSI
-		serial_->println("+CIMI: 262735573557355");
+		serial_->println(AT_IMSI);
 		serial_->println("OK");
 	} else if (cmd == "AT+CSQ" || cmd == "AT+CSQ?") {
 		// Return signal quality (3GPP TS 27.007)
@@ -714,7 +714,12 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 	} else if (cmd == "ATI" || cmd == "ATI0") {
 		// Return Identification Information
 		// Defined in 3GPP TS 27.007
-		serial_->println("bt-trx 1.0");
+		serial_->println("Manufacturer: " + string(AT_MANUFACTURER_IDENTIFICATION));
+		serial_->println("Model: " + string(AT_MODEL_IDENTIFICATION));
+		serial_->println("Revision: " + string(AT_OS_REVISION));
+		serial_->println("QCN:");
+		serial_->println("IMEI: " + string(AT_IMEI));
+		serial_->println("+GCAP: +CGSM");
 		serial_->println("OK");
 	} else if (cmd.find("AT+CPBR=") != string::npos && cmd != "AT+CPBR=?") {
 		// Return phonebook contents
