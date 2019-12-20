@@ -735,19 +735,7 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 	} else if (cmd == "ATI" || cmd == "ATI0") {
 		// Return Identification Information
 		// Defined in 3GPP TS 27.007
-<<<<<<< HEAD
 		sendERROR();
-=======
-		serial_->println(
-			"Manufacturer: " +
-			string(AT_MANUFACTURER_IDENTIFICATION));
-		serial_->println("Model: " + string(AT_MODEL_IDENTIFICATION));
-		serial_->println("Revision: " + string(AT_OS_REVISION));
-		serial_->println("QCN:");
-		serial_->println("IMEI: " + string(AT_IMEI));
-		serial_->println("+GCAP: +CGSM");
-		serial_->println("OK");
->>>>>>> [#30] Implement Direct Audio
 	} else if (cmd.find("AT+CPBR=") != string::npos && cmd != "AT+CPBR=?") {
 		// Return phonebook contents
 		// position, number, 129 (unkown number format), name

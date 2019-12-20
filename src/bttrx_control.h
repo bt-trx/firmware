@@ -40,7 +40,6 @@ enum ParameterType {
 	kPinCode,
 	kPTTToggleEnabled,
 	kPTTTimeout,
-	kPTTHangTime
 	kPTTHangTime,
 	kDirectAudioEnabled
 };
