@@ -41,6 +41,8 @@ enum ParameterType {
 	kPTTToggleEnabled,
 	kPTTTimeout,
 	kPTTHangTime
+	kPTTHangTime,
+	kDirectAudioEnabled
 };
 
 class BTTRX_CONTROL {
@@ -69,6 +71,7 @@ class BTTRX_CONTROL {
 	ResultType handleSetPTTToggleEnabled(string);
 	ResultType handleSetPTTTimeout(string);
 	ResultType handleSetPTTHangTime(string);
+	ResultType handleSetDirectAudioEnabled(string);
 
 	string adc_gain_ = "0";
 	string dac_gain_ = "0";

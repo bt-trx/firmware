@@ -95,13 +95,11 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
 {
 	string name  = "";
 	string value = "";
-	if(request->hasParam("id"))
-	{
-  	name = request->getParam("id")->value().c_str();
+	if (request->hasParam("id")) {
+		name = request->getParam("id")->value().c_str();
 	}
-	if(request->hasParam("value"))
-	{
-  	value = request->getParam("value")->value().c_str();
+	if (request->hasParam("value")) {
+		value = request->getParam("value")->value().c_str();
 	}
 
 	if (name.empty() || value.empty()) {
@@ -119,9 +117,8 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
 void BTTRX_WIFI::handleGet(AsyncWebServerRequest *request)
 {
 	string name = "";
-	if(request->hasParam("id"))
-	{
-  	name = request->getParam("id")->value().c_str();
+	if (request->hasParam("id")) {
+		name = request->getParam("id")->value().c_str();
 	}
 
 	if (name.empty()) {
@@ -140,9 +137,8 @@ void BTTRX_WIFI::handleGet(AsyncWebServerRequest *request)
 void BTTRX_WIFI::handleAction(AsyncWebServerRequest *request)
 {
 	string name = "";
-	if(request->hasParam("id"))
-	{
-  	name = request->getParam("id")->value().c_str();
+	if (request->hasParam("id")) {
+		name = request->getParam("id")->value().c_str();
 	}
 	if (name.empty()) {
 		// TODO Send Error to Website

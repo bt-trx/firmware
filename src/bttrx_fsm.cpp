@@ -202,10 +202,17 @@ void BTTRX_FSM::handleStateConnected()
 	// phone call
 	if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge() ||
 	    helper_button_.isPressedEdge()) {
-		if (wt32i_.dial() == kSuccess) {
-			if (wt32i_.connect() == kSuccess) {
-				setState(STATE_CALL_RUNNING);
+		bool direct_audio_enabled = false;
+		bttrx_control_.get(kDirectAudioEnabled, &direct_audio_enabled);
+
+		if (!direct_audio_enabled) {
+			if (wt32i_.dial() == kSuccess) {
+				if (wt32i_.connect() == kSuccess) {
+					setState(STATE_CALL_RUNNING);
+				}
 			}
+		} else {
+			wt32i_.scoOpen();
 		}
 	}
 }
@@ -229,7 +236,14 @@ void BTTRX_FSM::handleStateCallRunning()
 	// State change back to STATE_CONNECTED happens when HFP device indicates
 	// end of call
 	if (helper_button_.isPressedEdge()) {
-		wt32i_.hangup();
+		bool direct_audio_enabled = false;
+		bttrx_control_.get(kDirectAudioEnabled, &direct_audio_enabled);
+
+		if (!direct_audio_enabled) {
+			wt32i_.hangup();
+		} else {
+			wt32i_.scoClose();
+		}
 	}
 }
 
@@ -276,13 +290,18 @@ void BTTRX_FSM::handleIncomingMessage()
 			setState(STATE_CALL_RUNNING);
 		}
 		break;
-	case kHFPAG_NO_CARRIER:
-		// Phone call ended
+	case kHFPAG_NO_CARRIER: // Intended fallthrough
+	case kNOCARRIER_ERROR_CALL_ENDED:
+		// Audio connection ended
 		setState(STATE_CONNECTED);
 		break;
 	case kHFPAG_UNKOWN:
 		// Handle AT command
 		wt32i_.handleMessage_HFPAG_UNKNOWN(msg);
+		break;
+	case kCONNECT_SCO:
+		// Audio connection established
+		setState(STATE_CALL_RUNNING);
 		break;
 	case kNOCARRIER_ERROR_LINK_LOSS:
 		// Connection try was unsuccessful, get back to inquiry

@@ -14,7 +14,8 @@ function getAllParameters() {
   getData("ptt_timeout");
   getData("pin_code");
   getCheckboxData("ptt_toggle_en");
-};
+  getCheckboxData("direct_audio_en");
+}
 
 function getData(parameter) {
   var xhttp = new XMLHttpRequest();
