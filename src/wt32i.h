@@ -108,4 +108,7 @@ class WT32i : public WT32iInterface {
 
 	ResultType getBDAddress(string *);
 	string stripBDAddress(string);
+
+	void sendOK();
+	void sendERROR();
 };

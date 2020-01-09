@@ -638,138 +638,125 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 
 	if (cmd == "AT+NREC=0") {
 		// Indicate that we do not support Error Cancelation and Noise cancelation
-		serial_->println("ERROR");
+		sendERROR();
 	} else if (cmd == "AT+CGMR" || cmd == "AT+GMR") {
 		// Return Manufacturer OS revision
-		serial_->println(AT_OS_REVISION);
-		serial_->println("OK");
+		sendERROR();
 	} else if (cmd == "AT+CGSN" || cmd == "AT+GSN") {
 		// Return serial number
-		serial_->println(AT_SERIAL_NUMBER);
-		serial_->println("OK");
+		sendERROR();
 	} else if (
 		cmd == "AT+CGMI" || cmd == "AT+CGMI?" || cmd == "AT+GMI" ||
 		cmd == "AT+GMI?") {
 		// Return Manufacturer identification
-		serial_->println(AT_MANUFACTURER_IDENTIFICATION);
-		serial_->println("OK");
+		sendERROR();
 	} else if (
 		cmd == "AT+CGMM" || cmd == "AT+CGMM?" || cmd == "AT+GMM" ||
 		cmd == "AT+GMM?") {
 		// Return Model identification
-		serial_->println(AT_MODEL_IDENTIFICATION);
-		serial_->println("OK");
+		sendERROR();
 	} else if (cmd == "AT+CREG?") {
-		//  Return Network registration
+		// Return Network registration
 		serial_->println("+CREG: 1,1"); // registered in home network
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CREG=?") {
 		// Return Network registration
 		serial_->println("+CREG: 0"); // GSM
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+BTRH?") {
 		// Bluetooth respond and hold
 		serial_->println("+BTRH: 1"); // Accept the call which was held
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CPBS=?") {
 		// Return available phonebook storages
 		// e.g. "ME" (internal), "SM" (SIM) - we only support SIM
 		serial_->println("+CPBS: \"ME\"");
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CPBS?") {
 		// Return status of currently chosen phonebook storage
 		serial_->println(
 			"+CPBS: \"ME\", 1, 100"); // name, used entries, max entries
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CPBR=?") {
 		// Return phonebook configuration
 		serial_->println(
 			"+CPBR: (1-10),20,18"); // entry range, max number length,
 						// max name length
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CSCS?" || cmd == "AT+CSCS=?") {
 		// Return supported character sets
 		// possible values: "GSM", "HEX"."IRA", "PCDN", "UCS2","UTF-8" etc.
 		serial_->println("+CSCS: GSM");
-		serial_->println("OK");
+		sendOK();
 	} else if (
 		cmd == "AT+CMGS=?" || cmd == "AT+CMSS=?" ||
 		cmd == "AT+CMGL=?" || cmd == "AT+CMGR=?" ||
 		cmd == "AT+CNMI=?") {
 		// Check if commands for sending, receiving and reading SMS are supported
 		// -> No, we do not support this
-		serial_->println("ERROR");
+		sendERROR();
 	} else if (cmd == "AT+CIMI" || cmd == "AT+CIMI?" || cmd == "AT+CIMI=?") {
 		// Return IMSI
 		serial_->println(AT_IMSI);
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CSQ" || cmd == "AT+CSQ?") {
 		// Return signal quality (3GPP TS 27.007)
 		serial_->println("+CSQ: 31,0"); // RSSI (table), BER
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CBC" || cmd == "AT+CBC=?") {
 		// Return battery status
 		serial_->println("+CBC: 0,100"); // Battery connected, 100 %
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "ATI" || cmd == "ATI0") {
 		// Return Identification Information
 		// Defined in 3GPP TS 27.007
-		serial_->println("Manufacturer: " + string(AT_MANUFACTURER_IDENTIFICATION));
-		serial_->println("Model: " + string(AT_MODEL_IDENTIFICATION));
-		serial_->println("Revision: " + string(AT_OS_REVISION));
-		serial_->println("QCN:");
-		serial_->println("IMEI: " + string(AT_IMEI));
-		serial_->println("+GCAP: +CGSM");
-		serial_->println("OK");
+		sendERROR();
 	} else if (cmd.find("AT+CPBR=") != string::npos && cmd != "AT+CPBR=?") {
 		// Return phonebook contents
 		// position, number, 129 (unkown number format), name
 		serial_->println("+CPBR: 1,\"737373\",129,\"bt-trx\"");
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+APLSIRI?") {
 		// Return SIRI is not available on this platform
 		serial_->println("+APLSIRI:0");
-		serial_->println("OK");
-	}
-
-	// Commands which are recognized, but ignored
-	else if (cmd.find("AT+XAPL=") != string::npos) {
+		sendOK();
+	} else if (cmd.find("AT+XAPL=") != string::npos) {
 		// Indicates apple specific capabilities of the accessory
-		//serial_->println("ERROR");
-		serial_->println("+XAPL=iPhone,7");
-		serial_->println("OK");
+		serial_->println("ERROR");
 	} else if (cmd.find("AT+IPHONEACCEV=") != string::npos) {
 		// Indicates apple specific headphone change
-		serial_->println("OK");
+		sendERROR();
 	} else if (cmd.find("AT+CMGF=") != string::npos) {
 		// Set SMS Text Mode (0) or PDU Mode (1)
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd.find("AT+CNMI=") != string::npos) {
 		// Configuration of message routing/display of new messages
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd.find("AT+CSCS=\"") != string::npos) {
 		// Set charset to use
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd.find("AT+CSRSF=") != string::npos) {
 		// TODO Find out what this command is used for
 		// seen in Fiat Fiorino and SM-BT10
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd.find("AT+CPMS=") != string::npos) {
 		// Set preferred message storage
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd.find("AT+CPBS=\"") != string::npos) {
 		// Set currently used phonebook storage
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "AT+CREG=0" || cmd == "AT+CREG=1" || cmd == "AT+CREG=2") {
 		// Set behavior in case of network status change
-		serial_->println("OK");
+		sendOK();
 	} else if (cmd == "ATE0") {
 		// Disable echo of commands
+		sendOK();
 	}
 
 	// Unkown commands
 	else {
-		serial_->dbg_println("INFO: unhandled message");
+		serial_->dbg_println("INFO: unrecognized message");
+		sendERROR();
 		return kError;
 	}
 
@@ -787,4 +774,22 @@ ResultType WT32i::indicateNetworkAvailable()
 	setStatus("service", "1");
 	setStatus("signal", "5");
 	return kSuccess;
+}
+
+/**
+ * @brief Send "OK" to Bluetooth module
+ * 
+ */
+void WT32i::sendOK()
+{
+	serial_->println("OK");
+}
+
+/**
+ * @brief Send "ERROR" to Bluetooth module
+ * 
+ */
+void WT32i::sendERROR()
+{
+	serial_->println("ERROR");
 }
