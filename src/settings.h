@@ -29,23 +29,15 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define SERIAL_MAX_LINE_LENGTH 100
 #define BT_SERIAL_TIMEOUT 100 // ms  // Time to wait for answers from BT module
 
-#define INQUIRY_DURATION "5"  // *1.28s
-#define BLE_SCAN_DURATION 1   // s
-#define BLE_SCAN_INTERVAL 5   // s
+#define INQUIRY_DURATION "5" // *1.28s
+#define BLE_SCAN_DURATION 1  // s
+#define BLE_SCAN_INTERVAL 5  // s
 
 #define BTN_PRESS_WIFI_MODE_TIMEOUT 5000 // ms
 
 #define WIFI_HOSTNAME "bt-trx"
 #define WIFI_SSID "bt-trx"
 #define WIFI_PASSWORD "bt-trx73" // minimum 8 chars
-
-// Answers for AT Commands like AT+CGMM
-#define AT_OS_REVISION "1.0"
-#define AT_SERIAL_NUMBER "123456"
-#define AT_MANUFACTURER_IDENTIFICATION "bt-trx"
-#define AT_MODEL_IDENTIFICATION "bt-trx"
-#define AT_IMSI "262735573557355"
-#define AT_IMEI "123123123123123"
 
 // Teensy specific
 #define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup

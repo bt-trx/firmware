@@ -697,8 +697,7 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 		sendERROR();
 	} else if (cmd == "AT+CIMI" || cmd == "AT+CIMI?" || cmd == "AT+CIMI=?") {
 		// Return IMSI
-		serial_->println(AT_IMSI);
-		sendOK();
+		sendERROR();
 	} else if (cmd == "AT+CSQ" || cmd == "AT+CSQ?") {
 		// Return signal quality (3GPP TS 27.007)
 		serial_->println("+CSQ: 31,0"); // RSSI (table), BER
