@@ -28,6 +28,13 @@ BTTRX_CONTROL::BTTRX_CONTROL(
 {
 }
 
+/**
+ * @brief Evaluate SET command (e.g. from Webserver)
+ * 
+ * @param name Parameter name as string
+ * @param value Parameter value as string
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::set(string name, string value)
 {
 	// Search for name in enum
@@ -54,6 +61,13 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 	return result;
 }
 
+/**
+ * @brief Evalute GET command (e.g. from Webserver)
+ * 
+ * @param name Parameter name as string
+ * @param value output: Parameter value as string
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::get(string name, string *value)
 {
 	// Search for name in enum
@@ -61,6 +75,14 @@ ResultType BTTRX_CONTROL::get(string name, string *value)
 	return get(parameter, value);
 }
 
+/**
+ * @brief Evalute GET command (e.g. from Webserver)
+ * Parameters may be stored as "Parameter" in Flash or read from WT32i
+ * 
+ * @param name Parameter name as ParameterType
+ * @param value output: Parameter value as string
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value)
 {
 	// Reply with value / call handler method
@@ -85,6 +107,12 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value)
 	return kSuccess;
 }
 
+/**
+ * @brief Perform an action (call a method)
+ * 
+ * @param name Action parameter as string
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::action(string name)
 {
 	if (name == "resetBTPairings") {
@@ -94,6 +122,13 @@ ResultType BTTRX_CONTROL::action(string name)
 	return kError;
 }
 
+/**
+ * @brief Store current value of a parameter in member variable
+ * Used during startup to store values read from WT32i to this object
+ * 
+ * @param type 
+ * @param value 
+ */
 void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 {
 	switch (type) {
@@ -111,6 +146,11 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 	}
 }
 
+/**
+ * @brief Getter method for PTT HangTime
+ * 
+ * @return uint16_t 
+ */
 uint16_t BTTRX_CONTROL::getPTTHangTime()
 {
 	string value = "";
@@ -118,6 +158,12 @@ uint16_t BTTRX_CONTROL::getPTTHangTime()
 	return stoi(value);
 }
 
+/**
+ * @brief Convert parameter string to parameter Type
+ * 
+ * @param name 
+ * @return ParameterType 
+ */
 ParameterType BTTRX_CONTROL::stringToParameterType(string name)
 {
 	if (name == "adc_gain") {
@@ -135,6 +181,12 @@ ParameterType BTTRX_CONTROL::stringToParameterType(string name)
 	return kUnkownParameter;
 }
 
+/**
+ * @brief Convert Parameter Type to String
+ * 
+ * @param parameter_type 
+ * @return string 
+ */
 string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type)
 {
 	string return_value = "unknown parameter";
@@ -157,6 +209,12 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type)
 	return return_value;
 }
 
+/**
+ * @brief Set ADC Gain
+ * 
+ * @param adc_gain 
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::handleSetADCGain(string adc_gain)
 {
 	serial_->dbg_println("Set ADC Gain to: " + adc_gain);
@@ -168,6 +226,12 @@ ResultType BTTRX_CONTROL::handleSetADCGain(string adc_gain)
 	return wt32i_->setAudioGain(adc_gain_, dac_gain_);
 }
 
+/**
+ * @brief Set DAC Gain
+ * 
+ * @param dac_gain 
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::handleSetDACGain(string dac_gain)
 {
 	serial_->dbg_println("Set DAC Gain to: " + dac_gain);
@@ -179,6 +243,12 @@ ResultType BTTRX_CONTROL::handleSetDACGain(string dac_gain)
 	return wt32i_->setAudioGain(adc_gain_, dac_gain_);
 }
 
+/**
+ * @brief Set PIN Code
+ * 
+ * @param pin_code 
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::handleSetPinCode(string pin_code)
 {
 	serial_->dbg_println("Set PIN to: " + pin_code);
@@ -193,6 +263,12 @@ ResultType BTTRX_CONTROL::handleSetPinCode(string pin_code)
 	return wt32i_->setPinCode(pin_code_);
 }
 
+/**
+ * @brief Set PTT HangTime
+ * 
+ * @param hang_time 
+ * @return ResultType 
+ */
 ResultType BTTRX_CONTROL::handleSetPTTHangTime(string hang_time)
 {
 	uint16_t value = stoi(hang_time);
