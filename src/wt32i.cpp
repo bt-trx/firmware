@@ -747,6 +747,9 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg)
 	} else if (cmd == "AT+CREG=0" || cmd == "AT+CREG=1" || cmd == "AT+CREG=2") {
 		// Set behavior in case of network status change
 		sendOK();
+	} else if (cmd.find("AT+XEVENT=\"") != string::npos) {
+		// Plantronics XEVENT
+		sendERROR();
 	} else if (cmd == "ATE0") {
 		// Disable echo of commands
 		sendOK();
