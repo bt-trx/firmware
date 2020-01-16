@@ -28,9 +28,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
-
-static const char *BD_ADDR_OUI_ANYTONE =
-	"00:1b:10"; // Anytone Bluetooth PTT BP-01
+	
 // The remote service we wish to connect to.
 static BLEUUID serviceUUID("ff01"); // Button
 // The characteristic of the remote service we are interested in.

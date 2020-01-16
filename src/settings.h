@@ -39,5 +39,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define WIFI_SSID "bt-trx"
 #define WIFI_PASSWORD "bt-trx73" // minimum 8 chars
 
+#define BD_ADDR_OUI_ANYTONE "00:1b:10" // Anytone Bluetooth PTT BP-01
+
 // Teensy specific
 #define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup
