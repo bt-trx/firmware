@@ -35,9 +35,12 @@ class PTT {
 	void on();
 	void off();
 	void delayed_off(uint32_t);
+	void toggle();
+	bool getState() { return state_; };
 
     private:
 	int pin_;
 	LED led;
-	ulong turned_off;
+	bool state_;
+	ulong turn_off_time;
 };
