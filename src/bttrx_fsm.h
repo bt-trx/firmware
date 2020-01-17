@@ -89,4 +89,6 @@ class BTTRX_FSM {
 	void handleStateCallRunning();
 	// Message handler
 	void handleIncomingMessage();
+	// Handle PTT during Call
+	void handlePTTDuringCall();
 };

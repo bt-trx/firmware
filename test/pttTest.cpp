@@ -60,6 +60,21 @@ class PTTTest : public ::testing::Test {
 	}
 };
 
+TEST_F(PTTTest, checkTOT)
+{
+	EXPECT_CALL(*arduinoMock, millis())
+	  .WillOnce(Return(0))
+		.WillOnce(Return(60000))
+    .WillOnce(Return(60001));	
+
+  ptt->on();
+  ASSERT_EQ(true, ptt->getState());
+	ptt->checkTOT(1);
+	ASSERT_EQ(true, ptt->getState());
+	ptt->checkTOT(1);
+	ASSERT_EQ(false, ptt->getState());
+}
+
 TEST_F(PTTTest, on)
 {
   ptt->off();
@@ -97,13 +112,20 @@ TEST_F(PTTTest, delayed_off)
 		.WillOnce(Return(0))
 		.WillOnce(Return(50))
     .WillOnce(Return(101));
-	EXPECT_CALL(*arduinoMock, digitalWrite(0, 1)); // ptt
-  EXPECT_CALL(*arduinoMock, digitalWrite(1, 0)); // led
 	ptt->delayed_off(100);
   ASSERT_EQ(true, ptt->getState());
   ptt->delayed_off(100);
   ASSERT_EQ(true, ptt->getState());
   ptt->delayed_off(100);
+  ASSERT_EQ(false, ptt->getState());
+}
+
+TEST_F(PTTTest, delayed_off_0ms)
+{
+  ptt->on();
+  EXPECT_CALL(*arduinoMock, millis())
+		.WillOnce(Return(0));
+	ptt->delayed_off(0);
   ASSERT_EQ(false, ptt->getState());
 }
 

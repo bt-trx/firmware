@@ -28,9 +28,23 @@ Contact: bt-trx.com, mail@bt-trx.com
  * @param led_pin
  */
 PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
-	: pin_(ptt_pin), led(led_pin), state_(false), turn_off_time(-1)
+	: pin_(ptt_pin), led(led_pin), state_(false), last_turn_on_time_(-1), last_turn_off_time_(-1)
 {
 	pinMode(pin_, OUTPUT);
+}
+
+/**
+ * @brief Check if the time-out-timer has been expired and turn off PTT in that
+ * case
+ * 
+ */
+void PTT::checkTOT(uint32_t tot_min)
+{
+	ulong time_out_time = tot_min * 60000; // minutes to ms
+	if ((last_turn_on_time_ + time_out_time) < millis())
+	{
+		off();
+	}
 }
 
 /**
@@ -41,8 +55,9 @@ void PTT::on()
 {
 	digitalWrite(pin_, LOW); // active low
 	led.on();
-	turn_off_time = -1;
 
+	last_turn_on_time_ = millis();
+	last_turn_off_time_ = -1;
 	state_ = true;
 }
 
@@ -54,7 +69,7 @@ void PTT::off()
 {
 	digitalWrite(pin_, HIGH); // active low
 	led.off();
-	turn_off_time = -1;
+	last_turn_off_time_ = -1;
 
 	state_ = false;
 }
@@ -63,10 +78,10 @@ void PTT::off()
  * @brief Toggle PTT
  * 
  */
-void PTT::toggle()
+void PTT::toggle(uint32_t delay_ms)
 {
 	if (state_) {
-		off();
+		delayed_off(delay_ms);
 	} else {
 		on();
 	}
@@ -79,10 +94,16 @@ void PTT::toggle()
  */
 void PTT::delayed_off(uint32_t delay_ms)
 {
-	if (turn_off_time == -1) {
-		turn_off_time = millis();
-	} else {
-		if ((turn_off_time + delay_ms) <= millis()) {
+	ulong current_time = millis();
+
+	// Store the time when the command for turning off was received
+	if (last_turn_off_time_ == -1) {
+		last_turn_off_time_ = current_time;
+	}
+
+	// Check repeatedly when the delay was reached and switch off
+	if (last_turn_off_time_ != -1) {
+		if ((last_turn_off_time_ + delay_ms) <= current_time) {
 			off();
 		}
 	}
