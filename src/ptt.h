@@ -32,18 +32,21 @@ class PTT {
     public:
 	PTT(uint32_t ptt_pin, uint32_t led_pin);
 
-	void checkTOT(uint32_t);
+	void checkTimeout(uint32_t);
 
 	void on();
 	void off();
 	void delayed_off(uint32_t);
 	void toggle(uint32_t = 0);
-	bool getState() { return state_; };
+	bool getState()
+	{
+		return state_;
+	};
 
     private:
 	int pin_;
 	LED led;
 	bool state_;
-	ulong last_turn_on_time_; 
+	ulong last_turn_on_time_;
 	ulong last_turn_off_time_;
 };

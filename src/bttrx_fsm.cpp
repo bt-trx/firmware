@@ -341,22 +341,25 @@ void BTTRX_FSM::setState(state_t state)
  */
 void BTTRX_FSM::handlePTTDuringCall()
 {
-	ptt_output_.checkTOT(1); // bttrx_control_.getPTTToT();
+	ptt_output_.checkTimeout(bttrx_control_.getPTTTimeout());
 
-	if (true) // btttrx_control_.getPTTToggleEnabled();
-	{
+	if (bttrx_control_.getPTTToggleEnabled()) {
 		// Press Button to assert PTT, press again to release PTT
-		if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge()) {
+		if (ptt_button_.isPressedEdge() ||
+		    ble_button_.isPressedEdge()) {
 			ptt_output_.toggle(bttrx_control_.getPTTHangTime());
 		}
-	} else { // Hold Button for PTT		
-		if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge()) {
+	} else { // Hold Button for PTT
+		if (ptt_button_.isPressedEdge() ||
+		    ble_button_.isPressedEdge()) {
 			ptt_output_.on();
 		} else if (
 			ptt_button_.isReleased() &&
 			(!ble_button_.isConnected() ||
-			(ble_button_.isConnected() && ble_button_.isReleased()))) {
-			ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
+			 (ble_button_.isConnected() &&
+			  ble_button_.isReleased()))) {
+			ptt_output_.delayed_off(
+				bttrx_control_.getPTTHangTime());
 		}
-	}	
+	}
 }

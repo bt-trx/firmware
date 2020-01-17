@@ -38,6 +38,8 @@ enum ParameterType {
 	kADCGain,
 	kDACGain,
 	kPinCode,
+	kPTTToggleEnabled,
+	kPTTTimeout,
 	kPTTHangTime
 };
 
@@ -47,9 +49,12 @@ class BTTRX_CONTROL {
 	ResultType set(string, string);
 	ResultType get(string, string *);
 	ResultType get(ParameterType, string *);
+	ResultType get(ParameterType, bool *);
 	ResultType action(string);
 	void storeSetting(ParameterType, string);
 
+	bool getPTTToggleEnabled();
+	uint16_t getPTTTimeout();
 	uint16_t getPTTHangTime();
 
     private:
@@ -61,6 +66,8 @@ class BTTRX_CONTROL {
 	ResultType handleSetADCGain(string);
 	ResultType handleSetDACGain(string);
 	ResultType handleSetPinCode(string);
+	ResultType handleSetPTTToggleEnabled(string);
+	ResultType handleSetPTTTimeout(string);
 	ResultType handleSetPTTHangTime(string);
 
 	string adc_gain_ = "0";

@@ -28,7 +28,8 @@ Contact: bt-trx.com, mail@bt-trx.com
  * @param led_pin
  */
 PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
-	: pin_(ptt_pin), led(led_pin), state_(false), last_turn_on_time_(-1), last_turn_off_time_(-1)
+	: pin_(ptt_pin), led(led_pin), state_(false), last_turn_on_time_(-1),
+	  last_turn_off_time_(-1)
 {
 	pinMode(pin_, OUTPUT);
 }
@@ -38,11 +39,10 @@ PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
  * case
  * 
  */
-void PTT::checkTOT(uint32_t tot_min)
+void PTT::checkTimeout(uint32_t timeout_min)
 {
-	ulong time_out_time = tot_min * 60000; // minutes to ms
-	if ((last_turn_on_time_ + time_out_time) < millis())
-	{
+	ulong timeout_ms = timeout_min * 60000; // minutes to ms
+	if ((last_turn_on_time_ + timeout_ms) < millis()) {
 		off();
 	}
 }
@@ -56,9 +56,9 @@ void PTT::on()
 	digitalWrite(pin_, LOW); // active low
 	led.on();
 
-	last_turn_on_time_ = millis();
+	last_turn_on_time_  = millis();
 	last_turn_off_time_ = -1;
-	state_ = true;
+	state_              = true;
 }
 
 /**

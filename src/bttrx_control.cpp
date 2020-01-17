@@ -51,6 +51,12 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 	case kPinCode:
 		result = handleSetPinCode(value);
 		break;
+	case kPTTToggleEnabled:
+		result = handleSetPTTToggleEnabled(value);
+		break;
+	case kPTTTimeout:
+		result = handleSetPTTTimeout(value);
+		break;
 	case kPTTHangTime:
 		result = handleSetPTTHangTime(value);
 		break;
@@ -96,6 +102,15 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value)
 	case kPinCode:
 		*value = pin_code_;
 		break;
+	case kPTTToggleEnabled:
+		*value = to_string(preferences.getBool(
+			ParameterTypeToString(kPTTToggleEnabled).c_str(),
+			false));
+		break;
+	case kPTTTimeout:
+		*value = to_string(preferences.getUShort(
+			ParameterTypeToString(kPTTTimeout).c_str(), 3));
+		break;
 	case kPTTHangTime:
 		*value = to_string(preferences.getUShort(
 			ParameterTypeToString(kPTTHangTime).c_str(), 0));
@@ -103,6 +118,20 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value)
 	default:
 		return kError;
 		break;
+	}
+	return kSuccess;
+}
+
+ResultType BTTRX_CONTROL::get(ParameterType parameter, bool *value)
+{
+	switch (parameter) {
+	case kPTTToggleEnabled:
+		*value = preferences.getBool(
+			ParameterTypeToString(kPTTToggleEnabled).c_str(),
+			false);
+		break;
+	default:
+		return kError;
 	}
 	return kSuccess;
 }
@@ -151,6 +180,30 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
  * 
  * @return uint16_t 
  */
+bool BTTRX_CONTROL::getPTTToggleEnabled()
+{
+	bool value = "";
+	get(kPTTToggleEnabled, &value);
+	return value;
+}
+
+/**
+ * @brief Getter method for PTT Timeout
+ * 
+ * @return uint16_t 
+ */
+uint16_t BTTRX_CONTROL::getPTTTimeout()
+{
+	string value = "";
+	get(kPTTTimeout, &value);
+	return stoi(value);
+}
+
+/**
+ * @brief Getter method for PTT HangTime
+ * 
+ * @return uint16_t 
+ */
 uint16_t BTTRX_CONTROL::getPTTHangTime()
 {
 	string value = "";
@@ -174,6 +227,12 @@ ParameterType BTTRX_CONTROL::stringToParameterType(string name)
 	}
 	if (name == "pin_code") {
 		return kPinCode;
+	}
+	if (name == "ptt_toggle_en") {
+		return kPTTToggleEnabled;
+	}
+	if (name == "ptt_timeout") {
+		return kPTTTimeout;
 	}
 	if (name == "ptt_hang_time") {
 		return kPTTHangTime;
@@ -199,6 +258,12 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type)
 		break;
 	case kPinCode:
 		return_value = "pin_code";
+		break;
+	case kPTTToggleEnabled:
+		return_value = "ptt_toggle_en";
+		break;
+	case kPTTTimeout:
+		return_value = "ptt_timeout";
 		break;
 	case kPTTHangTime:
 		return_value = "ptt_hang_time";
@@ -261,6 +326,45 @@ ResultType BTTRX_CONTROL::handleSetPinCode(string pin_code)
 	pin_code_ = pin_code;
 	// Set on wt32i
 	return wt32i_->setPinCode(pin_code_);
+}
+
+/**
+ * @brief Set PTT Toggle feature on or off
+ * 
+ * @param enabled 
+ * @return ResultType 
+ */
+ResultType BTTRX_CONTROL::handleSetPTTToggleEnabled(string enabled)
+{
+	bool value = false;
+	if (enabled == "true") {
+		value = true;
+	} else if (enabled == "false") {
+		value = false;
+	} else {
+		return kError;
+	}
+
+	preferences.putBool(
+		ParameterTypeToString(kPTTToggleEnabled).c_str(), value);
+	return kSuccess;
+}
+
+/**
+ * @brief Set PTT Timeout
+ * 
+ * @param timeout in minutes 
+ * @return ResultType 
+ */
+ResultType BTTRX_CONTROL::handleSetPTTTimeout(string timeout)
+{
+	uint16_t value = stoi(timeout);
+	if (value < 10) {
+		preferences.putUShort(
+			ParameterTypeToString(kPTTTimeout).c_str(), value);
+		return kSuccess;
+	}
+	return kError;
 }
 
 /**
