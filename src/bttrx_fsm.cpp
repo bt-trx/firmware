@@ -137,8 +137,9 @@ void BTTRX_FSM::handleStateConfigure()
 	// Future (needs iWrap 6.2)
 	// wt32i_.set("CONTROL", "HFPINIT", "SERVICE 1 SIGNAL 5");
 
-	// Read wt32i configuration
+	// Read wt32i configuration to get current values of ADC/DAC Gain and PIN
 	wt32i_.set();
+	wt32i_.readActiveConnections();
 
 	setState(STATE_INQUIRY);
 }
