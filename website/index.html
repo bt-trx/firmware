@@ -72,6 +72,16 @@
   </tr>
   <tr><td colspan=2><h2>PTT</h2></td></tr>
   <tr>
+    <td class=descr>PTT Toggle</td>
+    <td><input type="checkbox" name="ptt_toggle_en" id="ptt_toggle_en" onclick='OnCheckboxChange(this.form.ptt_toggle_en);'></td>
+  </tr>
+  <tr>
+    <td class=descr>PTT Timeout<br>(1-9 minutes, 0 = off)</td>
+    <td class=set><input type="text" name="ptt_timeout" id="ptt_timeout" maxlength=1 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+      <input type="button" value="Set" onclick='setData("ptt_timeout", this.form.ptt_timeout.value);'>
+    </td>
+  </tr>
+  <tr>
     <td class=descr>PTT Hang Time<br>(0-999 ms)</td>
     <td class=set><input type="text" name="ptt_hang_time" id="ptt_hang_time" maxlength=3 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
       <input type="button" value="Set" onclick='setData("ptt_hang_time", this.form.ptt_hang_time.value);'>
