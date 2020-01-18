@@ -336,12 +336,13 @@ void BTTRX_FSM::setState(state_t state)
 }
 
 /**
- * @brief 
+ * @brief Check for PTT Timeout and Delayed PTT off, handle Button presses
  * 
  */
 void BTTRX_FSM::handlePTTDuringCall()
 {
-	ptt_output_.checkTimeout(bttrx_control_.getPTTTimeout());
+	ptt_output_.checkForTimeout(bttrx_control_.getPTTTimeout());
+	ptt_output_.checkForDelayedOff();
 
 	if (bttrx_control_.getPTTToggleEnabled()) {
 		// Press Button to assert PTT, press again to release PTT

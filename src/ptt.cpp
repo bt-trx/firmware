@@ -28,8 +28,8 @@ Contact: bt-trx.com, mail@bt-trx.com
  * @param led_pin
  */
 PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
-	: pin_(ptt_pin), led(led_pin), state_(false), last_turn_on_time_(-1),
-	  last_turn_off_time_(-1)
+	: pin_(ptt_pin), led(led_pin), ptt_on_(false), turn_on_time_(-1),
+	  turn_off_time_(-1), turn_off_delay_(0)
 {
 	pinMode(pin_, OUTPUT);
 }
@@ -39,11 +39,25 @@ PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
  * case
  * 
  */
-void PTT::checkTimeout(uint32_t timeout_min)
+void PTT::checkForTimeout(uint32_t timeout_min)
 {
+	if (timeout_min == 0) {
+		return;
+	} // Timeout disabled
+
 	ulong timeout_ms = timeout_min * 60000; // minutes to ms
-	if ((last_turn_on_time_ + timeout_ms) < millis()) {
+	if ((turn_on_time_ + timeout_ms) < millis()) {
 		off();
+	}
+}
+
+void PTT::checkForDelayedOff()
+{
+	// Check repeatedly when the delay was reached and switch off
+	if (turn_off_time_ != -1) {
+		if ((turn_off_time_ + turn_off_delay_) <= millis()) {
+			off();
+		}
 	}
 }
 
@@ -56,9 +70,9 @@ void PTT::on()
 	digitalWrite(pin_, LOW); // active low
 	led.on();
 
-	last_turn_on_time_  = millis();
-	last_turn_off_time_ = -1;
-	state_              = true;
+	turn_on_time_  = millis();
+	turn_off_time_ = -1;
+	ptt_on_        = true;
 }
 
 /**
@@ -69,9 +83,9 @@ void PTT::off()
 {
 	digitalWrite(pin_, HIGH); // active low
 	led.off();
-	last_turn_off_time_ = -1;
+	turn_off_time_ = -1;
 
-	state_ = false;
+	ptt_on_ = false;
 }
 
 /**
@@ -80,7 +94,7 @@ void PTT::off()
  */
 void PTT::toggle(uint32_t delay_ms)
 {
-	if (state_) {
+	if (ptt_on_) {
 		delayed_off(delay_ms);
 	} else {
 		on();
@@ -94,17 +108,15 @@ void PTT::toggle(uint32_t delay_ms)
  */
 void PTT::delayed_off(uint32_t delay_ms)
 {
-	ulong current_time = millis();
+	turn_off_delay_ = delay_ms;
 
-	// Store the time when the command for turning off was received
-	if (last_turn_off_time_ == -1) {
-		last_turn_off_time_ = current_time;
+	if (turn_off_delay_ == 0) {
+		off();
+		return;
 	}
 
-	// Check repeatedly when the delay was reached and switch off
-	if (last_turn_off_time_ != -1) {
-		if ((last_turn_off_time_ + delay_ms) <= current_time) {
-			off();
-		}
+	// Store the time when the command for turning off was received
+	if (turn_off_time_ == -1) {
+		turn_off_time_ = millis();
 	}
 }

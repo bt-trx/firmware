@@ -60,7 +60,7 @@ class PTTTest : public ::testing::Test {
 	}
 };
 
-TEST_F(PTTTest, checkTOT)
+TEST_F(PTTTest, checkTimeout)
 {
 	EXPECT_CALL(*arduinoMock, millis())
 	  .WillOnce(Return(0))
@@ -69,9 +69,9 @@ TEST_F(PTTTest, checkTOT)
 
   ptt->on();
   ASSERT_EQ(true, ptt->getState());
-	ptt->checkTOT(1);
+	ptt->checkForTimeout(1);
 	ASSERT_EQ(true, ptt->getState());
-	ptt->checkTOT(1);
+	ptt->checkForTimeout(1);
 	ASSERT_EQ(false, ptt->getState());
 }
 
@@ -95,7 +95,7 @@ TEST_F(PTTTest, off)
   ASSERT_EQ(false, ptt->getState());
 }
 
-TEST_F(PTTTest, toggle)
+TEST_F(PTTTest, toggle_0ms)
 {
   ptt->on();
   ASSERT_EQ(true, ptt->getState());
@@ -114,17 +114,15 @@ TEST_F(PTTTest, delayed_off)
     .WillOnce(Return(101));
 	ptt->delayed_off(100);
   ASSERT_EQ(true, ptt->getState());
-  ptt->delayed_off(100);
+  ptt->checkForDelayedOff();
   ASSERT_EQ(true, ptt->getState());
-  ptt->delayed_off(100);
+  ptt->checkForDelayedOff();
   ASSERT_EQ(false, ptt->getState());
 }
 
 TEST_F(PTTTest, delayed_off_0ms)
 {
   ptt->on();
-  EXPECT_CALL(*arduinoMock, millis())
-		.WillOnce(Return(0));
 	ptt->delayed_off(0);
   ASSERT_EQ(false, ptt->getState());
 }
