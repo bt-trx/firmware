@@ -137,8 +137,9 @@ void BTTRX_FSM::handleStateConfigure()
 	// Future (needs iWrap 6.2)
 	// wt32i_.set("CONTROL", "HFPINIT", "SERVICE 1 SIGNAL 5");
 
-	// Read wt32i configuration
+	// Read wt32i configuration to get current values of ADC/DAC Gain and PIN
 	wt32i_.set();
+	wt32i_.readActiveConnections();
 
 	setState(STATE_INQUIRY);
 }
@@ -249,14 +250,8 @@ void BTTRX_FSM::handleIncomingMessage()
 		bttrx_control_.storeSetting(kPinCode, splitString(msg.msg)[4]);
 		break;
 	case kLIST_RESULT:
-		if (!wt32i_.getActiveConnections().empty()) {
-			// Immediately indicate mobile network availability to HFP device
-			wt32i_.indicateNetworkAvailable();
-			if (current_state_ == STATE_INQUIRY ||
-			    current_state_ == STATE_CONNECTING) {
-				setState(STATE_CONNECTED);
-			}
-		}
+		// Kill existing connections
+		serial_.println("CLOSE " + splitString(msg.msg)[1]);
 		break;
 	case kINQUIRY_RESULT:
 		// In the meantime, we may have got an incoming connection and we do not
