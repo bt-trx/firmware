@@ -136,6 +136,7 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, bool *value)
 	case kPTTToggleEnabled:
 		*value = preferences.getBool(
 			ParameterTypeToString(kPTTToggleEnabled).c_str(),
+			false);
 	case kDirectAudioEnabled:
 		*value = preferences.getBool(
 			ParameterTypeToString(kDirectAudioEnabled).c_str(),
