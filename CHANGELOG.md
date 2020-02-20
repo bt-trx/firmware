@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2020-02-20
+
+### Added
+
+- PTT Toggle feature (Press the button once to assert PTT,
+  press again to release PTT). Can be enabled in webinterface.
+- PTT Timeout feature (maximum time of transmit up to 9 minutes).
+  Can be configured in webinterface.
+
+### Changed
+
+- Fix AT commands to enable compatibility to Audi Q5 (and probably others)
+- Doing a full reconnect of existing BT connections on power-cycle of bt-trx, should solve 
+  connectivity issues with some headsets.
+
+(changes of [1.0.0-rc1] and [0.3.1-rc1])
+
 ## [1.0.0-rc1] - 2020-02-12
 
 ### Changed
@@ -123,6 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial public release
 
+[1.0.0]: https://github.com/bt-trx/firmware/compare/1.0.0-rc1...1.0.0
 [1.0.0-rc1]: https://github.com/bt-trx/firmware/compare/0.3.1-rc1...1.0.0-rc1
 [0.3.1-rc1]: https://github.com/bt-trx/firmware/compare/0.3.0...0.3.1-rc1
 [0.3.0]: https://github.com/bt-trx/firmware/compare/0.2.1...0.3.0
