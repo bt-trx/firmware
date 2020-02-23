@@ -88,10 +88,12 @@ void setupPins()
 }
 
 String getHardwareVersion()
-{
+{	
 	switch (analogRead(PIN_HW_VER)) {
 	case 0:
-		return "dev-board v4.1";
+		return "4.1";
+	case 4095:
+		return "5.0";
 	default:
 		return "unkown";
 	}
@@ -120,7 +122,7 @@ void setup()
 	bttrx_fsm.setSerial(&SERIAL_BT, &SERIAL_DBG);
 
 	// Print version information
-	SERIAL_DBG.println("bt-trx Hardware: " + getHardwareVersion());
+	SERIAL_DBG.println("bt-trx Hardware: dev-board v" + getHardwareVersion());
 	string header = "bt-trx Firmware: v";
 	header.append(GIT_REVISION);
 	SERIAL_DBG.println(header.c_str());
