@@ -23,12 +23,11 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "../src/serialwrapper.h"
 
 class SerialWrapperMock : public SerialWrapperInterface {
-    public:
-	MOCK_METHOD1(println, size_t(const char *));
-	MOCK_METHOD1(println, size_t(string));
-	MOCK_METHOD1(dbg_println, size_t(const char *));
-	MOCK_METHOD1(dbg_println, size_t(string));
-	MOCK_METHOD3(
-		waitForInputBlocking, ResultType(string, string *, uint32_t));
-	MOCK_METHOD0(readLineToString, string());
+public:
+  MOCK_METHOD1(println, size_t(const char *));
+  MOCK_METHOD1(println, size_t(string));
+  MOCK_METHOD1(dbg_println, size_t(const char *));
+  MOCK_METHOD1(dbg_println, size_t(string));
+  MOCK_METHOD3(waitForInputBlocking, ResultType(string, string *, uint32_t));
+  MOCK_METHOD0(readLineToString, string());
 };

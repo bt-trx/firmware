@@ -34,43 +34,43 @@ Contact: bt-trx.com, mail@bt-trx.com
 using namespace std;
 
 enum ParameterType {
-	kUnkownParameter,
-	kADCGain,
-	kDACGain,
-	kPinCode,
-	kPTTToggleEnabled,
-	kPTTTimeout,
-	kPTTHangTime
+  kUnkownParameter,
+  kADCGain,
+  kDACGain,
+  kPinCode,
+  kPTTToggleEnabled,
+  kPTTTimeout,
+  kPTTHangTime
 };
 
 class BTTRX_CONTROL {
-    public:
-	BTTRX_CONTROL(SerialWrapperInterface *, WT32iInterface *);
-	ResultType set(string, string);
-	ResultType get(string, string *);
-	ResultType get(ParameterType, string *);
-	ResultType get(ParameterType, bool *);
-	ResultType action(string);
-	void storeSetting(ParameterType, string);
+public:
+  BTTRX_CONTROL(SerialWrapperInterface *, WT32iInterface *);
+  ResultType set(string, string);
+  ResultType get(string, string *);
+  ResultType get(ParameterType, string *);
+  ResultType get(ParameterType, bool *);
+  ResultType action(string);
+  void storeSetting(ParameterType, string);
 
-	bool getPTTToggleEnabled();
-	uint16_t getPTTTimeout();
-	uint16_t getPTTHangTime();
+  bool getPTTToggleEnabled();
+  uint16_t getPTTTimeout();
+  uint16_t getPTTHangTime();
 
-    private:
-	SerialWrapperInterface *serial_;
-	WT32iInterface *wt32i_;
+private:
+  SerialWrapperInterface *serial_;
+  WT32iInterface *wt32i_;
 
-	ParameterType stringToParameterType(string);
-	string ParameterTypeToString(ParameterType);
-	ResultType handleSetADCGain(string);
-	ResultType handleSetDACGain(string);
-	ResultType handleSetPinCode(string);
-	ResultType handleSetPTTToggleEnabled(string);
-	ResultType handleSetPTTTimeout(string);
-	ResultType handleSetPTTHangTime(string);
+  ParameterType stringToParameterType(string);
+  string ParameterTypeToString(ParameterType);
+  ResultType handleSetADCGain(string);
+  ResultType handleSetDACGain(string);
+  ResultType handleSetPinCode(string);
+  ResultType handleSetPTTToggleEnabled(string);
+  ResultType handleSetPTTTimeout(string);
+  ResultType handleSetPTTHangTime(string);
 
-	string adc_gain_ = "0";
-	string dac_gain_ = "0";
-	string pin_code_ = "0000";
+  string adc_gain_ = "0";
+  string dac_gain_ = "0";
+  string pin_code_ = "0000";
 };

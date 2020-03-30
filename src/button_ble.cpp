@@ -22,31 +22,24 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 /**
  * @brief Update the button state
- * 
+ *
  */
-void ButtonBLE::update()
-{
-	state_changed = false;
-	if (next_state != button_state) {
-		button_state  = next_state;
-		state_changed = true;
-	}
+void ButtonBLE::update() {
+  state_changed = false;
+  if (next_state != button_state) {
+    button_state = next_state;
+    state_changed = true;
+  }
 }
 
 /**
  * @brief Update the button state
- * 
+ *
  */
-void ButtonBLE::setPressed()
-{
-	next_state = BTNSTATE_PRESSED;
-}
+void ButtonBLE::setPressed() { next_state = BTNSTATE_PRESSED; }
 
 /**
  * @brief Update the button state
- * 
+ *
  */
-void ButtonBLE::setReleased()
-{
-	next_state = BTNSTATE_RELEASED;
-}
+void ButtonBLE::setReleased() { next_state = BTNSTATE_RELEASED; }

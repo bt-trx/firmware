@@ -29,47 +29,37 @@ using ::testing::Return;
 using ::testing::SetArrayArgument;
 using ::testing::StrEq;
 
-namespace
-{
+namespace {
 class ButtonHWTest : public ::testing::Test {
-    protected:
-	ArduinoMock *arduinoMock;
-	ButtonHW *button;
+protected:
+  ArduinoMock *arduinoMock;
+  ButtonHW *button;
 
-	ButtonHWTest()
-	{
-	}
+  ButtonHWTest() {}
 
-	virtual ~ButtonHWTest()
-	{
-	}
+  virtual ~ButtonHWTest() {}
 
-	virtual void SetUp()
-	{
-		arduinoMock = arduinoMockInstance();
+  virtual void SetUp() {
+    arduinoMock = arduinoMockInstance();
 
-		EXPECT_CALL(*arduinoMock, pinMode(_, INPUT));
-		button = new ButtonHW(0);
-	}
+    EXPECT_CALL(*arduinoMock, pinMode(_, INPUT));
+    button = new ButtonHW(0);
+  }
 
-	virtual void TearDown()
-	{
-		releaseArduinoMock();
-		delete button;
-	}
+  virtual void TearDown() {
+    releaseArduinoMock();
+    delete button;
+  }
 };
 
-TEST_F(ButtonHWTest, isPressed)
-{
-	EXPECT_CALL(*arduinoMock, digitalRead(_))
-		.WillOnce(Return(0))
-		.WillOnce(Return(0));
-	EXPECT_CALL(*arduinoMock, millis())
-		.WillOnce(Return(0))
-		.WillOnce(Return(50));
-	button->update();
-	button->update();
-	ASSERT_EQ(true, button->isPressed());
+TEST_F(ButtonHWTest, isPressed) {
+  EXPECT_CALL(*arduinoMock, digitalRead(_))
+      .WillOnce(Return(0))
+      .WillOnce(Return(0));
+  EXPECT_CALL(*arduinoMock, millis()).WillOnce(Return(0)).WillOnce(Return(50));
+  button->update();
+  button->update();
+  ASSERT_EQ(true, button->isPressed());
 }
 
 } // namespace

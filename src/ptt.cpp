@@ -28,95 +28,88 @@ Contact: bt-trx.com, mail@bt-trx.com
  * @param led_pin
  */
 PTT::PTT(uint32_t ptt_pin, uint32_t led_pin)
-	: pin_(ptt_pin), led(led_pin), ptt_on_(false), turn_on_time_(-1),
-	  turn_off_time_(-1), turn_off_delay_(0)
-{
-	pinMode(pin_, OUTPUT);
+    : pin_(ptt_pin), led(led_pin), ptt_on_(false), turn_on_time_(-1),
+      turn_off_time_(-1), turn_off_delay_(0) {
+  pinMode(pin_, OUTPUT);
 }
 
 /**
  * @brief Check if the time-out-timer has been expired and turn off PTT in that
  * case
- * 
+ *
  */
-void PTT::checkForTimeout(uint32_t timeout_min)
-{
-	if (timeout_min == 0) {
-		return;
-	} // Timeout disabled
+void PTT::checkForTimeout(uint32_t timeout_min) {
+  if (timeout_min == 0) {
+    return;
+  } // Timeout disabled
 
-	ulong timeout_ms = timeout_min * 60000; // minutes to ms
-	if ((turn_on_time_ + timeout_ms) < millis()) {
-		off();
-	}
+  ulong timeout_ms = timeout_min * 60000; // minutes to ms
+  if ((turn_on_time_ + timeout_ms) < millis()) {
+    off();
+  }
 }
 
-void PTT::checkForDelayedOff()
-{
-	// Check repeatedly when the delay was reached and switch off
-	if (turn_off_time_ != -1) {
-		if ((turn_off_time_ + turn_off_delay_) <= millis()) {
-			off();
-		}
-	}
+void PTT::checkForDelayedOff() {
+  // Check repeatedly when the delay was reached and switch off
+  if (turn_off_time_ != -1) {
+    if ((turn_off_time_ + turn_off_delay_) <= millis()) {
+      off();
+    }
+  }
 }
 
 /**
  * @brief Turn PTT output and PTT LED on
- * 
+ *
  */
-void PTT::on()
-{
-	digitalWrite(pin_, LOW); // active low
-	led.on();
+void PTT::on() {
+  digitalWrite(pin_, LOW); // active low
+  led.on();
 
-	turn_on_time_  = millis();
-	turn_off_time_ = -1;
-	ptt_on_        = true;
+  turn_on_time_ = millis();
+  turn_off_time_ = -1;
+  ptt_on_ = true;
 }
 
 /**
  * @brief Turn PTT output and PTT LED off
- * 
+ *
  */
-void PTT::off()
-{
-	digitalWrite(pin_, HIGH); // active low
-	led.off();
-	turn_off_time_ = -1;
+void PTT::off() {
+  digitalWrite(pin_, HIGH); // active low
+  led.off();
+  turn_off_time_ = -1;
 
-	ptt_on_ = false;
+  ptt_on_ = false;
 }
 
 /**
  * @brief Toggle PTT
- * 
+ *
  */
-void PTT::toggle(uint32_t delay_ms)
-{
-	if (ptt_on_) {
-		delayed_off(delay_ms);
-	} else {
-		on();
-	}
+void PTT::toggle(uint32_t delay_ms) {
+  if (ptt_on_) {
+    delayed_off(delay_ms);
+  } else {
+    on();
+  }
 }
 
 /**
  * @brief Turn PTT output and PTT LED off after the defined delay
- * 
+ *
  * @param delay in ms
  */
-void PTT::delayed_off(uint32_t delay_ms)
-{
-	turn_off_delay_ = delay_ms;
+void PTT::delayed_off(uint32_t delay_ms) {
+  turn_off_delay_ = delay_ms;
 
-	if (turn_off_delay_ == 0) {
-		off();
-		return;
-	}
+  if (turn_off_delay_ == 0) {
+    off();
+    return;
+  }
 
-	// Store the time when the command for turning off was received
-	if (turn_off_time_ == -1) {
-		turn_off_time_ = millis();
-	}
+  // Store the time when the command for turning off was received
+  if (turn_off_time_ == -1) {
+    turn_off_time_ = millis();
+  }
 }

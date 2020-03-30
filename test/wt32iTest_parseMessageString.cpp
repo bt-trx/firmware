@@ -30,175 +30,154 @@ using ::testing::SetArgPointee;
 using ::testing::SetArrayArgument;
 using ::testing::StrEq;
 
-namespace
-{
+namespace {
 class WT32i_parseMessageString_Test : public ::testing::Test {
-    protected:
-	SerialWrapperMock serialWrapperMock;
+protected:
+  SerialWrapperMock serialWrapperMock;
 
-	WT32i_parseMessageString_Test()
-	{
-	}
+  WT32i_parseMessageString_Test() {}
 
-	virtual ~WT32i_parseMessageString_Test()
-	{
-	}
+  virtual ~WT32i_parseMessageString_Test() {}
 
-	virtual void SetUp()
-	{
-	}
+  virtual void SetUp() {}
 
-	virtual void TearDown()
-	{
-	}
+  virtual void TearDown() {}
 };
 
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_empty)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "";
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_empty) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kEmpty, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kEmpty, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
 TEST_F(WT32i_parseMessageString_Test,
-       parseMessageString_success_SET_CONTROL_GAIN)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "SET CONTROL GAIN 8 10";
+       parseMessageString_success_SET_CONTROL_GAIN) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "SET CONTROL GAIN 8 10";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kSETTING_CONTROL_GAIN, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kSETTING_CONTROL_GAIN, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_BT_AUTH)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "SET BT AUTH * 2342";
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_BT_AUTH) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "SET BT AUTH * 2342";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kSETTING_PIN_CODE, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kSETTING_PIN_CODE, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_UNKOWN)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "SET DEADBEEF";
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SET_UNKOWN) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "SET DEADBEEF";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kSETTING_UNKNOWN, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kSETTING_UNKNOWN, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_LIST)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input =
-		"LIST 0 CONNECTED HFP-AG 667 0 0 7 8d 8d 25:aa:92:1f:94:a8 3 INCOMING ACTIVE SLAVE ENCRYPTED 0";
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_LIST) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "LIST 0 CONNECTED HFP-AG 667 0 0 7 8d 8d 25:aa:92:1f:94:a8 3 "
+                 "INCOMING ACTIVE SLAVE ENCRYPTED 0";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kLIST_RESULT, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kLIST_RESULT, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_INQUIRY)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "INQUIRY 25:aa:92:1f:94:a8 340404";
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_INQUIRY) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "INQUIRY 25:aa:92:1f:94:a8 340404";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kINQUIRY_RESULT, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
-}
-
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_HFPAG_CALLING)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "HFP-AG 0 CALLING";
-
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kHFPAG_CALLING, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kINQUIRY_RESULT, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
 TEST_F(WT32i_parseMessageString_Test,
-       parseMessageString_success_HFPAG_NO_CARRIER)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "HFP-AG 0 NO CARRIER";
+       parseMessageString_success_HFPAG_CALLING) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "HFP-AG 0 CALLING";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kHFPAG_NO_CARRIER, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
-}
-
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_HFPAG_UNKOWN)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "HFP-AG 0 UNKNOWN (0): AT+NREC=0\r";
-
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kHFPAG_UNKOWN, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kHFPAG_CALLING, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
 TEST_F(WT32i_parseMessageString_Test,
-       parseMessageString_success_NO_CARRIER_1_ERROR_0)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "NO CARRIER 1 ERROR 0";
+       parseMessageString_success_HFPAG_NO_CARRIER) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "HFP-AG 0 NO CARRIER";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_CALL_ENDED, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kHFPAG_NO_CARRIER, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
+}
+
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_HFPAG_UNKOWN) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "HFP-AG 0 UNKNOWN (0): AT+NREC=0\r";
+
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kHFPAG_UNKOWN, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
 TEST_F(WT32i_parseMessageString_Test,
-       parseMessageString_success_NO_CARRIER_0_ERROR_L2CAP_LINK_LOSS)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "NO CARRIER 0 ERROR c0c RFC_L2CAP_LINK_LOSS";
+       parseMessageString_success_NO_CARRIER_1_ERROR_0) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "NO CARRIER 1 ERROR 0";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_CALL_ENDED, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
 TEST_F(WT32i_parseMessageString_Test,
-       parseMessageString_success_NO_CARRIER_0_ERROR_0)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "NO CARRIER 0 ERROR 0";
+       parseMessageString_success_NO_CARRIER_0_ERROR_L2CAP_LINK_LOSS) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "NO CARRIER 0 ERROR c0c RFC_L2CAP_LINK_LOSS";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 
-TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SSP_CONFIRM)
-{
-	WT32i wt32i(nullptr);
-	iWrapMessage msg;
-	string input = "SSP CONFIRM 25:aa:92:1f:94:a8 559396 ?";
+TEST_F(WT32i_parseMessageString_Test,
+       parseMessageString_success_NO_CARRIER_0_ERROR_0) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "NO CARRIER 0 ERROR 0";
 
-	ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
-	ASSERT_EQ(iWrapMessageType::kSSP_CONFIRM, msg.msg_type);
-	ASSERT_EQ(input, msg.msg);
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kNOCARRIER_ERROR_LINK_LOSS, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
+}
+
+TEST_F(WT32i_parseMessageString_Test, parseMessageString_success_SSP_CONFIRM) {
+  WT32i wt32i(nullptr);
+  iWrapMessage msg;
+  string input = "SSP CONFIRM 25:aa:92:1f:94:a8 559396 ?";
+
+  ASSERT_EQ(ResultType::kSuccess, wt32i.parseMessageString(input, &msg));
+  ASSERT_EQ(iWrapMessageType::kSSP_CONFIRM, msg.msg_type);
+  ASSERT_EQ(input, msg.msg);
 }
 } // namespace

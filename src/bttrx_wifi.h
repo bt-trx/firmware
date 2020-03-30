@@ -22,32 +22,32 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #ifdef ARDUINO
 
+#include <ESPAsyncWebServer.h>
+#include <ESPmDNS.h>
+#include <Update.h>
 #include <WiFi.h>
 #include <WiFiAP.h>
-#include <ESPmDNS.h>
-#include <ESPAsyncWebServer.h>
-#include <Update.h>
 
-#include "settings.h"
 #include "bttrx_control.h"
+#include "settings.h"
 #include "website.h"
 
 extern const char *GIT_REVISION;
 
 class BTTRX_WIFI {
-    public:
-	AsyncWebServer server = AsyncWebServer(80);
-	void setup(BTTRX_CONTROL *);
-	void handleSet(AsyncWebServerRequest *);
-	void handleGet(AsyncWebServerRequest *);
-	void handleAction(AsyncWebServerRequest *);
+public:
+  AsyncWebServer server = AsyncWebServer(80);
+  void setup(BTTRX_CONTROL *);
+  void handleSet(AsyncWebServerRequest *);
+  void handleGet(AsyncWebServerRequest *);
+  void handleAction(AsyncWebServerRequest *);
 
-    private:
-	BTTRX_CONTROL *bttrx_control_;
-	void firmwareUpdateResponse(AsyncWebServerRequest *);
-	String resultPage(uint8_t);
-	String updateErrorcodeToString(uint8_t);
-	void onRequest(AsyncWebServerRequest *);
+private:
+  BTTRX_CONTROL *bttrx_control_;
+  void firmwareUpdateResponse(AsyncWebServerRequest *);
+  String resultPage(uint8_t);
+  String updateErrorcodeToString(uint8_t);
+  void onRequest(AsyncWebServerRequest *);
 };
 
 #endif // ARDUINO

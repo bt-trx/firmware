@@ -26,69 +26,63 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "arduino-mock/Serial.h"
 #endif
 
-#include "settings.h"
 #include "bttrx_control.h"
-#include "wt32i.h"
-#include "led.h"
-#include "button_hw.h"
 #include "button_ble.h"
+#include "button_hw.h"
+#include "led.h"
 #include "ptt.h"
+#include "settings.h"
+#include "wt32i.h"
 
 #include <string>
 using namespace std;
 
 class BTTRX_FSM {
-    public:
-	enum state_t {
-		STATE_INIT,
-		STATE_CONFIGURE,
-		STATE_INQUIRY,
-		STATE_CONNECTING,
-		STATE_CONNECTED,
-		STATE_CALL_RUNNING
-	};
+public:
+  enum state_t {
+    STATE_INIT,
+    STATE_CONFIGURE,
+    STATE_INQUIRY,
+    STATE_CONNECTING,
+    STATE_CONNECTED,
+    STATE_CALL_RUNNING
+  };
 
-	BTTRX_FSM();
-	BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg = NULL);
-	void setSerial(Stream *serial_bt, Stream *serial_dbg = NULL);
-	void run();
+  BTTRX_FSM();
+  BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg = NULL);
+  void setSerial(Stream *serial_bt, Stream *serial_dbg = NULL);
+  void run();
 
-	ButtonBLE *getBLEButtonHandler()
-	{
-		return &ble_button_;
-	};
+  ButtonBLE *getBLEButtonHandler() { return &ble_button_; };
 
-	BTTRX_CONTROL bttrx_control_;
+  BTTRX_CONTROL bttrx_control_;
 
-	// only required for unit testing
-	state_t getCurrentState()
-	{
-		return current_state_;
-	};
+  // only required for unit testing
+  state_t getCurrentState() { return current_state_; };
 
-    private:
-	SerialWrapper serial_;
-	WT32i wt32i_;
+private:
+  SerialWrapper serial_;
+  WT32i wt32i_;
 
-	state_t current_state_;
-	void setState(state_t);
+  state_t current_state_;
+  void setState(state_t);
 
-	LED led_connected_;
-	LED led_busy_;
-	ButtonHW helper_button_;
-	ButtonHW ptt_button_;
-	ButtonBLE ble_button_;
-	PTT ptt_output_;
+  LED led_connected_;
+  LED led_busy_;
+  ButtonHW helper_button_;
+  ButtonHW ptt_button_;
+  ButtonBLE ble_button_;
+  PTT ptt_output_;
 
-	// FSM State handler
-	void handleStateInit();
-	void handleStateConfigure();
-	void handleStateInquiry();
-	void handleStateConnecting();
-	void handleStateConnected();
-	void handleStateCallRunning();
-	// Message handler
-	void handleIncomingMessage();
-	// Handle PTT during Call
-	void handlePTTDuringCall();
+  // FSM State handler
+  void handleStateInit();
+  void handleStateConfigure();
+  void handleStateInquiry();
+  void handleStateConnecting();
+  void handleStateConnected();
+  void handleStateCallRunning();
+  // Message handler
+  void handleIncomingMessage();
+  // Handle PTT during Call
+  void handlePTTDuringCall();
 };

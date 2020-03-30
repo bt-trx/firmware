@@ -38,8 +38,7 @@ for source_file in "$@"; do
     fi
 
     if [[ "$source_file" == *.c* || "$source_file" == *.h* ]]; then
-        echo -e "\tCLANG-FORMAT\t$source_file"
-        clang-format -i "$source_file"
+        clang-format --verbose -style=llvm -i "$source_file"
     else
         echo -e "\tIGN\t\t$source_file"
 	fi

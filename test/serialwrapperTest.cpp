@@ -30,107 +30,84 @@ using ::testing::Return;
 using ::testing::SetArrayArgument;
 using ::testing::StrEq;
 
-namespace
-{
+namespace {
 class SerialWrapperTest : public ::testing::Test {
-    protected:
-	ArduinoMock *arduinoMock;
-	SerialMock *serialMock;
+protected:
+  ArduinoMock *arduinoMock;
+  SerialMock *serialMock;
 
-	SerialWrapperTest()
-	{
-	}
+  SerialWrapperTest() {}
 
-	virtual ~SerialWrapperTest()
-	{
-	}
+  virtual ~SerialWrapperTest() {}
 
-	virtual void SetUp()
-	{
-		arduinoMock = arduinoMockInstance();
-		serialMock  = serialMockInstance();
-	}
+  virtual void SetUp() {
+    arduinoMock = arduinoMockInstance();
+    serialMock = serialMockInstance();
+  }
 
-	virtual void TearDown()
-	{
-		releaseSerialMock();
-		releaseArduinoMock();
-	}
+  virtual void TearDown() {
+    releaseSerialMock();
+    releaseArduinoMock();
+  }
 };
 
-TEST_F(SerialWrapperTest, waitForInputBlocking_success_shortAnswer)
-{
-	SerialWrapper serialwrapper = SerialWrapper(&Serial);
+TEST_F(SerialWrapperTest, waitForInputBlocking_success_shortAnswer) {
+  SerialWrapper serialwrapper = SerialWrapper(&Serial);
 
-	EXPECT_CALL(*arduinoMock, millis())
-		.WillOnce(Return(0))
-		.WillOnce(Return(1));
-	char output[] = "FOO";
-	EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
-		.WillOnce(DoAll(
-			SetArrayArgument<1>(output, output + 4), (Return(3))));
+  EXPECT_CALL(*arduinoMock, millis()).WillOnce(Return(0)).WillOnce(Return(1));
+  char output[] = "FOO";
+  EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
+      .WillOnce(DoAll(SetArrayArgument<1>(output, output + 4), (Return(3))));
 
-	ASSERT_EQ(
-		ResultType::kSuccess,
-		serialwrapper.waitForInputBlocking("FOO"));
+  ASSERT_EQ(ResultType::kSuccess, serialwrapper.waitForInputBlocking("FOO"));
 }
 
-TEST_F(SerialWrapperTest, waitForInputBlocking_success_longAnswer)
-{
-	SerialWrapper serialwrapper = SerialWrapper(&Serial);
+TEST_F(SerialWrapperTest, waitForInputBlocking_success_longAnswer) {
+  SerialWrapper serialwrapper = SerialWrapper(&Serial);
 
-	EXPECT_CALL(*arduinoMock, millis())
-		.WillOnce(Return(0))
-		.WillOnce(Return(1));
-	char output[] = "FOO BAR";
-	EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
-		.WillOnce(DoAll(
-			SetArrayArgument<1>(output, output + 8), (Return(7))));
+  EXPECT_CALL(*arduinoMock, millis()).WillOnce(Return(0)).WillOnce(Return(1));
+  char output[] = "FOO BAR";
+  EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
+      .WillOnce(DoAll(SetArrayArgument<1>(output, output + 8), (Return(7))));
 
-	string result;
-	ASSERT_EQ(
-		ResultType::kSuccess,
-		serialwrapper.waitForInputBlocking("FOO", &result));
-	ASSERT_EQ(0, result.compare(output));
+  string result;
+  ASSERT_EQ(ResultType::kSuccess,
+            serialwrapper.waitForInputBlocking("FOO", &result));
+  ASSERT_EQ(0, result.compare(output));
 }
 
-TEST_F(SerialWrapperTest, waitForInputBlocking_timeout)
-{
-	SerialWrapper serialwrapper = SerialWrapper(&Serial);
+TEST_F(SerialWrapperTest, waitForInputBlocking_timeout) {
+  SerialWrapper serialwrapper = SerialWrapper(&Serial);
 
-	EXPECT_CALL(*arduinoMock, millis())
-		.WillOnce(Return(0))
-		.WillOnce(Return(1))
-		.WillOnce(Return(BT_SERIAL_TIMEOUT));
+  EXPECT_CALL(*arduinoMock, millis())
+      .WillOnce(Return(0))
+      .WillOnce(Return(1))
+      .WillOnce(Return(BT_SERIAL_TIMEOUT));
 
-	char output[] = "BAR";
-	EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
-		.WillRepeatedly(DoAll(
-			SetArrayArgument<1>(output, output + 4), (Return(3))));
+  char output[] = "BAR";
+  EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
+      .WillRepeatedly(
+          DoAll(SetArrayArgument<1>(output, output + 4), (Return(3))));
 
-	ASSERT_EQ(
-		ResultType::kTimeoutError,
-		serialwrapper.waitForInputBlocking("FOO"));
+  ASSERT_EQ(ResultType::kTimeoutError,
+            serialwrapper.waitForInputBlocking("FOO"));
 }
 
-TEST_F(SerialWrapperTest, readLineToString_success)
-{
-	SerialWrapper serialwrapper_ = SerialWrapper(&Serial);
+TEST_F(SerialWrapperTest, readLineToString_success) {
+  SerialWrapper serialwrapper_ = SerialWrapper(&Serial);
 
-	char output[] = "FOO BAR";
-	EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
-		.WillOnce(DoAll(
-			SetArrayArgument<1>(output, output + 8), (Return(7))));
+  char output[] = "FOO BAR";
+  EXPECT_CALL(*serialMock, readBytesUntil(_, _, _))
+      .WillOnce(DoAll(SetArrayArgument<1>(output, output + 8), (Return(7))));
 
-	ASSERT_EQ("FOO BAR", serialwrapper_.readLineToString());
+  ASSERT_EQ("FOO BAR", serialwrapper_.readLineToString());
 }
 
-TEST_F(SerialWrapperTest, readLineToString_success_emptyString)
-{
-	SerialWrapper serialwrapper_ = SerialWrapper(&Serial);
+TEST_F(SerialWrapperTest, readLineToString_success_emptyString) {
+  SerialWrapper serialwrapper_ = SerialWrapper(&Serial);
 
-	EXPECT_CALL(*serialMock, readBytesUntil(_, _, _));
+  EXPECT_CALL(*serialMock, readBytesUntil(_, _, _));
 
-	ASSERT_EQ("", serialwrapper_.readLineToString());
+  ASSERT_EQ("", serialwrapper_.readLineToString());
 }
 } // namespace

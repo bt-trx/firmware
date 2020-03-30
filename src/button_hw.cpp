@@ -25,35 +25,31 @@ Contact: bt-trx.com, mail@bt-trx.com
  *
  * @param pin
  */
-ButtonHW::ButtonHW(uint32_t pin) : pin_(pin)
-{
-	pinMode(pin_, INPUT);
-}
+ButtonHW::ButtonHW(uint32_t pin) : pin_(pin) { pinMode(pin_, INPUT); }
 
 /**
  * @brief Update the button state
- * 
+ *
  */
-void ButtonHW::update()
-{
-	bool reading      = digitalRead(pin_);
-	ulong currentTime = millis();
-	stateChanged      = false;
+void ButtonHW::update() {
+  bool reading = digitalRead(pin_);
+  ulong currentTime = millis();
+  stateChanged = false;
 
-	// If the switch changed, due to noise or pressing:
-	if (reading != lastButtonState) {
-		// reset the debouncing timer
-		lastDebounceTime = currentTime;
-	}
+  // If the switch changed, due to noise or pressing:
+  if (reading != lastButtonState) {
+    // reset the debouncing timer
+    lastDebounceTime = currentTime;
+  }
 
-	if ((currentTime - lastDebounceTime) >= debounceDelay) {
-		// if the button state has changed:
-		if (reading != buttonState) {
-			buttonState  = reading;
-			stateChanged = true;
-		}
-	}
-	lastButtonState = reading;
+  if ((currentTime - lastDebounceTime) >= debounceDelay) {
+    // if the button state has changed:
+    if (reading != buttonState) {
+      buttonState = reading;
+      stateChanged = true;
+    }
+  }
+  lastButtonState = reading;
 }
 
 /**
@@ -61,39 +57,31 @@ void ButtonHW::update()
  *
  * @return bool True if button is pressed
  */
-bool ButtonHW::isPressed()
-{
-	return !buttonState; // active low
+bool ButtonHW::isPressed() {
+  return !buttonState; // active low
 }
 
 /**
  * @brief Return current state of the button
- * 
+ *
  * @return bool True if button is released
  */
-bool ButtonHW::isReleased()
-{
-	return buttonState; // active low
+bool ButtonHW::isReleased() {
+  return buttonState; // active low
 }
 
 /**
- * @brief Returns true if the button was just pressed (edge), not the current state
- * Button is active low
+ * @brief Returns true if the button was just pressed (edge), not the current
+ * state Button is active low
  *
  * @return bool
  */
-bool ButtonHW::isPressedEdge()
-{
-	return isPressed() && stateChanged;
-}
+bool ButtonHW::isPressedEdge() { return isPressed() && stateChanged; }
 
 /**
- * @brief Returns true if the button was just released (edge), not the current state
- * Button is active low
- * 
+ * @brief Returns true if the button was just released (edge), not the current
+ * state Button is active low
+ *
  * @return bool
  */
-bool ButtonHW::isReleasedEdge()
-{
-	return isReleased() && stateChanged;
-}
+bool ButtonHW::isReleasedEdge() { return isReleased() && stateChanged; }

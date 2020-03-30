@@ -24,7 +24,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #define SERIAL_DBG_RATE 115200
 #define SERIAL_BT_RATE 115200
-#define SERIAL_TIMEOUT 10 //ms  // serial readline timeout
+#define SERIAL_TIMEOUT 10 // ms  // serial readline timeout
 #define SERIAL_DELIMITER '\n'
 #define SERIAL_MAX_LINE_LENGTH 110
 #define BT_SERIAL_TIMEOUT 100 // ms  // Time to wait for answers from BT module

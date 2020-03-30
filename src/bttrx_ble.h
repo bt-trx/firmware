@@ -28,47 +28,37 @@ Contact: bt-trx.com, mail@bt-trx.com
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
-	
+
 // The remote service we wish to connect to.
 static BLEUUID serviceUUID("ff01"); // Button
 // The characteristic of the remote service we are interested in.
 static BLEUUID charUUID("ff02");
 
 class BTTRX_BLE {
-    public:
-	BTTRX_BLE();
-	void setupBLE(ButtonBLE *);
-	ButtonBLE *getButton()
-	{
-		return ble_button_;
-	};
-	void run();
-	void doConnect(BLEAdvertisedDevice *device)
-	{
-		ble_device = new BLEAdvertisedDevice(*device);
-		do_connect = true;
-	}
-	void setConnectionState(bool state)
-	{
-		is_connected = state;
-	}
-	bool getConnectionState()
-	{
-		return is_connected;
-	}
+public:
+  BTTRX_BLE();
+  void setupBLE(ButtonBLE *);
+  ButtonBLE *getButton() { return ble_button_; };
+  void run();
+  void doConnect(BLEAdvertisedDevice *device) {
+    ble_device = new BLEAdvertisedDevice(*device);
+    do_connect = true;
+  }
+  void setConnectionState(bool state) { is_connected = state; }
+  bool getConnectionState() { return is_connected; }
 
-	static void
-	notifyCallback(BLERemoteCharacteristic *, uint8_t *, size_t, bool);
+  static void notifyCallback(BLERemoteCharacteristic *, uint8_t *, size_t,
+                             bool);
 
-    private:
-	BLEAdvertisedDevice *ble_device;
-	ButtonBLE *ble_button_ = nullptr;
-	bool is_started;
-	bool do_scan;
-	bool do_connect;
-	bool is_connected;
+private:
+  BLEAdvertisedDevice *ble_device;
+  ButtonBLE *ble_button_ = nullptr;
+  bool is_started;
+  bool do_scan;
+  bool do_connect;
+  bool is_connected;
 
-	bool connectToDevice();
+  bool connectToDevice();
 };
 
 #endif // ARDUINO
