@@ -25,45 +25,37 @@ Contact: bt-trx.com, mail@bt-trx.com
  *
  * @return bool True if button is pressed
  */
-bool Button::isPressed()
-{
-	if (button_state == BTNSTATE_PRESSED) {
-		return true;
-	}
-	return false;
+bool Button::isPressed() {
+  if (button_state == BTNSTATE_PRESSED) {
+    return true;
+  }
+  return false;
 }
 
 /**
  * @brief Return current state of the button
- * 
+ *
  * @return bool True if button is released
  */
-bool Button::isReleased()
-{
-	if (button_state == BTNSTATE_RELEASED) {
-		return true;
-	}
-	return false;
+bool Button::isReleased() {
+  if (button_state == BTNSTATE_RELEASED) {
+    return true;
+  }
+  return false;
 }
 
 /**
- * @brief Returns true if the button was just pressed (edge), not the current state
- * Button is active low
+ * @brief Returns true if the button was just pressed (edge), not the current
+ * state Button is active low
  *
  * @return bool
  */
-bool Button::isPressedEdge()
-{
-	return isPressed() && state_changed;
-}
+bool Button::isPressedEdge() { return isPressed() && state_changed; }
 
 /**
- * @brief Returns true if the button was just released (edge), not the current state
- * Button is active low
- * 
+ * @brief Returns true if the button was just released (edge), not the current
+ * state Button is active low
+ *
  * @return bool
  */
-bool Button::isReleasedEdge()
-{
-	return isReleased() && state_changed;
-}
+bool Button::isReleasedEdge() { return isReleased() && state_changed; }

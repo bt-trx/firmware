@@ -18,9 +18,9 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#include "gtest/gtest.h"
 #include "arduino-mock/Arduino.h"
 #include "arduino-mock/Serial.h"
+#include "gtest/gtest.h"
 
 #include "../src/bttrx_fsm.h"
 
@@ -32,39 +32,31 @@ using ::testing::Return;
 using ::testing::SetArrayArgument;
 using ::testing::StrEq;
 
-namespace
-{
+namespace {
 class BTTRX_FSMTest : public ::testing::Test {
-    protected:
-	ArduinoMock *arduinoMock;
-	SerialMock *serialMock;
+protected:
+  ArduinoMock *arduinoMock;
+  SerialMock *serialMock;
 
-	BTTRX_FSMTest()
-	{
-	}
+  BTTRX_FSMTest() {}
 
-	virtual ~BTTRX_FSMTest()
-	{
-	}
+  virtual ~BTTRX_FSMTest() {}
 
-	virtual void SetUp()
-	{
-		arduinoMock = arduinoMockInstance();
-		serialMock  = serialMockInstance();
-	}
+  virtual void SetUp() {
+    arduinoMock = arduinoMockInstance();
+    serialMock = serialMockInstance();
+  }
 
-	virtual void TearDown()
-	{
-		releaseSerialMock();
-		releaseArduinoMock();
-	}
+  virtual void TearDown() {
+    releaseSerialMock();
+    releaseArduinoMock();
+  }
 };
 
-TEST_F(BTTRX_FSMTest, Run_StateInit_Success1)
-{
-	EXPECT_CALL(*arduinoMock, pinMode(_, _)).Times(6);
-	BTTRX_FSM bttrx_fsm(&Serial, &Serial);
+TEST_F(BTTRX_FSMTest, Run_StateInit_Success1) {
+  EXPECT_CALL(*arduinoMock, pinMode(_, _)).Times(6);
+  BTTRX_FSM bttrx_fsm(&Serial, &Serial);
 
-	ASSERT_EQ(BTTRX_FSM::state_t::STATE_INIT, bttrx_fsm.getCurrentState());
+  ASSERT_EQ(BTTRX_FSM::state_t::STATE_INIT, bttrx_fsm.getCurrentState());
 }
 } // namespace

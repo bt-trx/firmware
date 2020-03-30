@@ -29,21 +29,15 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "button.h"
 
 class ButtonBLE : public Button {
-    public:
-	void setPressed();
-	void setReleased();
-	void update();
+public:
+  void setPressed();
+  void setReleased();
+  void update();
 
-	bool isConnected()
-	{
-		return is_connected;
-	}
-	void setConnected(bool state)
-	{
-		is_connected = state;
-	};
+  bool isConnected() { return is_connected; }
+  void setConnected(bool state) { is_connected = state; };
 
-    private:
-	bool is_connected      = false;
-	ButtonState next_state = BTNSTATE_UNKNOWN;
+private:
+  bool is_connected = false;
+  ButtonState next_state = BTNSTATE_UNKNOWN;
 };

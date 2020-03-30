@@ -26,22 +26,21 @@ Contact: bt-trx.com, mail@bt-trx.com
  * @param input
  * @return vector<string>
  */
-vector<string> splitString(const string input)
-{
-	string s         = input;
-	size_t pos       = 0;
-	string delimiter = " ";
-	vector<string> result;
-	while ((pos = s.find(delimiter)) != string::npos) {
-		if (pos != 0) {
-			result.push_back(s.substr(0, pos));
-		}
-		s.erase(0, pos + delimiter.length());
-	}
-	if (s != delimiter && s.length()) {
-		result.push_back(s);
-	}
-	return result;
+vector<string> splitString(const string input) {
+  string s = input;
+  size_t pos = 0;
+  string delimiter = " ";
+  vector<string> result;
+  while ((pos = s.find(delimiter)) != string::npos) {
+    if (pos != 0) {
+      result.push_back(s.substr(0, pos));
+    }
+    s.erase(0, pos + delimiter.length());
+  }
+  if (s != delimiter && s.length()) {
+    result.push_back(s);
+  }
+  return result;
 }
 
 /**
@@ -55,14 +54,13 @@ vector<string> splitString(const string input)
  * @param position
  * @return bool
  */
-bool containsStringOnPosition(
-	string input_string, string string_to_test, size_t position)
-{
-	vector<string> splitted_string = splitString(input_string);
-	if (position < splitted_string.size()) {
-		if (splitted_string.at(position) == string_to_test) {
-			return true;
-		}
-	}
-	return false;
+bool containsStringOnPosition(string input_string, string string_to_test,
+                              size_t position) {
+  vector<string> splitted_string = splitString(input_string);
+  if (position < splitted_string.size()) {
+    if (splitted_string.at(position) == string_to_test) {
+      return true;
+    }
+  }
+  return false;
 }

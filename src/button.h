@@ -23,13 +23,13 @@ Contact: bt-trx.com, mail@bt-trx.com
 enum ButtonState { BTNSTATE_UNKNOWN, BTNSTATE_RELEASED, BTNSTATE_PRESSED };
 
 class Button {
-    public:
-	bool isPressed();
-	bool isReleased();
-	bool isPressedEdge();
-	bool isReleasedEdge();
+public:
+  bool isPressed();
+  bool isReleased();
+  bool isPressedEdge();
+  bool isReleasedEdge();
 
-    protected:
-	ButtonState button_state = BTNSTATE_UNKNOWN;
-	bool state_changed       = false;
+protected:
+  ButtonState button_state = BTNSTATE_UNKNOWN;
+  bool state_changed = false;
 };

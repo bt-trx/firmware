@@ -27,5 +27,5 @@ Contact: bt-trx.com, mail@bt-trx.com
 using namespace std;
 
 vector<string> splitString(string);
-bool containsStringOnPosition(
-	string input_string, string string_to_test, size_t position);
+bool containsStringOnPosition(string input_string, string string_to_test,
+                              size_t position);

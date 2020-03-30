@@ -26,30 +26,17 @@ Contact: bt-trx.com, mail@bt-trx.com
  *
  * @param pin
  */
-LED::LED(uint32_t pin) : pin_(pin)
-{
-	pinMode(pin_, OUTPUT);
+LED::LED(uint32_t pin) : pin_(pin) { pinMode(pin_, OUTPUT); }
+
+void LED::on() { digitalWrite(pin_, HIGH); }
+
+void LED::off() { digitalWrite(pin_, LOW); }
+
+void LED::blink(uint32_t interval) {
+  if ((millis() - last_toggle_) > interval) {
+    toggle();
+    last_toggle_ = millis();
+  }
 }
 
-void LED::on()
-{
-	digitalWrite(pin_, HIGH);
-}
-
-void LED::off()
-{
-	digitalWrite(pin_, LOW);
-}
-
-void LED::blink(uint32_t interval)
-{
-	if ((millis() - last_toggle_) > interval) {
-		toggle();
-		last_toggle_ = millis();
-	}
-}
-
-void LED::toggle()
-{
-	digitalWrite(pin_, !digitalRead(pin_));
-}
+void LED::toggle() { digitalWrite(pin_, !digitalRead(pin_)); }

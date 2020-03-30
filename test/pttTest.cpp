@@ -29,90 +29,78 @@ using ::testing::Return;
 using ::testing::SetArrayArgument;
 using ::testing::StrEq;
 
-namespace
-{
+namespace {
 class PTTTest : public ::testing::Test {
-    protected:
-	ArduinoMock *arduinoMock;
+protected:
+  ArduinoMock *arduinoMock;
   PTT *ptt;
 
-	PTTTest()
-	{
-	}
+  PTTTest() {}
 
-	virtual ~PTTTest()
-	{
-	}
+  virtual ~PTTTest() {}
 
-	virtual void SetUp()
-	{
-		arduinoMock = arduinoMockInstance();
+  virtual void SetUp() {
+    arduinoMock = arduinoMockInstance();
 
-		EXPECT_CALL(*arduinoMock, pinMode(0, OUTPUT));
+    EXPECT_CALL(*arduinoMock, pinMode(0, OUTPUT));
     EXPECT_CALL(*arduinoMock, pinMode(1, OUTPUT));
-		ptt = new PTT(0, 1);
-	}
+    ptt = new PTT(0, 1);
+  }
 
-	virtual void TearDown()
-	{
-		releaseArduinoMock();
-		delete ptt;
-	}
+  virtual void TearDown() {
+    releaseArduinoMock();
+    delete ptt;
+  }
 };
 
-TEST_F(PTTTest, checkTimeout)
-{
-	EXPECT_CALL(*arduinoMock, millis())
-	  .WillOnce(Return(0))
-		.WillOnce(Return(60000))
-    .WillOnce(Return(60001));	
+TEST_F(PTTTest, checkTimeout) {
+  EXPECT_CALL(*arduinoMock, millis())
+      .WillOnce(Return(0))
+      .WillOnce(Return(60000))
+      .WillOnce(Return(60001));
 
   ptt->on();
   ASSERT_EQ(true, ptt->getState());
-	ptt->checkForTimeout(1);
-	ASSERT_EQ(true, ptt->getState());
-	ptt->checkForTimeout(1);
-	ASSERT_EQ(false, ptt->getState());
+  ptt->checkForTimeout(1);
+  ASSERT_EQ(true, ptt->getState());
+  ptt->checkForTimeout(1);
+  ASSERT_EQ(false, ptt->getState());
 }
 
-TEST_F(PTTTest, on)
-{
+TEST_F(PTTTest, on) {
   ptt->off();
   ASSERT_EQ(false, ptt->getState());
-	EXPECT_CALL(*arduinoMock, digitalWrite(0, 0)); // ptt
+  EXPECT_CALL(*arduinoMock, digitalWrite(0, 0)); // ptt
   EXPECT_CALL(*arduinoMock, digitalWrite(1, 1)); // led
-	ptt->on();
+  ptt->on();
   ASSERT_EQ(true, ptt->getState());
 }
 
-TEST_F(PTTTest, off)
-{
+TEST_F(PTTTest, off) {
   ptt->on();
   ASSERT_EQ(true, ptt->getState());
-	EXPECT_CALL(*arduinoMock, digitalWrite(0, 1)); // ptt
+  EXPECT_CALL(*arduinoMock, digitalWrite(0, 1)); // ptt
   EXPECT_CALL(*arduinoMock, digitalWrite(1, 0)); // led
-	ptt->off();
+  ptt->off();
   ASSERT_EQ(false, ptt->getState());
 }
 
-TEST_F(PTTTest, toggle_0ms)
-{
+TEST_F(PTTTest, toggle_0ms) {
   ptt->on();
   ASSERT_EQ(true, ptt->getState());
-	ptt->toggle();
+  ptt->toggle();
   ASSERT_EQ(false, ptt->getState());
-	ptt->toggle();
+  ptt->toggle();
   ASSERT_EQ(true, ptt->getState());
 }
 
-TEST_F(PTTTest, delayed_off)
-{
+TEST_F(PTTTest, delayed_off) {
   ptt->on();
   EXPECT_CALL(*arduinoMock, millis())
-		.WillOnce(Return(0))
-		.WillOnce(Return(50))
-    .WillOnce(Return(101));
-	ptt->delayed_off(100);
+      .WillOnce(Return(0))
+      .WillOnce(Return(50))
+      .WillOnce(Return(101));
+  ptt->delayed_off(100);
   ASSERT_EQ(true, ptt->getState());
   ptt->checkForDelayedOff();
   ASSERT_EQ(true, ptt->getState());
@@ -120,10 +108,9 @@ TEST_F(PTTTest, delayed_off)
   ASSERT_EQ(false, ptt->getState());
 }
 
-TEST_F(PTTTest, delayed_off_0ms)
-{
+TEST_F(PTTTest, delayed_off_0ms) {
   ptt->on();
-	ptt->delayed_off(0);
+  ptt->delayed_off(0);
   ASSERT_EQ(false, ptt->getState());
 }
 

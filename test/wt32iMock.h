@@ -23,8 +23,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "../src/wt32i.h"
 
 class WT32iMock : public WT32iInterface {
-    public:
-	MOCK_METHOD0(resetBTPairings, void());
-	MOCK_METHOD2(setAudioGain, ResultType(string, string));
-	MOCK_METHOD1(setPinCode, ResultType(string));
+public:
+  MOCK_METHOD0(resetBTPairings, void());
+  MOCK_METHOD2(setAudioGain, ResultType(string, string));
+  MOCK_METHOD1(setPinCode, ResultType(string));
 };

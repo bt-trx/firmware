@@ -26,8 +26,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "bttrx_fsm.h"
 
 #ifdef ARDUINO
-#include "bttrx_wifi.h"
 #include "bttrx_ble.h"
+#include "bttrx_wifi.h"
 #endif
 
 #ifdef ARDUINO
@@ -42,110 +42,105 @@ BTTRX_WIFI bttrx_wifi;
 BTTRX_BLE bttrx_ble;
 bool wifi_started_ = false;
 
-void checkForWifiStart()
-{
+void checkForWifiStart() {
 #ifdef ARDUINO
-	ulong startTime = millis();
-	while (!digitalRead(PIN_BTN_0)) {
-		if (startTime + BTN_PRESS_WIFI_MODE_TIMEOUT < millis()) {
-			bttrx_wifi.setup(&(bttrx_fsm.bttrx_control_));
-			wifi_started_ = true;
-			break;
-		}
-	}
-	if (wifi_started_) {
-		// Indicate Wifi State via LEDs
-		digitalWrite(PIN_LED_BLUE, HIGH);
-		digitalWrite(PIN_LED_GREEN, HIGH);
-		delay(2000);
-		digitalWrite(PIN_LED_BLUE, LOW);
-		digitalWrite(PIN_LED_GREEN, LOW);
-	}
+  ulong startTime = millis();
+  while (!digitalRead(PIN_BTN_0)) {
+    if (startTime + BTN_PRESS_WIFI_MODE_TIMEOUT < millis()) {
+      bttrx_wifi.setup(&(bttrx_fsm.bttrx_control_));
+      wifi_started_ = true;
+      break;
+    }
+  }
+  if (wifi_started_) {
+    // Indicate Wifi State via LEDs
+    digitalWrite(PIN_LED_BLUE, HIGH);
+    digitalWrite(PIN_LED_GREEN, HIGH);
+    delay(2000);
+    digitalWrite(PIN_LED_BLUE, LOW);
+    digitalWrite(PIN_LED_GREEN, LOW);
+  }
 #endif
 }
 
-void setupPins()
-{
-	// Set up GPIOs
-	pinMode(PIN_BTN_0, INPUT);
-	pinMode(PIN_LED_BLUE, OUTPUT);
-	pinMode(PIN_LED_GREEN, OUTPUT);
-	pinMode(PIN_PTT_IN, INPUT);
-	pinMode(PIN_PTT_OUT, OUTPUT);
-	pinMode(PIN_PTT_LED, OUTPUT);
-	pinMode(PIN_BT_RESET, OUTPUT);
-	pinMode(PIN_HW_VER, INPUT);
-	pinMode(PIN_VOX_IN, INPUT);
+void setupPins() {
+  // Set up GPIOs
+  pinMode(PIN_BTN_0, INPUT);
+  pinMode(PIN_LED_BLUE, OUTPUT);
+  pinMode(PIN_LED_GREEN, OUTPUT);
+  pinMode(PIN_PTT_IN, INPUT);
+  pinMode(PIN_PTT_OUT, OUTPUT);
+  pinMode(PIN_PTT_LED, OUTPUT);
+  pinMode(PIN_BT_RESET, OUTPUT);
+  pinMode(PIN_HW_VER, INPUT);
+  pinMode(PIN_VOX_IN, INPUT);
 
-	// LEDs off
-	digitalWrite(PIN_LED_BLUE, LOW);
-	digitalWrite(PIN_LED_GREEN, LOW);
-	digitalWrite(PIN_PTT_LED, LOW);
-	// Don't trigger PTT
-	digitalWrite(PIN_PTT_OUT, HIGH);
-	// Get BT Module out of reset (active-low)
-	digitalWrite(PIN_BT_RESET, HIGH);
+  // LEDs off
+  digitalWrite(PIN_LED_BLUE, LOW);
+  digitalWrite(PIN_LED_GREEN, LOW);
+  digitalWrite(PIN_PTT_LED, LOW);
+  // Don't trigger PTT
+  digitalWrite(PIN_PTT_OUT, HIGH);
+  // Get BT Module out of reset (active-low)
+  digitalWrite(PIN_BT_RESET, HIGH);
 }
 
-String getHardwareVersion()
-{	
-	switch (analogRead(PIN_HW_VER)) {
-	case 0:
-		return "4.1";
-	case 4095:
-		return "5.0";
-	default:
-		return "unkown";
-	}
+String getHardwareVersion() {
+  switch (analogRead(PIN_HW_VER)) {
+  case 0:
+    return "4.1";
+  case 4095:
+    return "5.0";
+  default:
+    return "unkown";
+  }
 }
 
-void setup()
-{
-	// Initialize Preferences
-	preferences.begin("bttrx-settings");
+void setup() {
+  // Initialize Preferences
+  preferences.begin("bttrx-settings");
 
-	// Setup Pins
-	setupPins();
+  // Setup Pins
+  setupPins();
 
-	// Set up Serial ports
-	SERIAL_DBG.begin(SERIAL_DBG_RATE);
-	SERIAL_DBG.setTimeout(SERIAL_TIMEOUT);
-	SERIAL_BT.begin(SERIAL_BT_RATE);
-	SERIAL_BT.setTimeout(SERIAL_TIMEOUT);
+  // Set up Serial ports
+  SERIAL_DBG.begin(SERIAL_DBG_RATE);
+  SERIAL_DBG.setTimeout(SERIAL_TIMEOUT);
+  SERIAL_BT.begin(SERIAL_BT_RATE);
+  SERIAL_BT.setTimeout(SERIAL_TIMEOUT);
 
 // Wait for connection on debug Serial
 #ifdef TEENSY32
-	while (!SERIAL_DBG && millis() < DEBUG_CONNECT_TIMEOUT)
-		;
+  while (!SERIAL_DBG && millis() < DEBUG_CONNECT_TIMEOUT)
+    ;
 #endif
 
-	bttrx_fsm.setSerial(&SERIAL_BT, &SERIAL_DBG);
+  bttrx_fsm.setSerial(&SERIAL_BT, &SERIAL_DBG);
 
-	// Print version information
-	SERIAL_DBG.println("bt-trx Hardware: dev-board v" + getHardwareVersion());
-	string header = "bt-trx Firmware: v";
-	header.append(GIT_REVISION);
-	SERIAL_DBG.println(header.c_str());
+  // Print version information
+  SERIAL_DBG.println("bt-trx Hardware: dev-board v" + getHardwareVersion());
+  string header = "bt-trx Firmware: v";
+  header.append(GIT_REVISION);
+  SERIAL_DBG.println(header.c_str());
 
-	// Print Chip ID
-	uint64_t chipid = ESP.getEfuseMac();
-	SERIAL_DBG.printf("ESP32 ID: %04X", (uint16_t)(chipid >> 32));
-	SERIAL_DBG.printf("%08X\n", (uint32_t)chipid);
+  // Print Chip ID
+  uint64_t chipid = ESP.getEfuseMac();
+  SERIAL_DBG.printf("ESP32 ID: %04X", (uint16_t)(chipid >> 32));
+  SERIAL_DBG.printf("%08X\n", (uint32_t)chipid);
 
-	// Check whether to start Wifi
-	checkForWifiStart();
+  // Check whether to start Wifi
+  checkForWifiStart();
 
-	// Start BLE
-	// Currently, BLE can't run simultaneously with Wifi
-	// (Wifi does not serve pages then)
-	// TODO investigate if this is a resource issue
-	if (!wifi_started_) {
-		bttrx_ble.setupBLE(bttrx_fsm.getBLEButtonHandler());
-	}
+  // Start BLE
+  // Currently, BLE can't run simultaneously with Wifi
+  // (Wifi does not serve pages then)
+  // TODO investigate if this is a resource issue
+  if (!wifi_started_) {
+    bttrx_ble.setupBLE(bttrx_fsm.getBLEButtonHandler());
+  }
 }
 
-void loop()
-{
-	bttrx_fsm.run();
-	bttrx_ble.run();
+void loop() {
+  bttrx_fsm.run();
+  bttrx_ble.run();
 }

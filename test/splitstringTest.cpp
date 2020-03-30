@@ -22,51 +22,43 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "../src/splitstring.h"
 
-TEST(SplitStringTest, splitString_1Element)
-{
-	vector<string> result = splitString("TEST1");
-	ASSERT_EQ(1, result.size());
-	ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
+TEST(SplitStringTest, splitString_1Element) {
+  vector<string> result = splitString("TEST1");
+  ASSERT_EQ(1, result.size());
+  ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
 }
 
-TEST(SplitStringTest, splitString_2Elements)
-{
-	vector<string> result = splitString("TEST1 TEST2");
-	ASSERT_EQ(2, result.size());
-	ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
-	ASSERT_EQ(0, strcmp(result.at(1).c_str(), "TEST2"));
+TEST(SplitStringTest, splitString_2Elements) {
+  vector<string> result = splitString("TEST1 TEST2");
+  ASSERT_EQ(2, result.size());
+  ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
+  ASSERT_EQ(0, strcmp(result.at(1).c_str(), "TEST2"));
 }
 
-TEST(SplitStringTest, splitString_LeadingBlank)
-{
-	vector<string> result = splitString(" TEST1");
-	ASSERT_EQ(1, result.size());
-	ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
+TEST(SplitStringTest, splitString_LeadingBlank) {
+  vector<string> result = splitString(" TEST1");
+  ASSERT_EQ(1, result.size());
+  ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
 }
 
-TEST(SplitStringTest, splitString_TrailingBlank)
-{
-	vector<string> result = splitString("TEST1 ");
-	ASSERT_EQ(1, result.size());
-	ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
+TEST(SplitStringTest, splitString_TrailingBlank) {
+  vector<string> result = splitString("TEST1 ");
+  ASSERT_EQ(1, result.size());
+  ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
 }
 
-TEST(SplitStringTest, containsStringOnPosition_success_1elem)
-{
-	ASSERT_EQ(true, containsStringOnPosition("FOO", "FOO", 0));
+TEST(SplitStringTest, containsStringOnPosition_success_1elem) {
+  ASSERT_EQ(true, containsStringOnPosition("FOO", "FOO", 0));
 }
 
-TEST(SplitStringTest, containsStringOnPosition_success_2elem)
-{
-	ASSERT_EQ(true, containsStringOnPosition("FOO BAR", "BAR", 1));
+TEST(SplitStringTest, containsStringOnPosition_success_2elem) {
+  ASSERT_EQ(true, containsStringOnPosition("FOO BAR", "BAR", 1));
 }
 
-TEST(SplitStringTest, containsStringOnPosition_fail_1elem)
-{
-	ASSERT_EQ(false, containsStringOnPosition("FOO", "BAR", 0));
+TEST(SplitStringTest, containsStringOnPosition_fail_1elem) {
+  ASSERT_EQ(false, containsStringOnPosition("FOO", "BAR", 0));
 }
 
-TEST(SplitStringTest, containsStringOnPosition_fail_2elem)
-{
-	ASSERT_EQ(false, containsStringOnPosition("FOO BAR", "BAZ", 1));
+TEST(SplitStringTest, containsStringOnPosition_fail_2elem) {
+  ASSERT_EQ(false, containsStringOnPosition("FOO BAR", "BAZ", 1));
 }
