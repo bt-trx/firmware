@@ -32,6 +32,11 @@ void ButtonBLE::update() {
   }
 }
 
+void ButtonBLE::setConnected(bool state) {
+  was_connected = is_connected;
+  is_connected = state;
+}
+
 /**
  * @brief Update the button state
  *

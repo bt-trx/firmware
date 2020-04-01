@@ -57,6 +57,9 @@ ResultType BTTRX_CONTROL::set(string name, string value) {
   case kPTTHangTime:
     result = handleSetPTTHangTime(value);
     break;
+  case kPTTWillimodeEnabled:
+    result = handleSetPTTWillimodeEnabled(value);
+    break;
   default:
     return kError;
     break;
@@ -109,6 +112,10 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
     *value = to_string(
         preferences.getUShort(ParameterTypeToString(kPTTHangTime).c_str(), 0));
     break;
+  case kPTTWillimodeEnabled:
+    *value = to_string(preferences.getBool(
+        ParameterTypeToString(kPTTWillimodeEnabled).c_str(), false));
+    break;
   default:
     return kError;
     break;
@@ -121,6 +128,10 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, bool *value) {
   case kPTTToggleEnabled:
     *value = preferences.getBool(
         ParameterTypeToString(kPTTToggleEnabled).c_str(), false);
+    break;
+  case kPTTWillimodeEnabled:
+    *value = preferences.getBool(
+        ParameterTypeToString(kPTTWillimodeEnabled).c_str(), false);
     break;
   default:
     return kError;
@@ -166,9 +177,9 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value) {
 }
 
 /**
- * @brief Getter method for PTT HangTime
+ * @brief Getter method for PTT Toggle
  *
- * @return uint16_t
+ * @return bool
  */
 bool BTTRX_CONTROL::getPTTToggleEnabled() {
   bool value = "";
@@ -199,6 +210,17 @@ uint16_t BTTRX_CONTROL::getPTTHangTime() {
 }
 
 /**
+ * @brief Getter method for PTT Willimode
+ *
+ * @return bool
+ */
+bool BTTRX_CONTROL::getPTTWillimodeEnabled() {
+  bool value = "";
+  get(kPTTWillimodeEnabled, &value);
+  return value;
+}
+
+/**
  * @brief Convert parameter string to parameter Type
  *
  * @param name
@@ -222,6 +244,9 @@ ParameterType BTTRX_CONTROL::stringToParameterType(string name) {
   }
   if (name == "ptt_hang_time") {
     return kPTTHangTime;
+  }
+  if (name == "ptt_willi_en") {
+    return kPTTWillimodeEnabled;
   }
   return kUnkownParameter;
 }
@@ -252,6 +277,9 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type) {
     break;
   case kPTTHangTime:
     return_value = "ptt_hang_time";
+    break;
+  case kPTTWillimodeEnabled:
+    return_value = "ptt_willi_en";
     break;
   default:
     break;
@@ -358,4 +386,24 @@ ResultType BTTRX_CONTROL::handleSetPTTHangTime(string hang_time) {
     return kSuccess;
   }
   return kError;
+}
+
+/**
+ * @brief Set PTT Willimode feature on or off
+ *
+ * @param enabled
+ * @return ResultType
+ */
+ResultType BTTRX_CONTROL::handleSetPTTWillimodeEnabled(string enabled) {
+  bool value = false;
+  if (enabled == "true") {
+    value = true;
+  } else if (enabled == "false") {
+    value = false;
+  } else {
+    return kError;
+  }
+
+  preferences.putBool(ParameterTypeToString(kPTTWillimodeEnabled).c_str(), value);
+  return kSuccess;
 }

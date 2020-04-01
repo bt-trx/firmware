@@ -14,6 +14,7 @@ function getAllParameters() {
   getData("ptt_timeout");
   getData("pin_code");
   getCheckboxData("ptt_toggle_en");
+  getCheckboxData("ptt_willimode_en");
 };
 
 function getData(parameter) {

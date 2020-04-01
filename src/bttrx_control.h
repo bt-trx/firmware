@@ -40,7 +40,8 @@ enum ParameterType {
   kPinCode,
   kPTTToggleEnabled,
   kPTTTimeout,
-  kPTTHangTime
+  kPTTHangTime,
+  kPTTWillimodeEnabled
 };
 
 class BTTRX_CONTROL {
@@ -56,6 +57,7 @@ public:
   bool getPTTToggleEnabled();
   uint16_t getPTTTimeout();
   uint16_t getPTTHangTime();
+  bool getPTTWillimodeEnabled();
 
 private:
   SerialWrapperInterface *serial_;
@@ -69,6 +71,7 @@ private:
   ResultType handleSetPTTToggleEnabled(string);
   ResultType handleSetPTTTimeout(string);
   ResultType handleSetPTTHangTime(string);
+  ResultType handleSetPTTWillimodeEnabled(string);
 
   string adc_gain_ = "0";
   string dac_gain_ = "0";

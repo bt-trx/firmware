@@ -84,8 +84,9 @@ private:
   // Message handler
   void handleIncomingMessage();
   // Handle PTT during Call
-  void handlePTTDuringCall();
-  void handlePTTBLE();
+  void handlePTTDuringCall();  
   void handlePTTWired();
-  void handlePTTWiredWilli();
+  void handlePTTBLE();
+  void handlePTTWiredWillimode();
+  void handlePTTBLEWillimode();
 };

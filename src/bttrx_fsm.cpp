@@ -322,28 +322,39 @@ void BTTRX_FSM::handlePTTDuringCall() {
   ptt_output_.checkForTimeout(bttrx_control_.getPTTTimeout());
   ptt_output_.checkForDelayedOff();
 
-  handlePTTBLE();
+  
 
-  if (true) { // TODO get Setting if PTT-Willimode is enabled
-    handlePTTWiredWilli();
+  if (bttrx_control_.getPTTWillimodeEnabled()) {
+    handlePTTBLEWillimode();
+    handlePTTWiredWillimode();
   } else {
+    handlePTTBLE();
     handlePTTWired();
   }
 }
 
-void BTTRX_FSM::handlePTTWiredWilli() {
-  static ulong start_time = 0;
-  if (ptt_button_.isPressedEdge()) {
-    start_time = millis();
-  }
-  if (ptt_button_.isReleasedEdge()) {
-    ulong stop_time = millis();
-    if (stop_time - start_time < 1000) { // TODO make define for this value
+/**
+ * @brief Handle press of wired PTT button 
+ */
+void BTTRX_FSM::handlePTTWired() {
+  if (bttrx_control_.getPTTToggleEnabled()) {
+    // Press Button to assert PTT, press again to release PTT
+    if (ptt_button_.isPressedEdge()) {
       ptt_output_.toggle(bttrx_control_.getPTTHangTime());
+    }
+  } else {
+    // Hold Button for PTT
+    if (ptt_button_.isPressedEdge()) {
+      ptt_output_.on();
+    } else if (ptt_button_.isReleased()) {
+      ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
     }
   }
 }
 
+/**
+ * @brief Handle press of BLE button
+ */
 void BTTRX_FSM::handlePTTBLE() {
   if (bttrx_control_.getPTTToggleEnabled()) {
     // Press Button to assert PTT, press again to release PTT
@@ -354,28 +365,37 @@ void BTTRX_FSM::handlePTTBLE() {
     // Hold Button for PTT
     if (ble_button_.isPressedEdge()) {
       ptt_output_.on();
-    } else if (ptt_button_.isReleased() &&
-               (!ble_button_.isConnected() ||
-                (ble_button_.isConnected() && ble_button_.isReleased()))) {
+    } else if (ble_button_.disappeared() ||
+               (ble_button_.isConnected() && ble_button_.isReleased())) {
       ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
     }
   }
 }
 
-void BTTRX_FSM::handlePTTWired() {
-  if (bttrx_control_.getPTTToggleEnabled()) {
-    // Press Button to assert PTT, press again to release PTT
-    if (ptt_button_.isPressedEdge()) {
+/**
+ * @brief If Willimode is enabled, wired PTT behaves as follows
+ * Holding it longer than 1s -> nothing happens
+ * Holding it shorter than 1s -> toggle PTT
+ */
+void BTTRX_FSM::handlePTTWiredWillimode() {
+  static ulong start_time = 0;
+  if (ptt_button_.isPressedEdge()) {
+    start_time = millis();
+  }
+  if (ptt_button_.isReleasedEdge()) {
+    ulong stop_time = millis();
+    if (stop_time - start_time < PTT_TIMEOUT_WILLIMODE) {
       ptt_output_.toggle(bttrx_control_.getPTTHangTime());
-    } else {
-      // Hold Button for PTT
-      if (ptt_button_.isPressedEdge()) {
-        ptt_output_.on();
-      } else if (ptt_button_.isReleased() &&
-                 (!ble_button_.isConnected() ||
-                  (ble_button_.isConnected() && ble_button_.isReleased()))) {
-        ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
-      }
     }
+  }
+}
+
+/**
+ * @brief Handle press of BLE button in case of Willimode - only toggle
+ */
+void BTTRX_FSM::handlePTTBLEWillimode() {
+  // Press Button to assert PTT, press again to release PTT
+  if (ble_button_.isPressedEdge()) {
+    ptt_output_.toggle(bttrx_control_.getPTTHangTime());
   }
 }
