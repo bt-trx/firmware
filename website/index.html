@@ -72,8 +72,13 @@
   </tr>
   <tr><td colspan=2><h2>PTT</h2></td></tr>
   <tr>
-    <td class=descr>PTT Toggle</td>
-    <td><input type="checkbox" name="ptt_toggle_en" id="ptt_toggle_en" onclick='OnCheckboxChange(this.form.ptt_toggle_en);'></td>
+    <td class=descr>PTT Mode</td>
+    <td class=set><select name="ptt_mode" id="ptt_mode" onchange='OnDropdownChange(this.form.ptt_mode);'>
+      <option value="1">Direct</option>
+      <option value="2">Toggle</option>
+      <option value="3">Willimode</option>
+      </select>
+    </td>
   </tr>
   <tr>
     <td class=descr>PTT Timeout<br>(1-9 minutes, 0 = off)</td>

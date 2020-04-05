@@ -38,10 +38,12 @@ enum ParameterType {
   kADCGain,
   kDACGain,
   kPinCode,
-  kPTTToggleEnabled,
+  kPTTMode,
   kPTTTimeout,
   kPTTHangTime
 };
+
+enum PTTMode { kUnkownPTTMode, kDirect, kToggle, kWillimode };
 
 class BTTRX_CONTROL {
 public:
@@ -53,7 +55,7 @@ public:
   ResultType action(string);
   void storeSetting(ParameterType, string);
 
-  bool getPTTToggleEnabled();
+  PTTMode getPTTMode();
   uint16_t getPTTTimeout();
   uint16_t getPTTHangTime();
 
@@ -66,7 +68,7 @@ private:
   ResultType handleSetADCGain(string);
   ResultType handleSetDACGain(string);
   ResultType handleSetPinCode(string);
-  ResultType handleSetPTTToggleEnabled(string);
+  ResultType handleSetPTTMode(string);
   ResultType handleSetPTTTimeout(string);
   ResultType handleSetPTTHangTime(string);
 

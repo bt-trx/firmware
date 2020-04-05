@@ -41,5 +41,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #define BD_ADDR_OUI_ANYTONE "00:1b:10" // Anytone Bluetooth PTT BP-01
 
+#define PTT_TIMEOUT_WILLIMODE 1000 // ms
+
 // Teensy specific
 #define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup
