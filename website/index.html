@@ -72,8 +72,13 @@
   </tr>
   <tr><td colspan=2><h2>PTT</h2></td></tr>
   <tr>
-    <td class=descr>PTT Toggle</td>
-    <td><input type="checkbox" name="ptt_toggle_en" id="ptt_toggle_en" onclick='OnCheckboxChange(this.form.ptt_toggle_en);'></td>
+    <td class=descr>PTT Mode</td>
+    <td class=set><select name="ptt_mode" id="ptt_mode" onchange='OnDropdownChange(this.form.ptt_mode);'>
+      <option value="1">Direct</option>
+      <option value="2">Toggle</option>
+      <option value="3">Willimode</option>
+      </select>
+    </td>
   </tr>
   <tr>
     <td class=descr>PTT Timeout<br>(1-9 minutes, 0 = off)</td>
@@ -86,10 +91,6 @@
     <td class=set><input type="text" name="ptt_hang_time" id="ptt_hang_time" maxlength=3 onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
       <input type="button" value="Set" onclick='setData("ptt_hang_time", this.form.ptt_hang_time.value);'>
     </td>
-  </tr>
-  <tr>
-    <td class=descr>PTT Willi-Mode</td>
-    <td><input type="checkbox" name="ptt_willi_en" id="ptt_willi_en" onclick='OnCheckboxChange(this.form.ptt_willi_en);'></td>
   </tr>
   <tr><td colspan=2><h2>Bluetooth</h2></td></tr>
   <tr>

@@ -48,17 +48,14 @@ ResultType BTTRX_CONTROL::set(string name, string value) {
   case kPinCode:
     result = handleSetPinCode(value);
     break;
-  case kPTTToggleEnabled:
-    result = handleSetPTTToggleEnabled(value);
+  case kPTTMode:
+    result = handleSetPTTMode(value);
     break;
   case kPTTTimeout:
     result = handleSetPTTTimeout(value);
     break;
   case kPTTHangTime:
     result = handleSetPTTHangTime(value);
-    break;
-  case kPTTWillimodeEnabled:
-    result = handleSetPTTWillimodeEnabled(value);
     break;
   default:
     return kError;
@@ -100,9 +97,9 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
   case kPinCode:
     *value = pin_code_;
     break;
-  case kPTTToggleEnabled:
-    *value = to_string(preferences.getBool(
-        ParameterTypeToString(kPTTToggleEnabled).c_str(), false));
+  case kPTTMode:
+    *value = to_string(
+        preferences.getUShort(ParameterTypeToString(kPTTMode).c_str(), 1));
     break;
   case kPTTTimeout:
     *value = to_string(
@@ -111,10 +108,6 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
   case kPTTHangTime:
     *value = to_string(
         preferences.getUShort(ParameterTypeToString(kPTTHangTime).c_str(), 0));
-    break;
-  case kPTTWillimodeEnabled:
-    *value = to_string(preferences.getBool(
-        ParameterTypeToString(kPTTWillimodeEnabled).c_str(), false));
     break;
   default:
     return kError;
@@ -125,14 +118,6 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
 
 ResultType BTTRX_CONTROL::get(ParameterType parameter, bool *value) {
   switch (parameter) {
-  case kPTTToggleEnabled:
-    *value = preferences.getBool(
-        ParameterTypeToString(kPTTToggleEnabled).c_str(), false);
-    break;
-  case kPTTWillimodeEnabled:
-    *value = preferences.getBool(
-        ParameterTypeToString(kPTTWillimodeEnabled).c_str(), false);
-    break;
   default:
     return kError;
   }
@@ -177,14 +162,14 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value) {
 }
 
 /**
- * @brief Getter method for PTT Toggle
+ * @brief Getter method for PTT Mode
  *
- * @return bool
+ * @return PTTMode
  */
-bool BTTRX_CONTROL::getPTTToggleEnabled() {
-  bool value = "";
-  get(kPTTToggleEnabled, &value);
-  return value;
+PTTMode BTTRX_CONTROL::getPTTMode() {
+  string value = "";
+  get(kPTTMode, &value);
+  return (PTTMode)stoi(value);
 }
 
 /**
@@ -210,17 +195,6 @@ uint16_t BTTRX_CONTROL::getPTTHangTime() {
 }
 
 /**
- * @brief Getter method for PTT Willimode
- *
- * @return bool
- */
-bool BTTRX_CONTROL::getPTTWillimodeEnabled() {
-  bool value = "";
-  get(kPTTWillimodeEnabled, &value);
-  return value;
-}
-
-/**
  * @brief Convert parameter string to parameter Type
  *
  * @param name
@@ -236,17 +210,14 @@ ParameterType BTTRX_CONTROL::stringToParameterType(string name) {
   if (name == "pin_code") {
     return kPinCode;
   }
-  if (name == "ptt_toggle_en") {
-    return kPTTToggleEnabled;
+  if (name == "ptt_mode") {
+    return kPTTMode;
   }
   if (name == "ptt_timeout") {
     return kPTTTimeout;
   }
   if (name == "ptt_hang_time") {
     return kPTTHangTime;
-  }
-  if (name == "ptt_willi_en") {
-    return kPTTWillimodeEnabled;
   }
   return kUnkownParameter;
 }
@@ -269,17 +240,14 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type) {
   case kPinCode:
     return_value = "pin_code";
     break;
-  case kPTTToggleEnabled:
-    return_value = "ptt_toggle_en";
+  case kPTTMode:
+    return_value = "ptt_mode";
     break;
   case kPTTTimeout:
     return_value = "ptt_timeout";
     break;
   case kPTTHangTime:
     return_value = "ptt_hang_time";
-    break;
-  case kPTTWillimodeEnabled:
-    return_value = "ptt_willi_en";
     break;
   default:
     break;
@@ -344,18 +312,13 @@ ResultType BTTRX_CONTROL::handleSetPinCode(string pin_code) {
  * @param enabled
  * @return ResultType
  */
-ResultType BTTRX_CONTROL::handleSetPTTToggleEnabled(string enabled) {
-  bool value = false;
-  if (enabled == "true") {
-    value = true;
-  } else if (enabled == "false") {
-    value = false;
-  } else {
-    return kError;
+ResultType BTTRX_CONTROL::handleSetPTTMode(string ptt_mode) {
+  uint16_t value = stoi(ptt_mode);
+  if (value < 4) {
+    preferences.putUShort(ParameterTypeToString(kPTTMode).c_str(), value);
+    return kSuccess;
   }
-
-  preferences.putBool(ParameterTypeToString(kPTTToggleEnabled).c_str(), value);
-  return kSuccess;
+  return kError;
 }
 
 /**
@@ -386,24 +349,4 @@ ResultType BTTRX_CONTROL::handleSetPTTHangTime(string hang_time) {
     return kSuccess;
   }
   return kError;
-}
-
-/**
- * @brief Set PTT Willimode feature on or off
- *
- * @param enabled
- * @return ResultType
- */
-ResultType BTTRX_CONTROL::handleSetPTTWillimodeEnabled(string enabled) {
-  bool value = false;
-  if (enabled == "true") {
-    value = true;
-  } else if (enabled == "false") {
-    value = false;
-  } else {
-    return kError;
-  }
-
-  preferences.putBool(ParameterTypeToString(kPTTWillimodeEnabled).c_str(), value);
-  return kSuccess;
 }

@@ -36,7 +36,7 @@ public:
 
   bool isConnected() { return is_connected; }
   bool wasConnected() { return was_connected; }
-  bool disappeared() {return was_connected && !is_connected; }
+  bool disappeared() { return was_connected && !is_connected; }
   void setConnected(bool state);
 
 private:
