@@ -10,10 +10,10 @@ function setSelectedIndexByValue(s, v) {
 function getAllParameters() {
   getDropdownData("adc_gain");
   getDropdownData("dac_gain");
+  getDropdownData("ptt_mode");
   getData("ptt_hang_time");
   getData("ptt_timeout");
   getData("pin_code");
-  getCheckboxData("ptt_toggle_en");
 };
 
 function getData(parameter) {

@@ -35,9 +35,12 @@ public:
   void update();
 
   bool isConnected() { return is_connected; }
-  void setConnected(bool state) { is_connected = state; };
+  bool wasConnected() { return was_connected; }
+  bool disappeared() { return was_connected && !is_connected; }
+  void setConnected(bool state);
 
 private:
   bool is_connected = false;
+  bool was_connected = false;
   ButtonState next_state = BTNSTATE_UNKNOWN;
 };
