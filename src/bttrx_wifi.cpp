@@ -22,6 +22,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bttrx_wifi.h"
 
+extern Preferences preferences;
+
 void BTTRX_WIFI::onRequest(AsyncWebServerRequest *request)
 {
 	//Handle Unknown Request
@@ -164,9 +166,21 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 	}
 	bttrx_control_ = control;
 
+	Serial.println("");
 	Serial.println("Configuring access point...");
 
-	WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+	String callsign = preferences.getString("callsign", "");
+	if (callsign != "") {
+		char result[sizeof(WIFI_SSID)+7];
+		strcpy(result, WIFI_SSID);
+		strcat(result, "_");
+		strcat(result, callsign.c_str());
+		Serial.print("WiFi SSID: ");
+		Serial.println(result);
+		WiFi.softAP(result, WIFI_PASSWORD);
+	} else {
+		WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+	}
 	IPAddress myIP = WiFi.softAPIP();
 	Serial.print("AP IP address: ");
 	Serial.println(myIP);
