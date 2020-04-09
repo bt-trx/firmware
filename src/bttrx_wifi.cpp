@@ -104,7 +104,7 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request)
   	value = request->getParam("value")->value().c_str();
 	}
 
-	if (name.empty() || value.empty()) {
+	if (name.empty()) {
 		// TODO Send Error to Website
 		return;
 	}
