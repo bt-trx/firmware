@@ -42,6 +42,9 @@ ResultType BTTRX_CONTROL::set(string name, string value)
 	// Call handler method
 	ResultType result = kError;
 	switch (parameter) {
+	case kCallsign:
+		result = handleSetCallsign(value);
+		break;
 	case kADCGain:
 		result = handleSetADCGain(value);
 		break;
@@ -93,6 +96,10 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value)
 {
 	// Reply with value / call handler method
 	switch (parameter) {
+	case kCallsign:
+		*value = preferences.getString(
+			ParameterTypeToString(kCallsign).c_str(), "").c_str();
+		break;
 	case kADCGain:
 		*value = adc_gain_;
 		break;
@@ -161,6 +168,9 @@ ResultType BTTRX_CONTROL::action(string name)
 void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 {
 	switch (type) {
+	case kCallsign:
+		callsign_ = value;
+		break;
 	case kADCGain:
 		adc_gain_ = value;
 		break;
@@ -219,6 +229,9 @@ uint16_t BTTRX_CONTROL::getPTTHangTime()
  */
 ParameterType BTTRX_CONTROL::stringToParameterType(string name)
 {
+	if (name == "callsign") {
+		return kCallsign;
+	}
 	if (name == "adc_gain") {
 		return kADCGain;
 	}
@@ -250,6 +263,9 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type)
 {
 	string return_value = "unknown parameter";
 	switch (parameter_type) {
+	case kCallsign:
+		return_value = "callsign";
+		break;
 	case kADCGain:
 		return_value = "adc_gain";
 		break;
@@ -272,6 +288,25 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type)
 		break;
 	}
 	return return_value;
+}
+
+/**
+ * @brief Set Callsign
+ * 
+ * @param callsign 
+ * @return ResultType 
+ */
+ResultType BTTRX_CONTROL::handleSetCallsign(string callsign)
+{
+	if (callsign != "") {
+		serial_->dbg_println("Set Callsign to: " + callsign);
+	} else {
+		serial_->dbg_println("Callsign deleted");
+	}
+
+	preferences.putString(
+		ParameterTypeToString(kCallsign).c_str(), callsign.c_str());
+	return kSuccess;
 }
 
 /**

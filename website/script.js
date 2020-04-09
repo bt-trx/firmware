@@ -8,6 +8,7 @@ function setSelectedIndexByValue(s, v) {
 }
 
 function getAllParameters() {
+  getData("callsign");
   getDropdownData("adc_gain");
   getDropdownData("dac_gain");
   getData("ptt_hang_time");
@@ -21,7 +22,12 @@ function getData(parameter) {
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       var x = document.getElementById(parameter);
-      x.value = this.responseText;
+      var result = this.responseText;
+      x.value = result;
+      if (parameter == "callsign" && result != "") {
+        var y = document.getElementById("callsigntag");
+        y.innerHTML = " :: " + result;
+      }
     }
   };
   xhttp.open("GET", "get?id=" + parameter, true);

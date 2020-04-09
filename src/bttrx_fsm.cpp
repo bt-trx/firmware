@@ -22,6 +22,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "resulttype.h"
 #include "splitstring.h"
 
+extern Preferences preferences;
+
 BTTRX_FSM::BTTRX_FSM()
 	: bttrx_control_(&serial_, &wt32i_), current_state_(STATE_INIT),
 	  led_connected_(PIN_LED_BLUE), led_busy_(PIN_LED_GREEN),
@@ -114,7 +116,13 @@ void BTTRX_FSM::handleStateConfigure()
 	}
 
 	// Enforce configuration
-	string friendly_name = "bt-trx-" + wt32i_.getBDAddressSuffix();
+	string friendly_name = "bt-trx_";
+	String callsign = preferences.getString("callsign", "");
+	if (callsign != "") {
+		friendly_name = friendly_name + callsign.c_str();
+	} else {
+		friendly_name = friendly_name + wt32i_.getBDAddressSuffix();
+	}
 	wt32i_.set("BT", "NAME", friendly_name.c_str());
 
 	wt32i_.set("PROFILE", "HFP-AG", "ON");
@@ -242,6 +250,9 @@ void BTTRX_FSM::handleIncomingMessage()
 	wt32i_.getIncomingMessage(&msg);
 
 	switch (msg.msg_type) {
+	case kSETTING_CALLSIGN:
+		bttrx_control_.storeSetting(kCallsign, splitString(msg.msg)[3]);
+		break;
 	case kSETTING_CONTROL_GAIN:
 		bttrx_control_.storeSetting(kADCGain, splitString(msg.msg)[3]);
 		bttrx_control_.storeSetting(kDACGain, splitString(msg.msg)[4]);

@@ -35,6 +35,7 @@ using namespace std;
 
 enum ParameterType {
 	kUnkownParameter,
+	kCallsign,
 	kADCGain,
 	kDACGain,
 	kPinCode,
@@ -63,6 +64,7 @@ class BTTRX_CONTROL {
 
 	ParameterType stringToParameterType(string);
 	string ParameterTypeToString(ParameterType);
+	ResultType handleSetCallsign(string);
 	ResultType handleSetADCGain(string);
 	ResultType handleSetDACGain(string);
 	ResultType handleSetPinCode(string);
@@ -70,6 +72,7 @@ class BTTRX_CONTROL {
 	ResultType handleSetPTTTimeout(string);
 	ResultType handleSetPTTHangTime(string);
 
+	string callsign_ = "";
 	string adc_gain_ = "0";
 	string dac_gain_ = "0";
 	string pin_code_ = "0000";
