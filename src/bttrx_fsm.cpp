@@ -250,9 +250,6 @@ void BTTRX_FSM::handleIncomingMessage()
 	wt32i_.getIncomingMessage(&msg);
 
 	switch (msg.msg_type) {
-	case kSETTING_CALLSIGN:
-		bttrx_control_.storeSetting(kCallsign, splitString(msg.msg)[3]);
-		break;
 	case kSETTING_CONTROL_GAIN:
 		bttrx_control_.storeSetting(kADCGain, splitString(msg.msg)[3]);
 		bttrx_control_.storeSetting(kDACGain, splitString(msg.msg)[4]);

@@ -72,7 +72,6 @@ class BTTRX_CONTROL {
 	ResultType handleSetPTTTimeout(string);
 	ResultType handleSetPTTHangTime(string);
 
-	string callsign_ = "";
 	string adc_gain_ = "0";
 	string dac_gain_ = "0";
 	string pin_code_ = "0000";

@@ -168,9 +168,6 @@ ResultType BTTRX_CONTROL::action(string name)
 void BTTRX_CONTROL::storeSetting(ParameterType type, string value)
 {
 	switch (type) {
-	case kCallsign:
-		callsign_ = value;
-		break;
 	case kADCGain:
 		adc_gain_ = value;
 		break;
