@@ -117,7 +117,7 @@ void BTTRX_FSM::handleStateConfigure()
 
 	// Enforce configuration
 	string friendly_name = "bt-trx_";
-	String callsign = preferences.getString("callsign", "");
+	string callsign = preferences.getString("callsign", "");
 	if (callsign != "") {
 		friendly_name = friendly_name + callsign.c_str();
 	} else {
