@@ -171,7 +171,7 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 
 	String callsign = preferences.getString("callsign", "");
 	if (callsign != "") {
-		char result[sizeof(WIFI_SSID)+7];
+		char result[sizeof(WIFI_SSID) + CALLSIGN_LENGTH + 1];
 		strcpy(result, WIFI_SSID);
 		strcat(result, "_");
 		strcat(result, callsign.c_str());
