@@ -7,10 +7,17 @@
 <link rel="stylesheet" type="text/css" href="style.css"/>
 <script src="script.js"></script>
 <body onload="getAllParameters()">
-<p class="title">bt-trx</p>
+<p class="title">bt-trx <span id="callsigntag"></span></p>
 <form>
 <table>
   <tr><td colspan=2><h1>Settings</h1></td></tr>
+  <tr><td colspan=2><h2>Identification</h2></td></tr>
+  <tr>
+    <td class=descr>Callsign<br>(max. 6 Characters)</td>
+    <td class=set><input type="text" name="callsign" id="callsign" maxlength=6>
+      <input type="button" value="Set" onclick='setData("callsign", this.form.callsign.value);'>
+    </td>
+  </tr>
   <tr><td colspan=2><h2>Audio</h2></td></tr>
   <tr>
     <td class=descr>ADC Gain<br>(Audio from TRX)</td>

@@ -43,5 +43,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #define PTT_TIMEOUT_WILLIMODE 1000 // ms
 
+#define CALLSIGN_LENGTH 6 // Max length of callsign for BT/WiFi identification
+
 // Teensy specific
 #define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup

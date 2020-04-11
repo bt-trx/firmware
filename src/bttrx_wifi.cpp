@@ -97,7 +97,7 @@ void BTTRX_WIFI::handleSet(AsyncWebServerRequest *request) {
     value = request->getParam("value")->value().c_str();
   }
 
-  if (name.empty() || value.empty()) {
+  if (name.empty()) {
     // TODO Send Error to Website
     return;
   }
@@ -152,9 +152,14 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control) {
   }
   bttrx_control_ = control;
 
+  Serial.println("");
   Serial.println("Configuring access point...");
 
-  WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+  string ssid = BTTRX_WIFI::buildSSID(WIFI_SSID, bttrx_control_->getCallsign());
+  Serial.print("WiFi SSID: ");
+  Serial.println(ssid.c_str());
+
+  WiFi.softAP(ssid.c_str(), WIFI_PASSWORD);
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
@@ -231,5 +236,13 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control) {
 
   Serial.printf("Ready! Open http://%s.local in your browser\n", WIFI_HOSTNAME);
 };
+
+string BTTRX_WIFI::buildSSID(string prefix, string suffix) {
+  string ssid = prefix;
+  if (!suffix.empty()) {
+    ssid += "_" + suffix;
+  }
+  return ssid;
+}
 
 #endif // ARDUINO
