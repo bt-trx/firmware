@@ -169,8 +169,8 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control)
 	Serial.println("");
 	Serial.println("Configuring access point...");
 
-	String callsign = preferences.getString("callsign", "");
-	if (callsign != "") {
+	string callsign = preferences.getString("callsign", "").c_str();
+	if (!callsign.empty()) {
 		char result[sizeof(WIFI_SSID) + CALLSIGN_LENGTH + 1];
 		strcpy(result, WIFI_SSID);
 		strcat(result, "_");

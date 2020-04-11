@@ -118,7 +118,7 @@ void BTTRX_FSM::handleStateConfigure()
 	// Enforce configuration
 	string friendly_name = "bt-trx_";
 	string callsign = preferences.getString("callsign", "").c_str();
-	if (callsign != "") {
+	if (!callsign.empty()) {
 		friendly_name = friendly_name + callsign.c_str();
 	} else {
 		friendly_name = friendly_name + wt32i_.getBDAddressSuffix();
