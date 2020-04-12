@@ -155,7 +155,8 @@ void BTTRX_WIFI::setup(BTTRX_CONTROL *control) {
   Serial.println("");
   Serial.println("Configuring access point...");
 
-  string ssid = BTTRX_WIFI::buildSSID(WIFI_SSID, bttrx_control_->getCallsign());
+  string ssid =
+      BTTRX_WIFI::buildSSID(WIFI_SSID_PREFIX, bttrx_control_->getCallsign());
   Serial.print("WiFi SSID: ");
   Serial.println(ssid.c_str());
 

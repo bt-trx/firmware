@@ -289,6 +289,7 @@ ResultType BTTRX_CONTROL::handleSetCallsign(string callsign) {
   if (callsign.length() > CALLSIGN_LENGTH) {
     serial_->dbg_println("Callsign exceed maximum length. Max. length is: " +
                          CALLSIGN_LENGTH);
+    return kError;
   } else {
     if (!callsign.empty()) {
       serial_->dbg_println("Set Callsign to: " + callsign);
