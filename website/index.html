@@ -14,7 +14,7 @@
   <tr><td colspan=2><h2>Identification</h2></td></tr>
   <tr>
     <td class=descr>Callsign<br>(max. 6 Characters)</td>
-    <td class=set><input type="text" name="callsign" id="callsign" maxlength=6>
+    <td class=set><input type="text" name="callsign" id="callsign" maxlength=6 onkeypress='return (event.charCode >= 48 && event.charCode <= 57) || (event.charCode >= 65 && event.charCode <= 90)'>
       <input type="button" value="Set" onclick='setData("callsign", this.form.callsign.value);'>
     </td>
   </tr>
