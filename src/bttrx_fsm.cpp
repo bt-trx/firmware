@@ -107,8 +107,13 @@ void BTTRX_FSM::handleStateConfigure() {
   }
 
   // Enforce configuration
-  string friendly_name = "bt-trx-" + wt32i_.getBDAddressSuffix();
-  wt32i_.set("BT", "NAME", friendly_name.c_str());
+  string friendly_name = "bt-trx_";
+  string callsign = bttrx_control_.getCallsign();
+  if (!callsign.empty()) {
+    wt32i_.set("BT", "NAME", friendly_name + callsign);
+  } else {
+    wt32i_.set("BT", "NAME", friendly_name + wt32i_.getBDAddressSuffix());
+  }
 
   wt32i_.set("PROFILE", "HFP-AG", "ON");
   wt32i_.set("BT", "CLASS", "400204"); // HFP-AG

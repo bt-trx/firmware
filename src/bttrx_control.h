@@ -35,6 +35,7 @@ using namespace std;
 
 enum ParameterType {
   kUnkownParameter,
+  kCallsign,
   kADCGain,
   kDACGain,
   kPinCode,
@@ -55,6 +56,7 @@ public:
   ResultType action(string);
   void storeSetting(ParameterType, string);
 
+  string getCallsign();
   PTTMode getPTTMode();
   uint16_t getPTTTimeout();
   uint16_t getPTTHangTime();
@@ -65,6 +67,7 @@ private:
 
   ParameterType stringToParameterType(string);
   string ParameterTypeToString(ParameterType);
+  ResultType handleSetCallsign(string);
   ResultType handleSetADCGain(string);
   ResultType handleSetDACGain(string);
   ResultType handleSetPinCode(string);

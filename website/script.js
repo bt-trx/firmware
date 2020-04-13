@@ -8,6 +8,7 @@ function setSelectedIndexByValue(s, v) {
 }
 
 function getAllParameters() {
+  getData("callsign");
   getDropdownData("adc_gain");
   getDropdownData("dac_gain");
   getDropdownData("ptt_mode");
@@ -22,10 +23,20 @@ function getData(parameter) {
     if (this.readyState == 4 && this.status == 200) {
       var x = document.getElementById(parameter);
       x.value = this.responseText;
+      if (parameter == "callsign") {
+        setCallsignTag(x.value)
+      }
     }
   };
   xhttp.open("GET", "get?id=" + parameter, true);
   xhttp.send();
+}
+
+function setCallsignTag(parameter) {
+  if (parameter != "") {
+    var x = document.getElementById("callsigntag");
+    x.innerHTML = " :: " + parameter;
+  }
 }
 
 function getCheckboxData(parameter) {
