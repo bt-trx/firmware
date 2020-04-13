@@ -36,12 +36,14 @@ Contact: bt-trx.com, mail@bt-trx.com
 #define BTN_PRESS_WIFI_MODE_TIMEOUT 5000 // ms
 
 #define WIFI_HOSTNAME "bt-trx"
-#define WIFI_SSID "bt-trx"
+#define WIFI_SSID_PREFIX "bt-trx"
 #define WIFI_PASSWORD "bt-trx73" // minimum 8 chars
 
 #define BD_ADDR_OUI_ANYTONE "00:1b:10" // Anytone Bluetooth PTT BP-01
 
 #define PTT_TIMEOUT_WILLIMODE 1000 // ms
+
+#define CALLSIGN_LENGTH 6 // Max length of callsign for BT/WiFi identification
 
 // Teensy specific
 #define DEBUG_CONNECT_TIMEOUT 3000 // Needed for Teensy startup

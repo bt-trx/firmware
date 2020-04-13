@@ -48,6 +48,7 @@ private:
   String resultPage(uint8_t);
   String updateErrorcodeToString(uint8_t);
   void onRequest(AsyncWebServerRequest *);
+  string buildSSID(string prefix, string suffix);
 };
 
 #endif // ARDUINO

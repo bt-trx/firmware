@@ -39,6 +39,9 @@ ResultType BTTRX_CONTROL::set(string name, string value) {
   // Call handler method
   ResultType result = kError;
   switch (parameter) {
+  case kCallsign:
+    result = handleSetCallsign(value);
+    break;
   case kADCGain:
     result = handleSetADCGain(value);
     break;
@@ -88,6 +91,10 @@ ResultType BTTRX_CONTROL::get(string name, string *value) {
 ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
   // Reply with value / call handler method
   switch (parameter) {
+  case kCallsign:
+    *value = preferences.getString(ParameterTypeToString(kCallsign).c_str(), "")
+                 .c_str();
+    break;
   case kADCGain:
     *value = adc_gain_;
     break;
@@ -162,6 +169,17 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value) {
 }
 
 /**
+ * @brief Getter method for Callsign
+ *
+ * @return Callsign
+ */
+string BTTRX_CONTROL::getCallsign() {
+  string value = "";
+  get(kCallsign, &value);
+  return value;
+}
+
+/**
  * @brief Getter method for PTT Mode
  *
  * @return PTTMode
@@ -201,6 +219,9 @@ uint16_t BTTRX_CONTROL::getPTTHangTime() {
  * @return ParameterType
  */
 ParameterType BTTRX_CONTROL::stringToParameterType(string name) {
+  if (name == "callsign") {
+    return kCallsign;
+  }
   if (name == "adc_gain") {
     return kADCGain;
   }
@@ -231,6 +252,9 @@ ParameterType BTTRX_CONTROL::stringToParameterType(string name) {
 string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type) {
   string return_value = "unknown parameter";
   switch (parameter_type) {
+  case kCallsign:
+    return_value = "callsign";
+    break;
   case kADCGain:
     return_value = "adc_gain";
     break;
@@ -253,6 +277,30 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type) {
     break;
   }
   return return_value;
+}
+
+/**
+ * @brief Set Callsign
+ *
+ * @param callsign
+ * @return ResultType
+ */
+ResultType BTTRX_CONTROL::handleSetCallsign(string callsign) {
+  if (callsign.length() > CALLSIGN_LENGTH) {
+    serial_->dbg_println("Callsign exceed maximum length. Max. length is: " +
+                         CALLSIGN_LENGTH);
+    return kError;
+  } else {
+    if (!callsign.empty()) {
+      serial_->dbg_println("Set Callsign to: " + callsign);
+    } else {
+      serial_->dbg_println("Callsign deleted");
+    }
+  }
+
+  preferences.putString(ParameterTypeToString(kCallsign).c_str(),
+                        callsign.c_str());
+  return kSuccess;
 }
 
 /**
