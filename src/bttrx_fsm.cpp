@@ -329,8 +329,7 @@ void BTTRX_FSM::handlePTTDuringCall() {
 
   switch (bttrx_control_.getPTTMode()) {
   case kDirect:
-    handlePTTWiredDirect();
-    handlePTTBLEDirect();
+    handlePTTDirect();
     break;
   case kToggle:
     handlePTTWiredToggle();
@@ -346,15 +345,21 @@ void BTTRX_FSM::handlePTTDuringCall() {
 }
 
 /**
- * @brief Handle press of wired PTT button in Direct Mode
+ * @brief Handle press of wired and BLE PTT button in Direct Mode
  */
-void BTTRX_FSM::handlePTTWiredDirect() {
+void BTTRX_FSM::handlePTTDirect() {
   // Hold Button for PTT
-  if (ptt_button_.isPressedEdge()) {
-    ptt_output_.on();
-  } else if (ptt_button_.isReleased()) {
-    ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
-  }
+  if (ptt_button_.isPressedEdge() ||
+		    ble_button_.isPressedEdge()) {
+			ptt_output_.on();
+		} else if (
+			ptt_button_.isReleased() &&
+			(!ble_button_.isConnected() ||
+			 (ble_button_.isConnected() &&
+			  ble_button_.isReleased()))) {
+			ptt_output_.delayed_off(
+				bttrx_control_.getPTTHangTime());
+		}
 }
 
 /**
@@ -382,19 +387,6 @@ void BTTRX_FSM::handlePTTWiredWillimode() {
     if (stop_time - start_time < PTT_TIMEOUT_WILLIMODE) {
       ptt_output_.toggle(bttrx_control_.getPTTHangTime());
     }
-  }
-}
-
-/**
- * @brief Handle press of BLE button in Direct Mode
- */
-void BTTRX_FSM::handlePTTBLEDirect() {
-  // Hold Button for PTT
-  if (ble_button_.isPressedEdge()) {
-    ptt_output_.on();
-  } else if (ble_button_.disappeared() ||
-             (ble_button_.isConnected() && ble_button_.isReleased())) {
-    ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
   }
 }
 
