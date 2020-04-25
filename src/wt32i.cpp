@@ -706,7 +706,18 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
   } else if (cmd == "ATE0") {
     // Disable echo of commands
     sendOK();
-  }
+  } else if (cmd == "AT+COPS?") {
+    // Send currently used network
+    serial_->println("+COPS: 0,0,\"BTTRX\"");
+    sendOK();
+  } else if (cmd == "AT+COPS=?") {
+    // Send list of available networks, '2' indicates this network is in use
+    serial_->println("+COPS: (2,\"BTTRX\",\"BT\",\"26273\")");
+    sendOK();
+  } else if (cmd.find("AT+COPS=") != string::npos) {
+    // Acknowledge setup of network operator string format
+    sendOK();
+  } 
 
   // Unkown commands
   else {
