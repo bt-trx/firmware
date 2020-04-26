@@ -543,6 +543,8 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg) {
     }
   } else if (splitted_msg[0] == "SSP" && splitted_msg[1] == "CONFIRM") {
     msg->msg_type = kSSP_CONFIRM;
+  } else if (splitted_msg[0] == "NAME") {
+    msg->msg_type = kINQUIRY_NAME;
   } else {
     return kError;
   }

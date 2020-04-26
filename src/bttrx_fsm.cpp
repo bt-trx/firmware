@@ -255,6 +255,9 @@ void BTTRX_FSM::handleIncomingMessage() {
       }
     }
     break;
+  case kINQUIRY_NAME:
+    serial_.dbg_println(msg.msg);
+    break;
   case kHFPAG_READY:
     // Indication that HFP-AG connection was successful
     wt32i_.indicateNetworkAvailable();
