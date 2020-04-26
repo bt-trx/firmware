@@ -257,6 +257,8 @@ void BTTRX_FSM::handleIncomingMessage() {
     break;
   case kINQUIRY_NAME:
     serial_.dbg_println(msg.msg);
+    friendly_names_.push_back(pair<string, string>(splitString(msg.msg)[1],
+                                                   splitString(msg.msg)[2]));
     break;
   case kHFPAG_READY:
     // Indication that HFP-AG connection was successful

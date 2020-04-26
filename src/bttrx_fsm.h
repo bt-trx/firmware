@@ -74,6 +74,8 @@ private:
   ButtonBLE ble_button_;
   PTT ptt_output_;
 
+  vector<pair<string,string>> friendly_names_;
+
   // FSM State handler
   void handleStateInit();
   void handleStateConfigure();
