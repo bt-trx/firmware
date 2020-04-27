@@ -163,7 +163,7 @@ TEST_F(WT32iTest, list_success_1result) {
                     "3 INCOMING ACTIVE SLAVE ENCRYPTED 0"),
                 Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.list());
+  ASSERT_EQ(ResultType::kSuccess, wt32i.readActiveConnections());
 
   vector<string> result = wt32i.getActiveConnections();
   ASSERT_EQ(1, result.size());
