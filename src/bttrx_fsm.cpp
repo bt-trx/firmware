@@ -135,7 +135,7 @@ void BTTRX_FSM::handleStateConfigure() {
 
   // Read wt32i configuration to get current values of ADC/DAC Gain and PIN
   wt32i_.set();
-  wt32i_.readActiveConnections();
+  wt32i_.list();
 
   setState(STATE_INQUIRY);
 }
@@ -201,6 +201,17 @@ void BTTRX_FSM::handleStateConnected() {
       }
     }
   }
+
+  // If not known yet, request the friendly name of the remote device
+  if (!remote_device_info_.bd_address.empty() &&
+      remote_device_info_.bd_friendly_name.empty()) {
+    ulong now = millis();
+    static ulong last_start_inquiry = -10000;
+    if (last_start_inquiry + 10000 < now) {
+      last_start_inquiry = now;
+      wt32i_.name(remote_device_info_.bd_address);
+    }
+  }
 }
 
 /**
@@ -232,6 +243,8 @@ void BTTRX_FSM::handleIncomingMessage() {
   iWrapMessage msg;
   wt32i_.getIncomingMessage(&msg);
 
+  BDDeviceInfo device_info;
+
   switch (msg.msg_type) {
   case kSETTING_CONTROL_GAIN:
     bttrx_control_.storeSetting(kADCGain, splitString(msg.msg)[3]);
@@ -241,8 +254,14 @@ void BTTRX_FSM::handleIncomingMessage() {
     bttrx_control_.storeSetting(kPinCode, splitString(msg.msg)[4]);
     break;
   case kLIST_RESULT:
-    // Kill existing connections
-    serial_.println("CLOSE " + splitString(msg.msg)[1]);
+    if (current_state_ != STATE_CONNECTED) {
+      // Kill existing connections
+      wt32i_.close(splitString(msg.msg)[1]);
+    } else if (current_state_ == STATE_CONNECTED) {
+      // Look for the friendly name of our connected device
+      remote_device_info_.bd_address = splitString(msg.msg)[10];
+      assignBDFriendlyNameForRemoteDevice();
+    }
     break;
   case kINQUIRY_RESULT:
     // In the meantime, we may have got an incoming connection and we do not
@@ -255,14 +274,17 @@ void BTTRX_FSM::handleIncomingMessage() {
       }
     }
     break;
-  case kINQUIRY_NAME:
-    serial_.dbg_println(msg.msg);
-    friendly_names_.push_back(pair<string, string>(splitString(msg.msg)[1],
-                                                   splitString(msg.msg)[2]));
+  case kNAME_RESULT:
+    // Store friendly name to list of currently known names
+    device_info.bd_address = splitString(msg.msg)[1];
+    device_info.bd_friendly_name = splitString(msg.msg)[2];
+    remote_devices_.push_back((BDDeviceInfo)(device_info));
+    assignBDFriendlyNameForRemoteDevice();
     break;
   case kHFPAG_READY:
     // Indication that HFP-AG connection was successful
     wt32i_.indicateNetworkAvailable();
+    wt32i_.list();
     setState(STATE_CONNECTED);
     break;
   case kHFPAG_CALLING:
@@ -281,6 +303,8 @@ void BTTRX_FSM::handleIncomingMessage() {
     break;
   case kNOCARRIER_ERROR_LINK_LOSS:
     // Connection try was unsuccessful, get back to inquiry
+    remote_device_info_.bd_address = "";
+    remote_device_info_.bd_friendly_name = "";
     setState(STATE_INQUIRY);
     break;
   case kSSP_CONFIRM:
@@ -354,17 +378,13 @@ void BTTRX_FSM::handlePTTDuringCall() {
  */
 void BTTRX_FSM::handlePTTDirect() {
   // Hold Button for PTT
-  if (ptt_button_.isPressedEdge() ||
-		    ble_button_.isPressedEdge()) {
-			ptt_output_.on();
-		} else if (
-			ptt_button_.isReleased() &&
-			(!ble_button_.isConnected() ||
-			 (ble_button_.isConnected() &&
-			  ble_button_.isReleased()))) {
-			ptt_output_.delayed_off(
-				bttrx_control_.getPTTHangTime());
-		}
+  if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge()) {
+    ptt_output_.on();
+  } else if (ptt_button_.isReleased() &&
+             (!ble_button_.isConnected() ||
+              (ble_button_.isConnected() && ble_button_.isReleased()))) {
+    ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
+  }
 }
 
 /**
@@ -402,5 +422,21 @@ void BTTRX_FSM::handlePTTBLEToggle() {
   // Press Button to assert PTT, press again to release PTT
   if (ble_button_.isPressedEdge()) {
     ptt_output_.toggle(bttrx_control_.getPTTHangTime());
+  }
+}
+
+void BTTRX_FSM::assignBDFriendlyNameForRemoteDevice() {
+  if (!remote_device_info_.bd_address.empty() &&
+      remote_device_info_.bd_friendly_name.empty()) {
+    while (!remote_devices_.empty()) {
+      if (remote_device_info_.bd_address.compare(
+              remote_devices_.back().bd_address) == 0) {
+        string bd_friendly_name = remote_devices_.back().bd_friendly_name;
+        bd_friendly_name.erase(0, 1);
+        bd_friendly_name.erase(bd_friendly_name.length() - 1);
+        remote_device_info_.bd_friendly_name = bd_friendly_name;
+        break;
+      }
+    }
   }
 }

@@ -26,6 +26,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "arduino-mock/Serial.h"
 #endif
 
+#include "bddeviceinfo.h"
 #include "bttrx_control.h"
 #include "button_ble.h"
 #include "button_hw.h"
@@ -74,7 +75,9 @@ private:
   ButtonBLE ble_button_;
   PTT ptt_output_;
 
-  vector<pair<string,string>> friendly_names_;
+  vector<BDDeviceInfo> remote_devices_;
+  BDDeviceInfo remote_device_info_;
+  void assignBDFriendlyNameForRemoteDevice();
 
   // FSM State handler
   void handleStateInit();
