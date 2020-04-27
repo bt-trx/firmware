@@ -234,10 +234,12 @@ ResultType WT32i::performInquiry() {
   return ResultType::kSuccess;
 }
 
-ResultType WT32i::readActiveConnections() {
-  active_connections_.clear();
-  serial_->println("LIST");
-  return kSuccess;
+void WT32i::list() { serial_->println("LIST"); }
+
+void WT32i::name(string bd_address) { serial_->println("NAME " + bd_address); }
+
+void WT32i::close(string connection_id) {
+  serial_->println("CLOSE " + connection_id);
 }
 
 /**
@@ -256,7 +258,7 @@ void WT32i::resetBTPairings() { serial_->println("SET BT PAIR *"); }
  *
  * @return ResultType
  */
-ResultType WT32i::list() {
+ResultType WT32i::readActiveConnections() {
   // Clear current list of currently active connections
   active_connections_.clear();
 
@@ -543,6 +545,8 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg) {
     }
   } else if (splitted_msg[0] == "SSP" && splitted_msg[1] == "CONFIRM") {
     msg->msg_type = kSSP_CONFIRM;
+  } else if (splitted_msg[0] == "NAME" && splitted_msg[1] != "ERROR") {
+    msg->msg_type = kNAME_RESULT;
   } else {
     return kError;
   }
@@ -717,7 +721,7 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
   } else if (cmd.find("AT+COPS=") != string::npos) {
     // Acknowledge setup of network operator string format
     sendOK();
-  } 
+  }
 
   // Unkown commands
   else {
