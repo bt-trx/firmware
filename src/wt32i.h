@@ -56,7 +56,9 @@ public:
   ResultType performInquiry();
   ResultType startInquiry();
   bool inquiryRunning() { return inquiry_running_; }
-  ResultType list();
+  void list();
+  void name(string);
+  void close(string);
   ResultType readActiveConnections();
   void resetBTPairings();
   ResultType connectHFPAG(string);

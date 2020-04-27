@@ -21,34 +21,9 @@ Contact: bt-trx.com, mail@bt-trx.com
 #pragma once
 
 #include <string>
+using namespace std;
 
-/**
- * @brief Non-exhaustive list of iWrap Message types *
- */
-enum iWrapMessageType {
-  kEmpty,
-  kUnknown,
-  kSETTING_CONTROL_GAIN,
-  kSETTING_PIN_CODE,
-  kSETTING_UNKNOWN,
-  kLIST_RESULT,
-  kINQUIRY_RESULT,
-  kNAME_RESULT,
-  kHFPAG_READY,
-  kHFPAG_DIAL,
-  kHFPAG_CALLING,
-  kHFPAG_NO_CARRIER,
-  kHFPAG_UNKOWN,
-  kNOCARRIER_ERROR_LINK_LOSS,
-  kNOCARRIER_ERROR_CALL_ENDED,
-  kSSP_CONFIRM
-};
-
-/**
- * @brief Contains the content and the MessageType classification of an iWrap
- * Message
- */
 typedef struct {
-  iWrapMessageType msg_type = kEmpty;
-  std::string msg;
-} iWrapMessage;
+  string bd_address = "";
+  string bd_friendly_name = "";
+} BDDeviceInfo;
