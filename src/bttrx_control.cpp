@@ -91,6 +91,9 @@ ResultType BTTRX_CONTROL::get(string name, string *value) {
 ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
   // Reply with value / call handler method
   switch (parameter) {
+  case kStatusmessage:
+    *value = status_message_;
+    break;
   case kCallsign:
     *value = preferences.getString(ParameterTypeToString(kCallsign).c_str(), "")
                  .c_str();
@@ -163,6 +166,9 @@ void BTTRX_CONTROL::storeSetting(ParameterType type, string value) {
   case kPinCode:
     pin_code_ = value;
     break;
+  case kStatusmessage:
+    status_message_ = value;
+    break;
   default:
     break;
   }
@@ -219,6 +225,9 @@ uint16_t BTTRX_CONTROL::getPTTHangTime() {
  * @return ParameterType
  */
 ParameterType BTTRX_CONTROL::stringToParameterType(string name) {
+  if (name == "statusmessage") {
+    return kStatusmessage;
+  }
   if (name == "callsign") {
     return kCallsign;
   }
@@ -252,6 +261,9 @@ ParameterType BTTRX_CONTROL::stringToParameterType(string name) {
 string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type) {
   string return_value = "unknown parameter";
   switch (parameter_type) {
+  case kStatusmessage:
+    return_value = "statusmessage";
+    break;
   case kCallsign:
     return_value = "callsign";
     break;

@@ -15,16 +15,25 @@ function getAllParameters() {
   getData("ptt_hang_time");
   getData("ptt_timeout");
   getData("pin_code");
+
+  getData("statusmessage");
+  setInterval(function(){ getData("statusmessage");}, 5000);
 };
 
 function getData(parameter) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
+    var x = document.getElementById(parameter);
     if (this.readyState == 4 && this.status == 200) {
-      var x = document.getElementById(parameter);
       x.value = this.responseText;
       if (parameter == "callsign") {
-        setCallsignTag(x.value)
+        setCallsignTag(x.value);
+      } else if (parameter == "statusmessage") {
+        x.innerHTML = this.responseText;
+      }
+    } else if (this.readyState == 4 && this.readyState != 200) {
+      if (parameter == "statusmessage") {
+        x.innerHTML = "no connection to bt-trx";
       }
     }
   };

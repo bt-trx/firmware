@@ -75,6 +75,38 @@ void BTTRX_FSM::run() {
   }
 }
 
+void BTTRX_FSM::updateStatusmessage() {
+  string message = "";
+  string device_name = remote_device_info_.bd_address;
+  if (!remote_device_info_.bd_friendly_name.empty()) {
+    device_name = remote_device_info_.bd_friendly_name;
+  }
+
+  switch (current_state_) {
+  case STATE_INIT:
+    message = "Initialization...";
+    break;
+  case STATE_CONFIGURE:
+    message = "Configuring...";
+    break;
+  case STATE_INQUIRY:
+    message = "Looking for Bluetooth devices...";
+    break;
+  case STATE_CONNECTING:
+    message = "Connecting to " + remote_device_info_.bd_address;
+    break;
+  case STATE_CONNECTED:
+    message = "Connected to " + device_name;
+    break;
+  case STATE_CALL_RUNNING:
+    message = "Call running";
+    break;
+  default:
+    break;
+  }
+  bttrx_control_.storeSetting(kStatusmessage, message);
+}
+
 /**
  * @brief StateInit: Try to reach the Bluetooth module
  * If the Bluetooth module is available, advance to next state
@@ -243,8 +275,6 @@ void BTTRX_FSM::handleIncomingMessage() {
   iWrapMessage msg;
   wt32i_.getIncomingMessage(&msg);
 
-  BDDeviceInfo device_info;
-
   switch (msg.msg_type) {
   case kSETTING_CONTROL_GAIN:
     bttrx_control_.storeSetting(kADCGain, splitString(msg.msg)[3]);
@@ -258,9 +288,7 @@ void BTTRX_FSM::handleIncomingMessage() {
       // Kill existing connections
       wt32i_.close(splitString(msg.msg)[1]);
     } else if (current_state_ == STATE_CONNECTED) {
-      // Look for the friendly name of our connected device
       remote_device_info_.bd_address = splitString(msg.msg)[10];
-      assignBDFriendlyNameForRemoteDevice();
     }
     break;
   case kINQUIRY_RESULT:
@@ -269,17 +297,16 @@ void BTTRX_FSM::handleIncomingMessage() {
     // INQUIRY state
     if (current_state_ == STATE_INQUIRY) {
       if (!wt32i_.getInquiredDevices().empty()) {
-        wt32i_.connectHFPAGnonblocking(wt32i_.getInquiredDevices().at(0));
+        remote_device_info_.bd_address = wt32i_.getInquiredDevices().at(0);
+        wt32i_.connectHFPAGnonblocking(remote_device_info_.bd_address);
         setState(STATE_CONNECTING);
       }
     }
     break;
   case kNAME_RESULT:
-    // Store friendly name to list of currently known names
-    device_info.bd_address = splitString(msg.msg)[1];
-    device_info.bd_friendly_name = splitString(msg.msg)[2];
-    remote_devices_.push_back((BDDeviceInfo)(device_info));
-    assignBDFriendlyNameForRemoteDevice();
+    // Store friendly name
+    remote_device_info_.bd_friendly_name = splitString(msg.msg)[2];
+    updateStatusmessage();
     break;
   case kHFPAG_READY:
     // Indication that HFP-AG connection was successful
@@ -346,6 +373,8 @@ void BTTRX_FSM::setState(state_t state) {
     serial_.dbg_println("ERROR: Trying to go into unkown state");
     break;
   }
+
+  updateStatusmessage();
 }
 
 /**
@@ -422,21 +451,5 @@ void BTTRX_FSM::handlePTTBLEToggle() {
   // Press Button to assert PTT, press again to release PTT
   if (ble_button_.isPressedEdge()) {
     ptt_output_.toggle(bttrx_control_.getPTTHangTime());
-  }
-}
-
-void BTTRX_FSM::assignBDFriendlyNameForRemoteDevice() {
-  if (!remote_device_info_.bd_address.empty() &&
-      remote_device_info_.bd_friendly_name.empty()) {
-    while (!remote_devices_.empty()) {
-      if (remote_device_info_.bd_address.compare(
-              remote_devices_.back().bd_address) == 0) {
-        string bd_friendly_name = remote_devices_.back().bd_friendly_name;
-        bd_friendly_name.erase(0, 1);
-        bd_friendly_name.erase(bd_friendly_name.length() - 1);
-        remote_device_info_.bd_friendly_name = bd_friendly_name;
-        break;
-      }
-    }
   }
 }
