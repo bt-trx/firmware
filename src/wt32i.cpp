@@ -191,7 +191,6 @@ ResultType WT32i::startInquiry() {
   // Inquiry for x * 1.28 seconds
   string output = "INQUIRY ";
   output.append(INQUIRY_DURATION);
-  output.append(" NAME");
   serial_->println(output.c_str());
 
   inquiry_running_ = true;

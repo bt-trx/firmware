@@ -35,6 +35,7 @@ using namespace std;
 
 enum ParameterType {
   kUnkownParameter,
+  kStatusmessage,
   kCallsign,
   kADCGain,
   kDACGain,
@@ -67,6 +68,7 @@ private:
 
   ParameterType stringToParameterType(string);
   string ParameterTypeToString(ParameterType);
+
   ResultType handleSetCallsign(string);
   ResultType handleSetADCGain(string);
   ResultType handleSetDACGain(string);
@@ -78,4 +80,5 @@ private:
   string adc_gain_ = "0";
   string dac_gain_ = "0";
   string pin_code_ = "0000";
+  string status_message_ = "";
 };

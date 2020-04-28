@@ -75,9 +75,8 @@ private:
   ButtonBLE ble_button_;
   PTT ptt_output_;
 
-  vector<BDDeviceInfo> remote_devices_;
   BDDeviceInfo remote_device_info_;
-  void assignBDFriendlyNameForRemoteDevice();
+  void updateStatusmessage();
 
   // FSM State handler
   void handleStateInit();
