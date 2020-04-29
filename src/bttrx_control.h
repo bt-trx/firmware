@@ -42,7 +42,8 @@ enum ParameterType {
   kPinCode,
   kPTTMode,
   kPTTTimeout,
-  kPTTHangTime
+  kPTTHangTime,
+  kDirectAudioEnabled
 };
 
 enum PTTMode { kUnkownPTTMode, kDirect, kToggle, kWillimode };
@@ -76,6 +77,7 @@ private:
   ResultType handleSetPTTMode(string);
   ResultType handleSetPTTTimeout(string);
   ResultType handleSetPTTHangTime(string);
+  ResultType handleSetDirectAudioEnabled(string);
 
   string adc_gain_ = "0";
   string dac_gain_ = "0";

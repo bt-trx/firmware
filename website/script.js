@@ -15,6 +15,7 @@ function getAllParameters() {
   getData("ptt_hang_time");
   getData("ptt_timeout");
   getData("pin_code");
+  getCheckboxData("direct_audio_en");
 
   getData("statusmessage");
   setInterval(function(){ getData("statusmessage");}, 5000);

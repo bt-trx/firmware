@@ -452,6 +452,28 @@ ResultType WT32i::hangup() {
 }
 
 /**
+ * @brief Forcing SCO connection open
+ *
+ * @return ResultType
+ */
+ResultType WT32i::scoOpen() {
+  serial_->println("SCO OPEN 0");
+
+  return ResultType::kSuccess;
+}
+
+/**
+ * @brief Forcing SCO connection close
+ *
+ * @return ResultType
+ */
+ResultType WT32i::scoClose() {
+  serial_->println("CLOSE 1");
+
+  return ResultType::kSuccess;
+}
+
+/**
  * @brief Send SSP Confirmation string with the given BD address
  *
  * @param address BD adress to confirm
@@ -532,6 +554,8 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg) {
     } else {
       return kError;
     }
+  } else if (msg->msg == "CONNECT 1 SCO") {
+    msg->msg_type = kCONNECT_SCO;
   } else if (splitted_msg[0] == "NO" && splitted_msg[1] == "CARRIER") {
     if (splitted_msg[3] == "ERROR") {
       if (splitted_msg[2] == "1") {

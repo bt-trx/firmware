@@ -60,6 +60,9 @@ ResultType BTTRX_CONTROL::set(string name, string value) {
   case kPTTHangTime:
     result = handleSetPTTHangTime(value);
     break;
+  case kDirectAudioEnabled:
+    result = handleSetDirectAudioEnabled(value);
+    break;
   default:
     return kError;
     break;
@@ -119,6 +122,10 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
     *value = to_string(
         preferences.getUShort(ParameterTypeToString(kPTTHangTime).c_str(), 0));
     break;
+  case kDirectAudioEnabled:
+    *value = to_string(preferences.getBool(
+        ParameterTypeToString(kDirectAudioEnabled).c_str(), false));
+    break;
   default:
     return kError;
     break;
@@ -128,6 +135,10 @@ ResultType BTTRX_CONTROL::get(ParameterType parameter, string *value) {
 
 ResultType BTTRX_CONTROL::get(ParameterType parameter, bool *value) {
   switch (parameter) {
+  case kDirectAudioEnabled:
+    *value = preferences.getBool(
+        ParameterTypeToString(kDirectAudioEnabled).c_str(), false);
+    break;
   default:
     return kError;
   }
@@ -249,6 +260,9 @@ ParameterType BTTRX_CONTROL::stringToParameterType(string name) {
   if (name == "ptt_hang_time") {
     return kPTTHangTime;
   }
+  if (name == "direct_audio_en") {
+    return kDirectAudioEnabled;
+  }
   return kUnkownParameter;
 }
 
@@ -285,6 +299,8 @@ string BTTRX_CONTROL::ParameterTypeToString(ParameterType parameter_type) {
   case kPTTHangTime:
     return_value = "ptt_hang_time";
     break;
+  case kDirectAudioEnabled:
+    return_value = "direct_audio_en";
   default:
     break;
   }
@@ -409,4 +425,19 @@ ResultType BTTRX_CONTROL::handleSetPTTHangTime(string hang_time) {
     return kSuccess;
   }
   return kError;
+}
+
+ResultType BTTRX_CONTROL::handleSetDirectAudioEnabled(string enabled) {
+  bool value = false;
+  if (enabled == "true") {
+    value = true;
+  } else if (enabled == "false") {
+    value = false;
+  } else {
+    return kError;
+  }
+
+  preferences.putBool(ParameterTypeToString(kDirectAudioEnabled).c_str(),
+                      value);
+  return kSuccess;
 }

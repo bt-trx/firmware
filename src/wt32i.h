@@ -67,6 +67,8 @@ public:
   ResultType dial();
   ResultType connect();
   ResultType hangup();
+  ResultType scoOpen();
+  ResultType scoClose();
   ResultType sendSSPConfirmation(string);
 
   // Message handlers
