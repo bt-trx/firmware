@@ -742,10 +742,6 @@ ResultType WT32i::indicateNetworkAvailable() {
   setStatus("service", "1");
   setStatus("signal", "5");
 
-  // Workaround for iWrap 6.1.0, as AT+COPS message does not get exposed to us
-  // we have to send +COPS message on our own
-  serial_->println("+COPS: 0,0,\"BTTRX\"");
-  sendOK();
   return kSuccess;
 }
 
