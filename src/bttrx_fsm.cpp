@@ -305,7 +305,7 @@ void BTTRX_FSM::handleIncomingMessage() {
     break;
   case kNAME_RESULT:
     // Store friendly name
-    remote_device_info_.bd_friendly_name = splitString(msg.msg)[2];
+    remote_device_info_.bd_friendly_name = splitString(msg.msg, "\"")[1];
     updateStatusmessage();
     break;
   case kHFPAG_READY:
