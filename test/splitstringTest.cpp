@@ -47,6 +47,13 @@ TEST(SplitStringTest, splitString_TrailingBlank) {
   ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1"));
 }
 
+TEST(SplitStringTest, splitString_quotationmark) {
+  vector<string> result = splitString("TEST1 \"TEST 2\"", "\"");
+  ASSERT_EQ(2, result.size());
+  ASSERT_EQ(0, strcmp(result.at(0).c_str(), "TEST1 "));
+  ASSERT_EQ(0, strcmp(result.at(1).c_str(), "TEST 2"));
+}
+
 TEST(SplitStringTest, containsStringOnPosition_success_1elem) {
   ASSERT_EQ(true, containsStringOnPosition("FOO", "FOO", 0));
 }

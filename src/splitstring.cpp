@@ -26,10 +26,9 @@ Contact: bt-trx.com, mail@bt-trx.com
  * @param input
  * @return vector<string>
  */
-vector<string> splitString(const string input) {
-  string s = input;
+vector<string> splitString(const string input_string, string delimiter) {
+  string s = input_string;
   size_t pos = 0;
-  string delimiter = " ";
   vector<string> result;
   while ((pos = s.find(delimiter)) != string::npos) {
     if (pos != 0) {
