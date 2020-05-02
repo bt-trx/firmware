@@ -234,6 +234,17 @@ void BTTRX_FSM::handleStateConnected() {
     }
   }
 
+  // Experimental: Workaround for iWrap 6.1.0, as AT+COPS message does not
+  // get exposed to us we have to send +COPS message on our own
+  ulong now = millis();
+  ulong COPS_INTERVAL = 10000;
+  static ulong last_cops_sent = -COPS_INTERVAL;
+  if (last_cops_sent + COPS_INTERVAL < now) {
+    last_cops_sent = now;
+    serial_.println("+COPS: 0,0,\"BTTRX\"");
+    serial_.println("OK");
+  } 
+
   // If not known yet, request the friendly name of the remote device
   if (!remote_device_info_.bd_address.empty() &&
       remote_device_info_.bd_friendly_name.empty()) {
