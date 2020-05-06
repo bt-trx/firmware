@@ -92,6 +92,9 @@ void PTT::toggle(uint32_t delay_ms) {
     delayed_off(delay_ms);
   } else {
     on();
+#ifdef ARDUINO
+    bttrx_display_.setTransmitMessage("<<< ON AIR >>>");
+#endif // ARDUINO
   }
 }
 
@@ -105,6 +108,9 @@ void PTT::delayed_off(uint32_t delay_ms) {
 
   if (turn_off_delay_ == 0) {
     off();
+#ifdef ARDUINO
+    bttrx_display_.setTransmitMessage("idle");
+#endif // ARDUINO
     return;
   }
 
