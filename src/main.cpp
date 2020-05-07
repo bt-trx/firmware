@@ -27,8 +27,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #ifdef ARDUINO
 #include "bttrx_ble.h"
-#include "bttrx_wifi.h"
 #include "bttrx_display.h"
+#include "bttrx_wifi.h"
 #endif
 
 #ifdef ARDUINO
@@ -94,6 +94,8 @@ void getHardwareVersion() {
     hardwareVersion = "4.1";
   case 4095:
     hardwareVersion = "5.0";
+  default:
+    hardwareVersion = " unknown";
   }
 }
 

@@ -23,19 +23,17 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #ifdef ARDUINO
 
-#define display_width  128
-#define display_height  64
+#define display_width 128
+#define display_height 64
 
 #include <string>
 using namespace std;
 
-extern const char *GIT_REVISION;
-
 class BTTRX_DISPLAY {
 public:
-   static void init();
-   static void setStatusMessage(string);
-   static void setTransmitMessage(string);
+  static void init();
+  static void setStatusMessage(string);
+  static void setTransmitMessage(string);
 
 private:
 };

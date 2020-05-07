@@ -22,7 +22,6 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #ifdef ARDUINO
 #include <Arduino.h>
-#include "bttrx_display.h"
 #else
 #include "arduino-mock/Serial.h"
 #endif

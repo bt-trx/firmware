@@ -22,7 +22,6 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #ifdef ARDUINO
 #include "Arduino.h"
-#include "bttrx_display.h"
 #else
 #include "arduino-mock/Arduino.h"
 #endif
@@ -41,10 +40,6 @@ public:
   void delayed_off(uint32_t);
   void toggle(uint32_t = 0);
   bool getState() { return ptt_on_; };
-
-#ifdef ARDUINO
-  BTTRX_DISPLAY bttrx_display_;
-#endif // ARDUINO
 
 private:
   int pin_;

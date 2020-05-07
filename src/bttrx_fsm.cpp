@@ -246,7 +246,7 @@ void BTTRX_FSM::handleStateConnected() {
     last_cops_sent = now;
     serial_.println("+COPS: 0,0,\"BTTRX\"");
     serial_.println("OK");
-  } 
+  }
 
   // If not known yet, request the friendly name of the remote device
   if (!remote_device_info_.bd_address.empty() &&
@@ -443,6 +443,13 @@ void BTTRX_FSM::handlePTTWiredToggle() {
   // Press Button to assert PTT, press again to release PTT
   if (ptt_button_.isPressedEdge()) {
     ptt_output_.toggle(bttrx_control_.getPTTHangTime());
+#ifdef ARDUINO
+    if (ptt_output_.getState()) {
+      bttrx_display_.setTransmitMessage("<<< ON AIR >>>");
+    } else {
+      bttrx_display_.setTransmitMessage("idle");
+    }
+#endif // ARDUINO
   }
 }
 
@@ -460,6 +467,13 @@ void BTTRX_FSM::handlePTTWiredWillimode() {
     ulong stop_time = millis();
     if (stop_time - start_time < PTT_TIMEOUT_WILLIMODE) {
       ptt_output_.toggle(bttrx_control_.getPTTHangTime());
+#ifdef ARDUINO
+      if (ptt_output_.getState()) {
+        bttrx_display_.setTransmitMessage("<<< ON AIR >>>");
+      } else {
+        bttrx_display_.setTransmitMessage("idle");
+      }
+#endif // ARDUINO
     }
   }
 }
@@ -471,5 +485,12 @@ void BTTRX_FSM::handlePTTBLEToggle() {
   // Press Button to assert PTT, press again to release PTT
   if (ble_button_.isPressedEdge()) {
     ptt_output_.toggle(bttrx_control_.getPTTHangTime());
+#ifdef ARDUINO
+    if (ptt_output_.getState()) {
+      bttrx_display_.setTransmitMessage("<<< ON AIR >>>");
+    } else {
+      bttrx_display_.setTransmitMessage("idle");
+    }
+#endif // ARDUINO
   }
 }
