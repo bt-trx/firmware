@@ -27,6 +27,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #ifdef ARDUINO
 #include "bttrx_ble.h"
+#include "bttrx_display.h"
 #include "bttrx_wifi.h"
 #endif
 
@@ -40,7 +41,9 @@ Preferences preferences;
 BTTRX_FSM bttrx_fsm;
 BTTRX_WIFI bttrx_wifi;
 BTTRX_BLE bttrx_ble;
+BTTRX_DISPLAY bttrx_display;
 bool wifi_started_ = false;
+String hardwareVersion = " unknown";
 
 void checkForWifiStart() {
 #ifdef ARDUINO
@@ -85,14 +88,14 @@ void setupPins() {
   digitalWrite(PIN_BT_RESET, HIGH);
 }
 
-String getHardwareVersion() {
+void getHardwareVersion() {
   switch (analogRead(PIN_HW_VER)) {
   case 0:
-    return "4.1";
+    hardwareVersion = "4.1";
   case 4095:
-    return "5.0";
+    hardwareVersion = "5.0";
   default:
-    return "unkown";
+    hardwareVersion = " unknown";
   }
 }
 
@@ -118,10 +121,14 @@ void setup() {
   bttrx_fsm.setSerial(&SERIAL_BT, &SERIAL_DBG);
 
   // Print version information
-  SERIAL_DBG.println("bt-trx Hardware: dev-board v" + getHardwareVersion());
+  getHardwareVersion();
+  SERIAL_DBG.println("bt-trx Hardware: dev-board v" + hardwareVersion);
   string header = "bt-trx Firmware: v";
   header.append(GIT_REVISION);
   SERIAL_DBG.println(header.c_str());
+
+  // Inititalize I2C display
+  bttrx_display.init();
 
   // Print Chip ID
   uint64_t chipid = ESP.getEfuseMac();

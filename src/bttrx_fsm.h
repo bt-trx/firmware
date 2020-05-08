@@ -28,6 +28,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "bddeviceinfo.h"
 #include "bttrx_control.h"
+#include "bttrx_display.h"
 #include "button_ble.h"
 #include "button_hw.h"
 #include "led.h"
@@ -57,6 +58,9 @@ public:
   ButtonBLE *getBLEButtonHandler() { return &ble_button_; };
 
   BTTRX_CONTROL bttrx_control_;
+#ifdef ARDUINO
+  BTTRX_DISPLAY bttrx_display_;
+#endif // ARDUINO
 
   // only required for unit testing
   state_t getCurrentState() { return current_state_; };
