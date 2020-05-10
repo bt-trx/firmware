@@ -14,39 +14,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL),
+              2020 Florian Wolters (DF2ET)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
 #pragma once
 
 #ifdef ARDUINO
-#include "Arduino.h"
-#else
-#include "arduino-mock/Arduino.h"
-#endif
 
-#include "led.h"
+#define display_width 128
+#define display_height 64
 
-class PTT {
+#include <string>
+using namespace std;
+
+class BTTRX_DISPLAY {
 public:
-  PTT(uint32_t ptt_pin, uint32_t led_pin);
-
-  void checkForTimeout(uint32_t);
-  void checkForDelayedOff();
-
-  void on();
-  void off();
-  void delayed_off(uint32_t);
-  void toggle(uint32_t = 0);
-  bool getState() { return ptt_on_; };
+  static void init();
+  static void setStatusMessage(string);
+  static void setTransmitMessage(string);
 
 private:
-  int pin_;
-  LED led;
-  bool ptt_on_;
-
-  ulong turn_on_time_;
-  ulong turn_off_time_;
-  uint32_t turn_off_delay_;
 };
+
+#endif // ARDUINO
