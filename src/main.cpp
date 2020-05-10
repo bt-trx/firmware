@@ -92,10 +92,13 @@ void getHardwareVersion() {
   switch (analogRead(PIN_HW_VER)) {
   case 0:
     hardwareVersion = "4.1";
+    break;
   case 4095:
     hardwareVersion = "5.0";
+    break;
   default:
     hardwareVersion = " unknown";
+    break;
   }
 }
 
