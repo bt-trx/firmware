@@ -283,10 +283,9 @@ ResultType WT32i::readActiveConnections() {
   return ResultType::kSuccess;
 }
 
-ResultType WT32i::connectHFPAGnonblocking(string address) {
+void WT32i::connectHFPAG(string address) {
   string output = "call " + address + " 111e hfp-ag";
   serial_->println(output.c_str());
-  return kSuccess;
 }
 
 /**
@@ -296,7 +295,7 @@ ResultType WT32i::connectHFPAGnonblocking(string address) {
  * @param address Bluetooth address of the HFP device
  * @return ResultType
  */
-ResultType WT32i::connectHFPAG(string address) {
+ResultType WT32i::connectHFPAG_blocking(string address) {
   string output = "call " + address + " 111e hfp-ag";
   serial_->println(output.c_str());
 
@@ -404,10 +403,17 @@ ResultType WT32i::getHFPStatus(int link_id, string status_name,
 
 /**
  * @brief Indicate outgoing phone call to the HFP device
+ */
+void WT32i::dial() {
+  serial_->println("DIALING");
+}
+
+/**
+ * @brief Indicate outgoing phone call to the HFP device
  *
  * @return ResultType
  */
-ResultType WT32i::dial() {
+ResultType WT32i::dial_blocking() {
   serial_->println("DIALING");
 
   string input;
@@ -426,7 +432,16 @@ ResultType WT32i::dial() {
  *
  * @return ResultType
  */
-ResultType WT32i::connect() {
+void WT32i::connect() {
+  serial_->println("CONNECT");
+}
+
+/**
+ * @brief Accept phone call request
+ *
+ * @return ResultType
+ */
+ResultType WT32i::connect_blocking() {
   serial_->println("CONNECT");
 
   string input;
@@ -525,6 +540,8 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg) {
       msg->msg_type = kHFPAG_READY;
     } else if (splitted_msg[2] == "CALLING") {
       msg->msg_type = kHFPAG_CALLING;
+    } else if (splitted_msg[2] == "CONNECT") {
+      msg->msg_type = kHFPAG_CONNECT;
     } else if (splitted_msg[2] == "NO" && splitted_msg[3] == "CARRIER") {
       msg->msg_type = kHFPAG_NO_CARRIER;
     } else if (splitted_msg[2] == "UNKNOWN") {

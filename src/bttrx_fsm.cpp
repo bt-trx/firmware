@@ -230,11 +230,7 @@ void BTTRX_FSM::handleStateConnected() {
   // phone call
   if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge() ||
       helper_button_.isPressedEdge()) {
-    if (wt32i_.dial() == kSuccess) {
-      if (wt32i_.connect() == kSuccess) {
-        setState(STATE_CALL_RUNNING);
-      }
-    }
+    wt32i_.dial();
   }
 
   // Experimental: Workaround for iWrap 6.1.0, as AT+COPS message does not
@@ -312,7 +308,7 @@ void BTTRX_FSM::handleIncomingMessage() {
     if (current_state_ == STATE_INQUIRY) {
       if (!wt32i_.getInquiredDevices().empty()) {
         remote_device_info_.bd_address = wt32i_.getInquiredDevices().at(0);
-        wt32i_.connectHFPAGnonblocking(remote_device_info_.bd_address);
+        wt32i_.connectHFPAG(remote_device_info_.bd_address);
         setState(STATE_CONNECTING);
       }
     }
@@ -330,9 +326,11 @@ void BTTRX_FSM::handleIncomingMessage() {
     break;
   case kHFPAG_CALLING:
     // Indication that an outgoing phone call is requested
-    if (wt32i_.connect() == kSuccess) { // Accept call
-      setState(STATE_CALL_RUNNING);
-    }
+    wt32i_.connect();
+    break;
+  case kHFPAG_CONNECT:
+    // Phone call established
+    setState(STATE_CALL_RUNNING);
     break;
   case kHFPAG_NO_CARRIER:
     // Phone call ended

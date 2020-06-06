@@ -179,7 +179,15 @@ TEST_F(WT32iTest, resetBTPairings) {
   wt32i.resetBTPairings();
 }
 
-TEST_F(WT32iTest, connectHFPAG_success_without_SSP) {
+TEST_F(WT32iTest, connectHFPAG) {
+  WT32i wt32i(&serialWrapperMock);
+
+  EXPECT_CALL(serialWrapperMock, println(Matcher<const char *>(StrEq(
+                                     "call de:ad:be:ef:ca:fe 111e hfp-ag"))));
+  wt32i.connectHFPAG("de:ad:be:ef:ca:fe");
+}
+
+TEST_F(WT32iTest, connectHFPAG_blocking_success_without_SSP) {
   WT32i wt32i(&serialWrapperMock);
 
   EXPECT_CALL(serialWrapperMock, println(Matcher<const char *>(StrEq(
@@ -197,10 +205,10 @@ TEST_F(WT32iTest, connectHFPAG_success_without_SSP) {
       .WillOnce(
           DoAll(SetArgPointee<1>("HFP 0 READY"), Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.connectHFPAG("de:ad:be:ef:ca:fe"));
+  ASSERT_EQ(ResultType::kSuccess, wt32i.connectHFPAG_blocking("de:ad:be:ef:ca:fe"));
 }
 
-TEST_F(WT32iTest, connectHFPAG_success_with_SSP) {
+TEST_F(WT32iTest, connectHFPAG_blocking_success_with_SSP) {
   WT32i wt32i(&serialWrapperMock);
 
   EXPECT_CALL(serialWrapperMock, println(Matcher<const char *>(StrEq(
@@ -221,7 +229,7 @@ TEST_F(WT32iTest, connectHFPAG_success_with_SSP) {
       .WillOnce(
           DoAll(SetArgPointee<1>("HFP 0 READY"), Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.connectHFPAG("de:ad:be:ef:ca:fe"));
+  ASSERT_EQ(ResultType::kSuccess, wt32i.connectHFPAG_blocking("de:ad:be:ef:ca:fe"));
 }
 
 TEST_F(WT32iTest, setStatus_success) {
@@ -268,6 +276,15 @@ TEST_F(WT32iTest, getHFPStatus_fail_read) {
   ASSERT_EQ(-1, value);
 }
 
+TEST_F(WT32iTest, dial) {
+  WT32i wt32i(&serialWrapperMock);
+
+  EXPECT_CALL(serialWrapperMock,
+              println(Matcher<const char *>(StrEq("DIALING"))));
+
+  wt32i.dial();
+}
+
 TEST_F(WT32iTest, dial_success) {
   WT32i wt32i(&serialWrapperMock);
 
@@ -278,10 +295,18 @@ TEST_F(WT32iTest, dial_success) {
       .WillOnce(DoAll(SetArgPointee<1>("HFP-AG 0 CALLING"),
                       Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.dial());
+  ASSERT_EQ(ResultType::kSuccess, wt32i.dial_blocking());
 }
 
 TEST_F(WT32iTest, connect_success) {
+  WT32i wt32i(&serialWrapperMock);
+
+  EXPECT_CALL(serialWrapperMock,
+              println(Matcher<const char *>(StrEq("CONNECT"))));
+  wt32i.connect();
+}
+
+TEST_F(WT32iTest, connect_blocking_success) {
   WT32i wt32i(&serialWrapperMock);
 
   EXPECT_CALL(serialWrapperMock,
@@ -291,7 +316,7 @@ TEST_F(WT32iTest, connect_success) {
       .WillOnce(DoAll(SetArgPointee<1>("HFP-AG 0 CONNECT"),
                       Return(ResultType::kSuccess)));
 
-  ASSERT_EQ(ResultType::kSuccess, wt32i.connect());
+  ASSERT_EQ(ResultType::kSuccess, wt32i.connect_blocking());
 }
 
 TEST_F(WT32iTest, hangup_success) {
