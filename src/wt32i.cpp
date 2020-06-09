@@ -283,55 +283,14 @@ ResultType WT32i::readActiveConnections() {
   return ResultType::kSuccess;
 }
 
-ResultType WT32i::connectHFPAGnonblocking(string address) {
-  string output = "call " + address + " 111e hfp-ag";
-  serial_->println(output.c_str());
-  return kSuccess;
-}
-
 /**
  * @brief Establish HFP-AG connection to given device
- * Blocks until answer or timeout
  *
  * @param address Bluetooth address of the HFP device
- * @return ResultType
  */
-ResultType WT32i::connectHFPAG(string address) {
+void WT32i::connectHFPAG(string address) {
   string output = "call " + address + " 111e hfp-ag";
   serial_->println(output.c_str());
-
-  string input;
-  if (serial_->waitForInputBlocking("CALL", &input) == kTimeoutError) {
-    return kTimeoutError;
-  }
-
-  // Setting timeout to 15 secs, in case of fallback to PIN
-  // This should be somewhat enough time to enter the PIN in the HFP device
-  ulong start_time = millis();
-  while (true) {
-    input = serial_->readLineToString();
-    if (!input.empty()) {
-      vector<string> splitted_input = splitString(input);
-      if (splitted_input[0] == "SSP" && splitted_input[1] == "CONFIRM") {
-        output = "SSP CONFIRM " + address + " OK";
-        serial_->println(output.c_str());
-      } else if (splitted_input[0] == "CONNECT") {
-        break;
-      }
-    }
-
-    if ((start_time + 15000) < millis()) {
-      return kTimeoutError;
-    }
-  }
-
-  input.clear();
-  while (!containsStringOnPosition(input, "READY", 2)) {
-    if (serial_->waitForInputBlocking("HFP-AG", &input) == kTimeoutError) {
-      return kTimeoutError;
-    }
-  }
-  return kSuccess;
 }
 
 /**
@@ -404,40 +363,16 @@ ResultType WT32i::getHFPStatus(int link_id, string status_name,
 
 /**
  * @brief Indicate outgoing phone call to the HFP device
- *
- * @return ResultType
  */
-ResultType WT32i::dial() {
+void WT32i::dial() {
   serial_->println("DIALING");
-
-  string input;
-  if (serial_->waitForInputBlocking("HFP-AG", &input) ==
-      ResultType::kTimeoutError) {
-    return ResultType::kTimeoutError;
-  }
-  if (input != "HFP-AG 0 CALLING") {
-    return ResultType::kError;
-  }
-  return ResultType::kSuccess;
 }
 
 /**
  * @brief Accept phone call request
- *
- * @return ResultType
  */
-ResultType WT32i::connect() {
+void WT32i::connect() {
   serial_->println("CONNECT");
-
-  string input;
-  if (serial_->waitForInputBlocking("HFP-AG", &input) ==
-      ResultType::kTimeoutError) {
-    return ResultType::kTimeoutError;
-  }
-  if (input != "HFP-AG 0 CONNECT") {
-    return ResultType::kError;
-  }
-  return ResultType::kSuccess;
 }
 
 /**
@@ -525,6 +460,8 @@ ResultType WT32i::parseMessageString(string input, iWrapMessage *msg) {
       msg->msg_type = kHFPAG_READY;
     } else if (splitted_msg[2] == "CALLING") {
       msg->msg_type = kHFPAG_CALLING;
+    } else if (splitted_msg[2] == "CONNECT") {
+      msg->msg_type = kHFPAG_CONNECT;
     } else if (splitted_msg[2] == "NO" && splitted_msg[3] == "CARRIER") {
       msg->msg_type = kHFPAG_NO_CARRIER;
     } else if (splitted_msg[2] == "UNKNOWN") {
