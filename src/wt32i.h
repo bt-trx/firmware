@@ -61,11 +61,10 @@ public:
   void close(string);
   ResultType readActiveConnections();
   void resetBTPairings();
-  ResultType connectHFPAG(string);
-  ResultType connectHFPAGnonblocking(string);
+  void connectHFPAG(string);
   ResultType setStatus(string, string);
-  ResultType dial();
-  ResultType connect();
+  void dial();
+  void connect();
   ResultType hangup();
   ResultType sendSSPConfirmation(string);
 
