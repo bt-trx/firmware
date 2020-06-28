@@ -37,6 +37,8 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "../test/esp32_mock/Preferences.h"
 #endif
 
+#include "frequency_generator.h"
+
 Preferences preferences;
 BTTRX_FSM bttrx_fsm;
 BTTRX_WIFI bttrx_wifi;
@@ -148,6 +150,10 @@ void setup() {
   if (!wifi_started_) {
     bttrx_ble.setupBLE(bttrx_fsm.getBLEButtonHandler());
   }
+ 
+  dac_cosine_enable(DAC_CHANNEL_1);
+  dac_frequency_set(7, 111);
+  dac_output_enable(DAC_CHANNEL_1);
 }
 
 void loop() {
