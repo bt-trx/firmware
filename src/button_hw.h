@@ -26,28 +26,18 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "arduino-mock/Arduino.h"
 #endif
 
-class ButtonHW {
+#include "button.h"
+
+class ButtonHW : public Button{
 public:
   ButtonHW(uint32_t pin);
-
-  bool isPressed();
-  bool isReleased();
-  bool isPressedEdge();
-  bool isReleasedEdge();
-  bool isTripleClick();
   void update();
-
-  // Public for Unit Testing only
-  void checkForTripleClick(bool, ulong);
 
 private:
   int pin_;
-  bool buttonState;
-  bool lastButtonState = HIGH;
-  bool stateChanged = false;
 
-  bool tripleClick = false;
-
+  // Required for debouncing
+  bool lastReading = HIGH;
   unsigned long lastDebounceTime =
       0; // the last time the output pin was toggled
   unsigned long debounceDelay =

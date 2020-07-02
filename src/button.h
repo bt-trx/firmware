@@ -20,6 +20,12 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #pragma once
 
+#ifdef ARDUINO
+#include "Arduino.h"
+#else
+#include "arduino-mock/Arduino.h"
+#endif
+
 enum ButtonState { BTNSTATE_UNKNOWN, BTNSTATE_RELEASED, BTNSTATE_PRESSED };
 
 class Button {
@@ -28,8 +34,14 @@ public:
   bool isReleased();
   bool isPressedEdge();
   bool isReleasedEdge();
+  bool isTripleClick();
+
+  // Public for Unit Testing only
+  void checkForTripleClick(bool, ulong);
 
 protected:
   ButtonState button_state = BTNSTATE_UNKNOWN;
   bool state_changed = false;
+
+  bool triple_click = false;
 };

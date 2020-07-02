@@ -18,6 +18,7 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
+#include "settings.h"
 #include "button.h"
 
 /**
@@ -59,3 +60,38 @@ bool Button::isPressedEdge() { return isPressed() && state_changed; }
  * @return bool
  */
 bool Button::isReleasedEdge() { return isReleased() && state_changed; }
+
+
+/**
+ * @brief Returns true if the button was just triple clicked, not the current
+ * state
+ *
+ * @return bool
+ */
+bool Button::isTripleClick() { return triple_click; }
+
+/**
+ * 
+ */
+void Button::checkForTripleClick(bool isPressedEdge, ulong currentTime) {
+  static ulong lastClick = 0;
+  static int clicks = 0;
+
+  if (isPressedEdge) {
+    if ((currentTime - lastClick < PTT_TRIPLE_CLICK_SPEED)) {
+      // Second and Third Click
+      clicks++;      
+    } else {
+      // First Click
+      clicks = 1;
+    }
+    lastClick = currentTime;
+  }
+
+  if (clicks == 3) {
+    triple_click = true;
+    clicks = 0;
+  } else {
+    triple_click = false;
+  }
+}
