@@ -64,25 +64,25 @@ TEST_F(ButtonHWTest, isPressed) {
 
 TEST_F(ButtonHWTest, isTripleClick_true) {
   
-  button->checkForTripleClick(false, 0);
+  button->checkForTripleClick(false, 1000);
   ASSERT_EQ(false, button->isTripleClick());
 
-  button->checkForTripleClick(true, 100);
+  button->checkForTripleClick(true, 1100);
   ASSERT_EQ(false, button->isTripleClick());
   
-  button->checkForTripleClick(false,150);
+  button->checkForTripleClick(false,1150);
   ASSERT_EQ(false, button->isTripleClick());
 
-  button->checkForTripleClick(true, 200);
+  button->checkForTripleClick(true, 1200);
   ASSERT_EQ(false, button->isTripleClick());
 
-  button->checkForTripleClick(false, 250);
+  button->checkForTripleClick(false, 1250);
   ASSERT_EQ(false, button->isTripleClick());
 
-  button->checkForTripleClick(true, 300);
+  button->checkForTripleClick(true, 1300);
   ASSERT_EQ(true, button->isTripleClick());
   
-  button->checkForTripleClick(false, 350);
+  button->checkForTripleClick(false, 1350);
   ASSERT_EQ(false, button->isTripleClick());
 }
 } // namespace

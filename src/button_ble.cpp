@@ -30,6 +30,8 @@ void ButtonBLE::update() {
     button_state = next_state;
     state_changed = true;
   }
+
+  checkForTripleClick(isPressedEdge(), millis());
 }
 
 void ButtonBLE::setConnected(bool state) {

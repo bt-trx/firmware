@@ -18,7 +18,6 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#include "settings.h"
 #include "button_hw.h"
 
 /**
@@ -35,89 +34,31 @@ ButtonHW::ButtonHW(uint32_t pin) : pin_(pin) { pinMode(pin_, INPUT); }
 void ButtonHW::update() {
   bool reading = digitalRead(pin_);
   ulong currentTime = millis();
-  stateChanged = false;
+  state_changed = false;
 
   // If the switch changed, due to noise or pressing:
-  if (reading != lastButtonState) {
+  if (reading != lastReading) {
     // reset the debouncing timer
     lastDebounceTime = currentTime;
   }
 
   if ((currentTime - lastDebounceTime) >= debounceDelay) {
     // if the button state has changed:
-    if (reading != buttonState) {
-      buttonState = reading;
-      stateChanged = true;
+    ButtonState new_state = BTNSTATE_UNKNOWN;
+    if (reading == HIGH) {
+      new_state = BTNSTATE_RELEASED;
+    }
+    else {
+      new_state = BTNSTATE_PRESSED;
+    }
+
+    if (new_state != button_state) {
+      button_state = new_state;
+      state_changed = true;
     }
   }
 
   checkForTripleClick(isPressedEdge(), currentTime);
 
-  lastButtonState = reading;
-
+  lastReading = reading;
 }
-
-void ButtonHW::checkForTripleClick(bool isPressedEdge, ulong currentTime) {
-  static ulong lastClick = -1;
-  static int clicks = 0;
-
-  if (isPressedEdge) {
-    if ((currentTime - lastClick < PTT_TRIPLE_CLICK_SPEED)) {
-      // Second and Third Click
-      clicks++;      
-    } else {
-      // First Click
-      clicks = 1;
-    }
-    lastClick = currentTime;
-  }
-
-  if (clicks == 3) {
-    tripleClick = true;
-    clicks = 0;
-  } else {
-    tripleClick = false;
-  }
-}
-
-/**
- * @brief Return current state of the button
- *
- * @return bool True if button is pressed
- */
-bool ButtonHW::isPressed() {
-  return !buttonState; // active low
-}
-
-/**
- * @brief Return current state of the button
- *
- * @return bool True if button is released
- */
-bool ButtonHW::isReleased() {
-  return buttonState; // active low
-}
-
-/**
- * @brief Returns true if the button was just pressed (edge), not the current
- * state
- *
- * @return bool
- */
-bool ButtonHW::isPressedEdge() { return isPressed() && stateChanged; }
-
-/**
- * @brief Returns true if the button was just released (edge), not the current
- * state
- *
- * @return bool
- */
-bool ButtonHW::isReleasedEdge() { return isReleased() && stateChanged; }
-
-/**
- * @brief Returns true if the button was just triple clicked, not the current
- * state
- *
- * @return bool
- */
-bool ButtonHW::isTripleClick() { return tripleClick; }
