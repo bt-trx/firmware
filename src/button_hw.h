@@ -34,13 +34,19 @@ public:
   bool isReleased();
   bool isPressedEdge();
   bool isReleasedEdge();
+  bool isTripleClick();
   void update();
+
+  // Public for Unit Testing only
+  void checkForTripleClick(bool, ulong);
 
 private:
   int pin_;
   bool buttonState;
   bool lastButtonState = HIGH;
   bool stateChanged = false;
+
+  bool tripleClick = false;
 
   unsigned long lastDebounceTime =
       0; // the last time the output pin was toggled

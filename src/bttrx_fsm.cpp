@@ -397,6 +397,10 @@ void BTTRX_FSM::handlePTTDuringCall() {
   ptt_output_.checkForTimeout(bttrx_control_.getPTTTimeout());
   ptt_output_.checkForDelayedOff();
 
+  if (ptt_button_.isTripleClick()) {
+    serial_.dbg_println("TRIPLE CLICK");
+  };
+
   switch (bttrx_control_.getPTTMode()) {
   case kDirect:
     handlePTTDirect();
