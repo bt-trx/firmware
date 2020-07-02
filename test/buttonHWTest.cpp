@@ -62,4 +62,27 @@ TEST_F(ButtonHWTest, isPressed) {
   ASSERT_EQ(true, button->isPressed());
 }
 
+TEST_F(ButtonHWTest, isTripleClick_true) {
+  
+  button->checkForTripleClick(false, 0);
+  ASSERT_EQ(false, button->isTripleClick());
+
+  button->checkForTripleClick(true, 100);
+  ASSERT_EQ(false, button->isTripleClick());
+  
+  button->checkForTripleClick(false,150);
+  ASSERT_EQ(false, button->isTripleClick());
+
+  button->checkForTripleClick(true, 200);
+  ASSERT_EQ(false, button->isTripleClick());
+
+  button->checkForTripleClick(false, 250);
+  ASSERT_EQ(false, button->isTripleClick());
+
+  button->checkForTripleClick(true, 300);
+  ASSERT_EQ(true, button->isTripleClick());
+  
+  button->checkForTripleClick(false, 350);
+  ASSERT_EQ(false, button->isTripleClick());
+}
 } // namespace

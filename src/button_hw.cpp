@@ -18,6 +18,7 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
+#include "settings.h"
 #include "button_hw.h"
 
 /**
@@ -49,7 +50,34 @@ void ButtonHW::update() {
       stateChanged = true;
     }
   }
+
+  checkForTripleClick(isPressedEdge(), currentTime);
+
   lastButtonState = reading;
+
+}
+
+void ButtonHW::checkForTripleClick(bool isPressedEdge, ulong currentTime) {
+  static ulong lastClick = -1;
+  static int clicks = 0;
+
+  if (isPressedEdge) {
+    if ((currentTime - lastClick < PTT_TRIPLE_CLICK_SPEED)) {
+      // Second and Third Click
+      clicks++;      
+    } else {
+      // First Click
+      clicks = 1;
+    }
+    lastClick = currentTime;
+  }
+
+  if (clicks == 3) {
+    tripleClick = true;
+    clicks = 0;
+  } else {
+    tripleClick = false;
+  }
 }
 
 /**
@@ -72,7 +100,7 @@ bool ButtonHW::isReleased() {
 
 /**
  * @brief Returns true if the button was just pressed (edge), not the current
- * state Button is active low
+ * state
  *
  * @return bool
  */
@@ -80,8 +108,16 @@ bool ButtonHW::isPressedEdge() { return isPressed() && stateChanged; }
 
 /**
  * @brief Returns true if the button was just released (edge), not the current
- * state Button is active low
+ * state
  *
  * @return bool
  */
 bool ButtonHW::isReleasedEdge() { return isReleased() && stateChanged; }
+
+/**
+ * @brief Returns true if the button was just triple clicked, not the current
+ * state
+ *
+ * @return bool
+ */
+bool ButtonHW::isTripleClick() { return tripleClick; }
