@@ -14,7 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+Copyright (C) 2019-2020 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+and contributors
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
@@ -26,7 +27,8 @@ BTTRX_FSM::BTTRX_FSM()
     : bttrx_control_(&serial_, &wt32i_), current_state_(STATE_INIT),
       led_connected_(PIN_LED_BLUE), led_busy_(PIN_LED_GREEN),
       helper_button_(PIN_BTN_0), ptt_button_(PIN_PTT_IN),
-      ptt_output_(PIN_PTT_OUT, PIN_PTT_LED) {}
+      ptt_output_(PIN_PTT_OUT, PIN_PTT_LED),
+      tone_1750_(&ptt_output_, &serial_) {}
 
 BTTRX_FSM::BTTRX_FSM(Stream *serial_bt, Stream *serial_dbg) : BTTRX_FSM() {
   setSerial(serial_bt, serial_dbg);
@@ -49,6 +51,7 @@ void BTTRX_FSM::run() {
   ptt_button_.update();
   helper_button_.update();
   ble_button_.update();
+  tone_1750_.update();
 
   // Run State Machine
   switch (current_state_) {
@@ -231,8 +234,8 @@ void BTTRX_FSM::handleStateConnected() {
 
   // If either the PTT button or the helper button is pressed, start a
   // phone call
-  if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge() ||
-      helper_button_.isPressedEdge()) {
+  if (ptt_button_.isClicked() || ble_button_.isClicked() ||
+      helper_button_.isClicked()) {
     wt32i_.dial();
   }
 
@@ -276,7 +279,7 @@ void BTTRX_FSM::handleStateCallRunning() {
   // If the button is pressed, send the "HANGUP" message.
   // State change back to STATE_CONNECTED happens when HFP device indicates
   // end of call
-  if (helper_button_.isPressedEdge()) {
+  if (helper_button_.isClicked()) {
     wt32i_.hangup();
   }
 }
@@ -400,10 +403,19 @@ void BTTRX_FSM::handlePTTDuringCall() {
   ptt_output_.checkForTimeout(bttrx_control_.getPTTTimeout());
   ptt_output_.checkForDelayedOff();
 
-  if (ptt_button_.isTripleClick() || ble_button_.isTripleClick()) {
-    serial_.dbg_println("TRIPLE CLICK");
-    // TODO Enable PTT, Play 1750 Hz Tone for x ms, Disable PTT
-  };
+  // Willimode not yet supported for 1750 Hz tone
+  if (bttrx_control_.getPTTMode() != kWillimode &&
+      (ptt_button_.isTripleClicked() || ble_button_.isTripleClicked())) {
+    if (!tone_1750_.isActive()) {
+      tone_1750_.send();
+      return;
+    }
+  }
+
+  // As long as the tone is active, now further PTT actions allowed
+  if (tone_1750_.isActive()) {
+    return;
+  }
 
   switch (bttrx_control_.getPTTMode()) {
   case kDirect:
@@ -427,14 +439,12 @@ void BTTRX_FSM::handlePTTDuringCall() {
  */
 void BTTRX_FSM::handlePTTDirect() {
   // Hold Button for PTT
-  if (ptt_button_.isPressedEdge() || ble_button_.isPressedEdge()) {
+  if (ptt_button_.isHeldDown() || ble_button_.isHeldDown()) {
     ptt_output_.on();
 #ifdef ARDUINO
     bttrx_display_.setTransmitMessage("<<< ON AIR >>>");
 #endif // ARDUINO
-  } else if (ptt_button_.isReleased() &&
-             (!ble_button_.isConnected() ||
-              (ble_button_.isConnected() && ble_button_.isReleased()))) {
+  } else {
     ptt_output_.delayed_off(bttrx_control_.getPTTHangTime());
 #ifdef ARDUINO
     bttrx_display_.setTransmitMessage("idle");
@@ -447,7 +457,7 @@ void BTTRX_FSM::handlePTTDirect() {
  */
 void BTTRX_FSM::handlePTTWiredToggle() {
   // Press Button to assert PTT, press again to release PTT
-  if (ptt_button_.isPressedEdge()) {
+  if (ptt_button_.isClicked()) {
     ptt_output_.toggle(bttrx_control_.getPTTHangTime());
 #ifdef ARDUINO
     if (ptt_output_.getState()) {
@@ -489,7 +499,7 @@ void BTTRX_FSM::handlePTTWiredWillimode() {
  */
 void BTTRX_FSM::handlePTTBLEToggle() {
   // Press Button to assert PTT, press again to release PTT
-  if (ble_button_.isPressedEdge()) {
+  if (ble_button_.isClicked()) {
     ptt_output_.toggle(bttrx_control_.getPTTHangTime());
 #ifdef ARDUINO
     if (ptt_output_.getState()) {

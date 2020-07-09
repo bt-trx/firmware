@@ -19,38 +19,29 @@ and contributors
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#include "button_ble.h"
+#pragma once
 
-/**
- * @brief Update the button state
- *
- */
-void ButtonBLE::update() {
-  ulong now = millis();
+#ifdef ARDUINO
+#include "Arduino.h"
+#else
+#include "arduino-mock/Arduino.h"
+#endif
 
-  state_changed = false;
-  if (next_state != button_state) {
-    button_state = next_state;
-    state_changed = true;
-    last_state_change_time = now;
-  }
+#include "ptt.h"
+#include "serialwrapper.h"
 
-  checkForClick(last_state_change_time, now);
-}
+class Tone1750 {
+public:
+  Tone1750(PTT *, SerialWrapper *);
+  void update();
+  bool isActive();
+  void send();
 
-void ButtonBLE::setConnected(bool state) {
-  was_connected = is_connected;
-  is_connected = state;
-}
+private:
+  PTT *_ptt_button = 0;
+  SerialWrapper *_serial = 0;
+  ulong _start_time = 0;
+  bool _active = false;
 
-/**
- * @brief Update the button state
- *
- */
-void ButtonBLE::setPressed() { next_state = BTNSTATE_PRESSED; }
-
-/**
- * @brief Update the button state
- *
- */
-void ButtonBLE::setReleased() { next_state = BTNSTATE_RELEASED; }
+  void stop();
+};

@@ -19,38 +19,33 @@ and contributors
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#include "button_ble.h"
+#include "tone1750.h"
+#include "settings.h"
 
-/**
- * @brief Update the button state
- *
- */
-void ButtonBLE::update() {
+Tone1750::Tone1750(PTT *ptt_button, SerialWrapper *serialwrapper)
+    : _ptt_button(ptt_button), _serial(serialwrapper) {}
+
+void Tone1750::update() {
   ulong now = millis();
 
-  state_changed = false;
-  if (next_state != button_state) {
-    button_state = next_state;
-    state_changed = true;
-    last_state_change_time = now;
+  if (_start_time + TONE_1750HZ_LENGTH < now) {
+    stop();
   }
-
-  checkForClick(last_state_change_time, now);
 }
 
-void ButtonBLE::setConnected(bool state) {
-  was_connected = is_connected;
-  is_connected = state;
+bool Tone1750::isActive() { return _active; }
+
+void Tone1750::send() {
+  _ptt_button->on();
+  _active = true;
+  _start_time = millis();
+
+  // TODO Find correct tone and how to determine/vary length to play
+  _serial->println("PLAYSOUND 3 3 0 goodbye.adpcm");
 }
 
-/**
- * @brief Update the button state
- *
- */
-void ButtonBLE::setPressed() { next_state = BTNSTATE_PRESSED; }
-
-/**
- * @brief Update the button state
- *
- */
-void ButtonBLE::setReleased() { next_state = BTNSTATE_RELEASED; }
+void Tone1750::stop() {
+  _active = false;
+  _ptt_button->off();
+  // TODO DO WE HAVE TO STOP PLAYSOUND?
+}

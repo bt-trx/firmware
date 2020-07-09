@@ -14,7 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+Copyright (C) 2019-2020 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+and contributors
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
@@ -34,6 +35,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 #include "led.h"
 #include "ptt.h"
 #include "settings.h"
+#include "tone1750.h"
 #include "wt32i.h"
 
 #include <string>
@@ -78,6 +80,7 @@ private:
   ButtonHW ptt_button_;
   ButtonBLE ble_button_;
   PTT ptt_output_;
+  Tone1750 tone_1750_;
 
   BDDeviceInfo remote_device_info_;
   void updateStatusmessage();

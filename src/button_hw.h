@@ -14,7 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+Copyright (C) 2019-2020 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+and contributors
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
@@ -28,18 +29,21 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #include "button.h"
 
-class ButtonHW : public Button{
+class ButtonHW : public Button {
 public:
-  ButtonHW(uint32_t pin);
+  ButtonHW(uint32_t pin, bool activeLow = true);
   void update();
 
 private:
   int pin_;
+  bool activeLow_;
 
   // Required for debouncing
-  bool lastReading = HIGH;
-  unsigned long lastDebounceTime =
+  bool last_reading = HIGH;
+  unsigned long last_debounce_time =
       0; // the last time the output pin was toggled
-  unsigned long debounceDelay =
+
+  // Settings
+  unsigned long debounce_delay =
       50; // the debounce time; increase if the output flickers
 };
