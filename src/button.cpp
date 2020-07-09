@@ -18,8 +18,8 @@ Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
-#include "settings.h"
 #include "button.h"
+#include "settings.h"
 
 /**
  * @brief Return current state of the button
@@ -61,37 +61,39 @@ bool Button::isPressedEdge() { return isPressed() && state_changed; }
  */
 bool Button::isReleasedEdge() { return isReleased() && state_changed; }
 
-
 /**
- * @brief Returns true if the button was just triple clicked, not the current
+ * @brief Returns true if the button was just clicked, not the current
  * state
  *
- * @return bool
+ * @return ClickType
  */
-bool Button::isTripleClick() { return triple_click; }
+bool Button::isClicked() { return (clicks == 1); }
 
 /**
- * 
+ * @brief Returns true if the button was just triple-clicked, not the current
+ * state
+ *
+ * @return ClickType
  */
-void Button::checkForTripleClick(bool isPressedEdge, ulong currentTime) {
-  static ulong lastClick = 0;
-  static int clicks = 0;
+bool Button::isTripleClicked() { return (clicks == 3); }
 
-  if (isPressedEdge) {
-    if ((currentTime - lastClick < PTT_TRIPLE_CLICK_SPEED)) {
-      // Second and Third Click
-      clicks++;      
-    } else {
-      // First Click
-      clicks = 1;
-    }
-    lastClick = currentTime;
+void Button::checkForClick(ulong last_change, ulong now) {
+
+  // Account each additional click within click_delay
+  if (isPressedEdge()) {
+    click_count++;
   }
 
-  if (clicks == 3) {
-    triple_click = true;
-    clicks = 0;
-  } else {
-    triple_click = false;
+  // Button is released, report amount of clicks
+  if (last_change + PTT_CLICK_SPEED < now &&
+      button_state == BTNSTATE_RELEASED) {
+    clicks = click_count;
+    click_count = 0;
+  }
+
+  if (last_change + PTT_CLICK_SPEED + 10 < now &&
+      button_state == BTNSTATE_PRESSED) {
+    clicks = 255;
+    click_count = 0;
   }
 }
