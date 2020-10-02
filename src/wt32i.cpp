@@ -523,6 +523,13 @@ ResultType WT32i::handleMessage_HFPAG_DIAL(iWrapMessage msg) {
  */
 ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
   vector<string> splitted_msg = splitString(msg.msg);
+
+  if (splitted_msg.size() < 5) {
+    serial_->dbg_println("INFO: received empty message");
+    sendERROR();
+    return kError;
+  }
+
   string cmd = splitted_msg[4];
 
   // If \r at the end of the string, remove it
@@ -640,7 +647,7 @@ ResultType WT32i::handleMessage_HFPAG_UNKNOWN(iWrapMessage msg) {
   } else if (cmd == "AT+CREG=0" || cmd == "AT+CREG=1" || cmd == "AT+CREG=2") {
     // Set behavior in case of network status change
     sendOK();
-  } else if (cmd.find("AT+XEVENT=\"") != string::npos) {
+  } else if (cmd.find("AT+XEVENT=") != string::npos) {
     // Plantronics XEVENT
     sendERROR();
   } else if (cmd == "ATE0") {

@@ -318,6 +318,18 @@ TEST_F(WT32iTest, handleMessage_HFPAG_UNKNOWN_NREC_success) {
   ASSERT_EQ(ResultType::kSuccess, wt32i.handleMessage_HFPAG_UNKNOWN(msg));
 }
 
+TEST_F(WT32iTest, handleMessage_HFPAG_UNKNOWN_EMPTYMESSAGE_success) {
+  WT32i wt32i(&serialWrapperMock);
+
+  EXPECT_CALL(serialWrapperMock,
+              println(Matcher<const char *>(StrEq("ERROR"))));
+
+  iWrapMessage msg;
+  msg.msg_type = kHFPAG_UNKOWN;
+  msg.msg = "HFP-AG 0 UNKNOWN (0): \\r";
+  ASSERT_EQ(ResultType::kError, wt32i.handleMessage_HFPAG_UNKNOWN(msg));
+}
+
 TEST_F(WT32iTest, getBDAddressSuffix_success) {
   WT32i wt32i(&serialWrapperMock);
 
