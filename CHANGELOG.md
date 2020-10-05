@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+
+### Changed
+
+- Fixed operation with Platronics Voyager 5200
+
 ## [1.1.0] - 2020-06-30
 
 ### Added
@@ -186,6 +192,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial public release
 
+[unreleased]: https://github.com/bt-trx/firmware/compare/1.1.0...develop
 [1.1.0]: https://github.com/bt-trx/firmware/compare/1.0.1...1.1.0
 [1.1.0-rc3]: https://github.com/bt-trx/firmware/compare/1.1.0-rc2...1.1.0-rc3
 [1.1.0-rc2]: https://github.com/bt-trx/firmware/compare/1.1.0-rc1...1.1.0-rc2
