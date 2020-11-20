@@ -61,6 +61,7 @@ public:
   ResultType waitForInputBlocking(string expectation, string *output = NULL,
                                   uint32_t timeout = BT_SERIAL_TIMEOUT);
   string readLineToString();
+  void pipeDbgToBtStream();
 
 private:
   Stream *serial_bt_ = NULL;

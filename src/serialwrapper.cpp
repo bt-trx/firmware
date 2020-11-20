@@ -141,3 +141,13 @@ string SerialWrapper::readLineToString() {
 
   return output;
 }
+
+/**
+ * @brief Read input from dbg stream and write directly to bt stream
+ * This enables to directly control the WT32i module using the debug interface
+ */
+void SerialWrapper::pipeDbgToBtStream() {
+  if (serial_dbg_->available()) {
+    serial_bt_->write(serial_dbg_->read());
+  }
+}
