@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Fixed operation with Platronics Voyager 5200
+- Enable to directly write serial commands to WT32i using the serial Debug interface
 
 ## [1.1.0] - 2020-06-30
 

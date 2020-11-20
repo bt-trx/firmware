@@ -44,6 +44,9 @@ void BTTRX_FSM::setSerial(Stream *serial_bt, Stream *serial_dbg) {
  *
  */
 void BTTRX_FSM::run() {
+  // Pipe debug serial to bt serial
+  serial_.pipeDbgToBtStream();
+
   // Read button states
   ptt_button_.update();
   helper_button_.update();
