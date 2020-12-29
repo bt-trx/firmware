@@ -40,12 +40,13 @@ void Tone1750::send() {
   _active = true;
   _start_time = millis();
 
-  // TODO Find correct tone and how to determine/vary length to play
-  _serial->println("PLAYSOUND 3 3 0 goodbye.adpcm");
+  // A6 (1760 Hz) for about 4-5 secs
+  _serial->println("PLAYSOUND 0 3 0 7aaaaa");
+  delay(3000);
+
+  _ptt_button->off();
 }
 
 void Tone1750::stop() {
-  _active = false;
-  _ptt_button->off();
-  // TODO DO WE HAVE TO STOP PLAYSOUND?
+  _active = false;  
 }
