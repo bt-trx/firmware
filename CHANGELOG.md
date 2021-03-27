@@ -4,12 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## 1.2.0 - [unreleased]
+
+### Added
+
+- Triple click to enable 1750 Hz Tone (not supported in Willimode)
 
 ### Changed
 
 - Fixed operation with Platronics Voyager 5200
 - Enable to directly write serial commands to WT32i using the serial Debug interface
+- Change of OLED Library as the old library is not available anymore
 
 ## [1.1.0] - 2020-06-30
 
