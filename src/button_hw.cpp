@@ -14,7 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+Copyright (C) 2019-2020 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+and contributors
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
@@ -25,63 +26,45 @@ Contact: bt-trx.com, mail@bt-trx.com
  *
  * @param pin
  */
-ButtonHW::ButtonHW(uint32_t pin) : pin_(pin) { pinMode(pin_, INPUT); }
+ButtonHW::ButtonHW(uint32_t pin, bool activeLow)
+    : pin_(pin), activeLow_(activeLow) {
+  pinMode(pin_, INPUT);
+}
 
 /**
  * @brief Update the button state
  *
  */
 void ButtonHW::update() {
+  ulong now = millis();
   bool reading = digitalRead(pin_);
-  ulong currentTime = millis();
-  stateChanged = false;
+
+  // If button is active high, invert reading
+  if (!activeLow_) {
+    reading = !reading;
+  }
 
   // If the switch changed, due to noise or pressing:
-  if (reading != lastButtonState) {
+  if (reading != last_reading) {
     // reset the debouncing timer
-    lastDebounceTime = currentTime;
+    last_debounce_time = now;
   }
 
-  if ((currentTime - lastDebounceTime) >= debounceDelay) {
-    // if the button state has changed:
-    if (reading != buttonState) {
-      buttonState = reading;
-      stateChanged = true;
-    }
+  ButtonState new_state = BTNSTATE_UNKNOWN;
+  if (reading == HIGH) {
+    new_state = BTNSTATE_RELEASED;
+  } else {
+    new_state = BTNSTATE_PRESSED;
   }
-  lastButtonState = reading;
+
+  // Reading has settled
+  state_changed = false;
+  if (last_debounce_time + debounce_delay < now && button_state != new_state) {
+    button_state = new_state;
+    state_changed = true;
+    last_state_change_time = now;
+  }
+  last_reading = reading;
+
+  checkForClick(last_state_change_time, now);
 }
-
-/**
- * @brief Return current state of the button
- *
- * @return bool True if button is pressed
- */
-bool ButtonHW::isPressed() {
-  return !buttonState; // active low
-}
-
-/**
- * @brief Return current state of the button
- *
- * @return bool True if button is released
- */
-bool ButtonHW::isReleased() {
-  return buttonState; // active low
-}
-
-/**
- * @brief Returns true if the button was just pressed (edge), not the current
- * state Button is active low
- *
- * @return bool
- */
-bool ButtonHW::isPressedEdge() { return isPressed() && stateChanged; }
-
-/**
- * @brief Returns true if the button was just released (edge), not the current
- * state Button is active low
- *
- * @return bool
- */
-bool ButtonHW::isReleasedEdge() { return isReleased() && stateChanged; }

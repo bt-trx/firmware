@@ -19,6 +19,7 @@ Contact: bt-trx.com, mail@bt-trx.com
 */
 
 #include "button.h"
+#include "settings.h"
 
 /**
  * @brief Return current state of the button
@@ -59,3 +60,40 @@ bool Button::isPressedEdge() { return isPressed() && state_changed; }
  * @return bool
  */
 bool Button::isReleasedEdge() { return isReleased() && state_changed; }
+
+/**
+ * @brief Returns true if the button was just clicked, not the current
+ * state
+ *
+ * @return ClickType
+ */
+bool Button::isClicked() { return (clicks == 1); }
+
+/**
+ * @brief Returns true if the button was just triple-clicked, not the current
+ * state
+ *
+ * @return ClickType
+ */
+bool Button::isTripleClicked() { return (clicks == 3); }
+
+void Button::checkForClick(ulong last_change, ulong now) {
+
+  // Account each additional click within click_delay
+  if (isPressedEdge()) {
+    click_count++;
+  }
+
+  // Button is released, report amount of clicks
+  if (last_change + PTT_CLICK_SPEED < now &&
+      button_state == BTNSTATE_RELEASED) {
+    clicks = click_count;
+    click_count = 0;
+  }
+
+  if (last_change + PTT_CLICK_SPEED + 10 < now &&
+      button_state == BTNSTATE_PRESSED) {
+    clicks = 255;
+    click_count = 0;
+  }
+}

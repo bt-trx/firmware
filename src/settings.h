@@ -14,7 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Copyright (C) 2019 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+Copyright (C) 2019-2020 Christian Obersteiner (DL1COM), Andreas Müller (DC1MIL)
+and contributors
 Contact: bt-trx.com, mail@bt-trx.com
 */
 
@@ -41,7 +42,9 @@ Contact: bt-trx.com, mail@bt-trx.com
 
 #define BD_ADDR_OUI_ANYTONE "00:1b:10" // Anytone Bluetooth PTT BP-01
 
+#define PTT_CLICK_SPEED 250        // ms
 #define PTT_TIMEOUT_WILLIMODE 1000 // ms
+#define TONE_1750HZ_LENGTH 1000    // ms (min. 600 ms)
 
 #define CALLSIGN_LENGTH 6 // Max length of callsign for BT/WiFi identification
 
