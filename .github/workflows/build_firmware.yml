@@ -1,0 +1,33 @@
+name: Build Firmware
+
+on: [push, pull_request]
+
+jobs:
+  build-firmware:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo and submodules
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        submodules: recursive
+    - name: Set variables
+      id: vars
+      run: |
+        echo "::set-output name=tag::$(git describe --tags)"
+    - name: Install dependencies
+      run: |
+        pip install -U platformio
+    - name: Build
+      run: |
+        platformio run -v
+    - name: Prepare Artifacts
+      run: |
+        mv .pio/build/esp32/firmware.bin ./bt-trx_esp32_firmware_${{ steps.vars.outputs.tag }}.bin
+        mv .pio/build/esp32/partitions.bin ./bt-trx_esp32_partitions_${{ steps.vars.outputs.tag }}.bin
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: bt-trx_esp32_firmware_${{ steps.vars.outputs.tag }}
+        path: ./*.bin
